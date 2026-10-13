@@ -43,6 +43,8 @@ from dui2.client.exec_utils import (
 
 from dui2.client.init_firts import IniData
 
+from dui2.client.file_nav_utils import FileBrowser
+
 from dui2.client.simpler_param_widgets import RootWidg
 from dui2.client.simpler_param_widgets import ImportWidget
 from dui2.client.simpler_param_widgets import MaskWidget
@@ -673,10 +675,10 @@ class MainObject(QObject):
         )
 
         self.window.actionRead_old_Xia2_execution.triggered.connect(
-            self.Xia2_execution
+            self.read_Xia2
         )
         self.window.actionRun_and_read_Xia2.triggered.connect(
-            self.read_Xia2
+            self.Xia2_execution
         )
 
         self.window.actionExit.triggered.connect(self.exit_triggered)
@@ -756,8 +758,26 @@ class MainObject(QObject):
 
     def read_Xia2(self):
         print("\n read_Xia2 \n")
+        cmd = {"nod_lst":"", "cmd_str":["dir_path"]}
+        lst_req = get_req_json_dat(
+            params_in = cmd, main_handler = self.runner_handler
+        )
+        dic_str = lst_req.result_out()
 
+        #init_path = "/tmp/"
+        init_path = str(dic_str[0])
 
+        self.open_widget = FileBrowser(
+            parent = None, path_ini = init_path,
+            limit_path = init_path, only_dir = True,
+            runner_handler = self.runner_handler
+        )
+        self.open_widget.resize(self.open_widget.size() * 2)
+        self.open_widget.select_done.connect(self.set_xia2_dir)
+        print("\n here 1 \n")
+
+    def set_xia2_dir(self, ini_dir_path, is_dir = True):
+        print("\n picked: ", ini_dir_path, " for reading xia2 debug file \n")
 
     def exit_triggered(self):
         logging.info("exit_triggered(QObject) ... 1")
