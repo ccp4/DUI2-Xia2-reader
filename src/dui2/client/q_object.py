@@ -778,6 +778,16 @@ class MainObject(QObject):
 
     def set_xia2_dir(self, ini_dir_path, is_dir = True):
         print("\n picked: ", ini_dir_path, " for reading xia2 debug file \n")
+        cmd = {"nod_lst":"", "cmd_str":["read_xia2_debug", ini_dir_path]}
+
+        lst_req = get_req_json_dat(
+            params_in = cmd, main_handler = self.runner_handler
+        )
+        dic_str = lst_req.result_out()
+
+        print("dic_str =", dic_str)
+
+
 
     def exit_triggered(self):
         logging.info("exit_triggered(QObject) ... 1")

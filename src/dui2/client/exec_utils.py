@@ -88,12 +88,6 @@ class get_req_json_dat(QObject):
         super(get_req_json_dat, self).__init__(parent)
         self.to_return = None
 
-
-        print(
-            "\n\n parent =", parent, "\n params_in =", params_in,
-            "\n main_handler =", main_handler, "\n"
-        )
-
         if main_handler == None:
             data_init = IniData()
             uni_url = data_init.get_url()

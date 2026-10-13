@@ -44,6 +44,7 @@ def get_pair_list():
         ("gh",      "get_help"                              ),
         ("gmt",     "get_mtz"                               ),
         ("tmt",     "transfer_mtz"                          ),
+        ("rxd",     "read_xia2_debug"                       ),
         ("gt",      "get_template"                          ),
         ("gfp",     "get_files_path"                        ),
         ("gi",      "get_image"                             ),
