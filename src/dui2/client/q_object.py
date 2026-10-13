@@ -671,6 +671,14 @@ class MainObject(QObject):
         self.window.actionReset_Control_Graph.triggered.connect(
             self.reset_graph_triggered
         )
+
+        self.window.actionRead_old_Xia2_execution.triggered.connect(
+            self.Xia2_execution
+        )
+        self.window.actionRun_and_read_Xia2.triggered.connect(
+            self.read_Xia2
+        )
+
         self.window.actionExit.triggered.connect(self.exit_triggered)
         self.window.actionBright_on_off.triggered.connect(
             self.bright_fonts_triggered
@@ -741,6 +749,15 @@ class MainObject(QObject):
         self.H_Box = HistoryBox()
         self.H_Box.get_main_obj_n_request(self)
         self.H_Box.show()
+
+
+    def Xia2_execution(self):
+        print("\n Xia2_execution \n")
+
+    def read_Xia2(self):
+        print("\n read_Xia2 \n")
+
+
 
     def exit_triggered(self):
         logging.info("exit_triggered(QObject) ... 1")

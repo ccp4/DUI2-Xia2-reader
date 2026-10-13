@@ -255,8 +255,8 @@
                             <rect>
                              <x>0</x>
                              <y>0</y>
-                             <width>415</width>
-                             <height>289</height>
+                             <width>96</width>
+                             <height>26</height>
                             </rect>
                            </property>
                           </widget>
@@ -1111,8 +1111,8 @@
                             <rect>
                              <x>0</x>
                              <y>0</y>
-                             <width>407</width>
-                             <height>273</height>
+                             <width>100</width>
+                             <height>30</height>
                             </rect>
                            </property>
                           </widget>
@@ -1176,8 +1176,8 @@
                             <rect>
                              <x>0</x>
                              <y>0</y>
-                             <width>415</width>
-                             <height>289</height>
+                             <width>96</width>
+                             <height>26</height>
                             </rect>
                            </property>
                           </widget>
@@ -1215,8 +1215,8 @@
                             <rect>
                              <x>0</x>
                              <y>0</y>
-                             <width>415</width>
-                             <height>285</height>
+                             <width>96</width>
+                             <height>26</height>
                             </rect>
                            </property>
                           </widget>
@@ -1283,8 +1283,8 @@
                             <rect>
                              <x>0</x>
                              <y>0</y>
-                             <width>419</width>
-                             <height>293</height>
+                             <width>454</width>
+                             <height>296</height>
                             </rect>
                            </property>
                           </widget>
@@ -1325,8 +1325,8 @@
                             <rect>
                              <x>0</x>
                              <y>0</y>
-                             <width>419</width>
-                             <height>289</height>
+                             <width>450</width>
+                             <height>288</height>
                             </rect>
                            </property>
                           </widget>
@@ -1497,8 +1497,8 @@
                             <rect>
                              <x>0</x>
                              <y>0</y>
-                             <width>415</width>
-                             <height>289</height>
+                             <width>96</width>
+                             <height>26</height>
                             </rect>
                            </property>
                           </widget>
@@ -1536,8 +1536,8 @@
                             <rect>
                              <x>0</x>
                              <y>0</y>
-                             <width>415</width>
-                             <height>285</height>
+                             <width>96</width>
+                             <height>26</height>
                             </rect>
                            </property>
                           </widget>
@@ -2280,7 +2280,7 @@
      <x>0</x>
      <y>0</y>
      <width>1613</width>
-     <height>34</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_file">
@@ -2290,6 +2290,9 @@
     <addaction name="separator"/>
     <addaction name="actionShow_History"/>
     <addaction name="actionReset_Control_Graph"/>
+    <addaction name="separator"/>
+    <addaction name="actionRead_old_Xia2_execution"/>
+    <addaction name="actionRun_and_read_Xia2"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -2369,6 +2372,16 @@
   <action name="actionGive_feedback">
    <property name="text">
     <string>Give feedback</string>
+   </property>
+  </action>
+  <action name="actionRead_old_Xia2_execution">
+   <property name="text">
+    <string>Read old Xia2 execution</string>
+   </property>
+  </action>
+  <action name="actionRun_and_read_Xia2">
+   <property name="text">
+    <string>Run and read Xia2</string>
    </property>
   </action>
  </widget>
