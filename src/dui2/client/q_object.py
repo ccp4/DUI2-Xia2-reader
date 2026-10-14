@@ -753,40 +753,6 @@ class MainObject(QObject):
         self.H_Box.show()
 
 
-    def Xia2_execution(self):
-        print("\n Xia2_execution \n")
-
-    def read_Xia2(self):
-        cmd = {"nod_lst":"", "cmd_str":["dir_path"]}
-        lst_req = get_req_json_dat(
-            params_in = cmd, main_handler = self.runner_handler
-        )
-        dic_str = lst_req.result_out()
-
-        #init_path = "/tmp/"
-        init_path = str(dic_str[0])
-
-        self.open_widget = FileBrowser(
-            parent = None, path_ini = init_path,
-            limit_path = init_path, only_dir = True,
-            runner_handler = self.runner_handler
-        )
-        self.open_widget.resize(self.open_widget.size() * 2)
-        self.open_widget.select_done.connect(self.set_xia2_dir)
-
-    def set_xia2_dir(self, ini_dir_path, is_dir = True):
-        print("\n picked: ", ini_dir_path, " for reading xia2 debug file \n")
-        cmd = {"nod_lst":"", "cmd_str":["read_xia2_debug", ini_dir_path]}
-
-        lst_req = get_req_json_dat(
-            params_in = cmd, main_handler = self.runner_handler
-        )
-        dic_str = lst_req.result_out()
-
-        print("dic_str =", dic_str)
-
-
-
     def exit_triggered(self):
         logging.info("exit_triggered(QObject) ... 1")
         msgBox  = QMessageBox()
@@ -1728,6 +1694,43 @@ class MainObject(QObject):
             "self.server_nod_lst = " + str( self.server_nod_lst)
         )
         self.check_nxt_btn()
+
+        ##########################################################################################################
+
+    def Xia2_execution(self):
+        print("\n Xia2_execution \n")
+
+    def read_Xia2(self):
+        cmd = {"nod_lst":"", "cmd_str":["dir_path"]}
+        lst_req = get_req_json_dat(
+            params_in = cmd, main_handler = self.runner_handler
+        )
+        dic_str = lst_req.result_out()
+
+        #init_path = "/tmp/"
+        init_path = str(dic_str[0])
+
+        self.open_widget = FileBrowser(
+            parent = None, path_ini = init_path,
+            limit_path = init_path, only_dir = True,
+            runner_handler = self.runner_handler
+        )
+        self.open_widget.resize(self.open_widget.size() * 2)
+        self.open_widget.select_done.connect(self.set_xia2_dir)
+
+    def set_xia2_dir(self, ini_dir_path, is_dir = True):
+        print("\n picked: ", ini_dir_path, " for reading xia2 debug file \n")
+        cmd = {"nod_lst":"", "cmd_str":["read_xia2_debug", ini_dir_path]}
+
+        lst_req = get_req_json_dat(
+            params_in = cmd, main_handler = self.runner_handler
+        )
+        dic_str = lst_req.result_out()
+
+        print("dic_str =", dic_str)
+
+        ##########################################################################################################
+
 
     def respose_n1_from_reset(self, line):
         logging.info("respose_from_reset(err code):" + str(line))
