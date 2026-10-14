@@ -4,16 +4,18 @@ try:
     from graph_common import (
         reversed_find_str, is_output_key, has_file_extension,
         is_bravais_setting, find_implicit_parent, find_param_parent,
-        print_graph_table, export_reusable_graph_list, is_dials_command,
-        find_work_dirs, POSITIONAL_IN, POSITIONAL_OUT
+        print_graph_table, export_reusable_graph_list,
+        build_reusable_graph_list, is_dials_command, find_work_dirs,
+        POSITIONAL_IN, POSITIONAL_OUT
     )
 
 except ModuleNotFoundError:
     from dui2.server.xia2_reader.graph_common import (
         reversed_find_str, is_output_key, has_file_extension,
         is_bravais_setting, find_implicit_parent, find_param_parent,
-        print_graph_table, export_reusable_graph_list, is_dials_command,
-        find_work_dirs, POSITIONAL_IN, POSITIONAL_OUT
+        print_graph_table, export_reusable_graph_list,
+        build_reusable_graph_list, is_dials_command, find_work_dirs,
+        POSITIONAL_IN, POSITIONAL_OUT
     )
 
 def split_cmd_line(new_cmd_str):
@@ -264,10 +266,8 @@ def get_tree(path_to_xia2_run_dir):
         path_to_debug_file = path_to_xia2_run_dir + os.sep + "xia2-debug.txt"
 
     lst_cmd = get_list_of_commands(path_to_debug_file)
-
-    return lst_cmd
-
-
+    dict_w_lst_cmd = build_reusable_graph_list(lst_cmd)
+    return dict_w_lst_cmd
 
 def main():
     try:

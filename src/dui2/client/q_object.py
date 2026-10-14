@@ -757,7 +757,6 @@ class MainObject(QObject):
         print("\n Xia2_execution \n")
 
     def read_Xia2(self):
-        print("\n read_Xia2 \n")
         cmd = {"nod_lst":"", "cmd_str":["dir_path"]}
         lst_req = get_req_json_dat(
             params_in = cmd, main_handler = self.runner_handler
@@ -774,7 +773,6 @@ class MainObject(QObject):
         )
         self.open_widget.resize(self.open_widget.size() * 2)
         self.open_widget.select_done.connect(self.set_xia2_dir)
-        print("\n here 1 \n")
 
     def set_xia2_dir(self, ini_dir_path, is_dir = True):
         print("\n picked: ", ini_dir_path, " for reading xia2 debug file \n")

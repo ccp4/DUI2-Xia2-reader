@@ -275,12 +275,24 @@ def print_graph_table(list_of_commands):
     print("=" * 90)
 
 def export_reusable_graph_list(list_of_commands):
+    all_dat = build_reusable_graph_list(list_of_commands)
+
+    with open("run_data", "w") as fp:
+        json.dump(all_dat, fp, indent=4)
+
+
+def build_reusable_graph_list(list_of_commands):
+
     lst_nod = []
     #for uni in self.step_list:
 
     bigger_lin = 0
 
+
+
     for cmd_dict in list_of_commands:
+
+        print("\n cmd_dict =", cmd_dict, "\n")
 
         if bigger_lin < cmd_dict['curr_poss']:
             bigger_lin = cmd_dict['curr_poss']
@@ -323,7 +335,5 @@ def export_reusable_graph_list(list_of_commands):
             "step_list"             :lst_nod,
             "bigger_lin"            :bigger_lin,
     }
-
-    with open("run_data", "w") as fp:
-        json.dump(all_dat, fp, indent=4)
+    return all_dat
 
