@@ -26,6 +26,8 @@ import os, sys, shutil, logging
 import glob, json, time
 
 from dui2.server.data_n_json import get_info_data, spit_out
+from dui2.server.xia2_reader.reading_xia2_debug_d_txt  import get_tree
+
 from dui2.shared_modules import format_utils
 
 def get_pair_list():
@@ -711,7 +713,35 @@ class Runner(object):
                         str_out = "Reset tree ... Done",
                         req_obj = req_obj, out_type = 'utf-8'
                     )
+                    #######################################################################################################
+                elif unalias_cmd_lst[0][0] == 'read_xia2_debug':
+                    try:
+                        req_obj.send_response(201)
+                        req_obj.send_header('Content-type', 'text/plain')
+                        req_obj.end_headers()
 
+                    except AttributeError:
+                        logging.info(
+                            "Attribute Err catch," +
+                            " not supposed send header info #3"
+                        )
+
+                    spit_out(
+                        str_out = "err.code=0", req_obj = req_obj,
+                        out_type = 'utf-8'
+                    )
+                    xia2_debug_dir_path = unalias_cmd_lst[1][0]
+                    try:
+                        return_list = get_tree(xia2_debug_dir_path)
+
+                    except FileNotFoundError:
+                        print("File xia2-debug.txt Not Found Err Catch")
+
+                        spit_out(
+                            str_out = "Reset tree ... Done",
+                            req_obj = req_obj, out_type = 'utf-8'
+                        )
+                    #######################################################################################################
                 elif unalias_cmd_lst == [['run_predict_n_report']]:
                     try:
                         req_obj.send_response(201)

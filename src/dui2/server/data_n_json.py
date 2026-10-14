@@ -66,7 +66,7 @@ from dials.command_line.cosym import phil_scope as phil_scope_cosym
 from dui2.server.img_uploader import flex_arr_2_json
 from dui2.server.init_first import IniData
 
-from dui2.server.xia2_reader.reading_xia2_debug_d_txt  import get_tree
+#from dui2.server.xia2_reader.reading_xia2_debug_d_txt  import get_tree
 
 
 def spit_out(str_out = None, req_obj = None, out_type = None):
@@ -203,7 +203,7 @@ def get_info_data(uni_cmd, cmd_dict, step_list):
                 logging.info(
                     " err catch , wrong line, NOT sending reflections file"
                 )
-
+        old_approach = '''
     elif uni_cmd[0] == "read_xia2_debug":
         xia2_debug_dir_path = uni_cmd[1]
         try:
@@ -212,6 +212,7 @@ def get_info_data(uni_cmd, cmd_dict, step_list):
         except FileNotFoundError:
             print("File xia2-debug.txt Not Found Err Catch")
             return_list = []
+        '''
 
     elif uni_cmd[0] == "get_cloudrun_availability":
             try:
