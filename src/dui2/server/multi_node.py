@@ -732,15 +732,18 @@ class Runner(object):
                     )
                     xia2_debug_dir_path = unalias_cmd_lst[1][0]
                     try:
+                        self.clear_run_dirs_n_reset()
                         return_list = get_tree(xia2_debug_dir_path)
+                        self._recover_state(return_list)
 
+                        spit_out(
+                            str_out = "reading xia2_debug ... Done",
+                            req_obj = req_obj, out_type = 'utf-8'
+                        )
                     except FileNotFoundError:
                         print("File xia2-debug.txt Not Found Err Catch")
 
-                        spit_out(
-                            str_out = "Reset tree ... Done",
-                            req_obj = req_obj, out_type = 'utf-8'
-                        )
+
                     #######################################################################################################
                 elif unalias_cmd_lst == [['run_predict_n_report']]:
                     try:
