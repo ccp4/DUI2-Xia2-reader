@@ -258,12 +258,14 @@ def get_list_of_commands(path_in):
 
 def get_tree(path_to_xia2_run_dir):
     print("path_to_xia2_run_dir =", path_to_xia2_run_dir)
-
-    if path_to_xia2_run_dir.endswith("xia2-debug.txt"):
+    ended_str = os.sep + "xia2-debug.txt"
+    if path_to_xia2_run_dir.endswith(ended_str):
+        print("using path: \'", path_to_xia2_run_dir, "\' as given by user")
         path_to_debug_file = path_to_xia2_run_dir
 
     else:
-        path_to_debug_file = path_to_xia2_run_dir + os.sep + "xia2-debug.txt"
+        print("adding: \'", ended_str, "\' to given path")
+        path_to_debug_file = path_to_xia2_run_dir + ended_str
 
     lst_cmd = get_list_of_commands(path_to_debug_file)
     dict_w_lst_cmd = build_reusable_graph_list(lst_cmd)

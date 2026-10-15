@@ -713,7 +713,7 @@ class Runner(object):
                         str_out = "Reset tree ... Done",
                         req_obj = req_obj, out_type = 'utf-8'
                     )
-                    #######################################################################################################
+
                 elif unalias_cmd_lst[0][0] == 'read_xia2_debug':
                     try:
                         req_obj.send_response(201)
@@ -726,25 +726,29 @@ class Runner(object):
                             " not supposed send header info #3"
                         )
 
+                    xia2_debug_dir_path = unalias_cmd_lst[1][0]
+                    print("xia2_debug_dir_path =", xia2_debug_dir_path)
                     spit_out(
                         str_out = "err.code=0", req_obj = req_obj,
                         out_type = 'utf-8'
                     )
-                    xia2_debug_dir_path = unalias_cmd_lst[1][0]
+                    self.clear_run_dirs_n_reset()
                     try:
-                        self.clear_run_dirs_n_reset()
                         return_list = get_tree(xia2_debug_dir_path)
                         self._recover_state(return_list)
-
+                        #self._save_state()
                         spit_out(
                             str_out = "reading xia2_debug ... Done",
                             req_obj = req_obj, out_type = 'utf-8'
                         )
+
                     except FileNotFoundError:
-                        print("File xia2-debug.txt Not Found Err Catch")
+                        print("Not Found Err Catch while reading Xia2_debug")
+                        spit_out(
+                            str_out = "FAILED reading xia2_debug",
+                            req_obj = req_obj, out_type = 'utf-8'
+                        )
 
-
-                    #######################################################################################################
                 elif unalias_cmd_lst == [['run_predict_n_report']]:
                     try:
                         req_obj.send_response(201)
