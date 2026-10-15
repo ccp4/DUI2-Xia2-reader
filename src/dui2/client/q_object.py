@@ -1721,13 +1721,7 @@ class MainObject(QObject):
 
     def xia2_read_go(self, ini_dir_path, is_dir = True):
         print("\n picked: ", ini_dir_path, " for reading xia2 debug file \n")
-        #cmd = {"nod_lst":"", "cmd_str":["read_xia2_debug", ini_dir_path]}
         cmd = {"nod_lst":"", "cmd_lst":["read_xia2_debug", ini_dir_path]}
-
-        old_approach = '''lst_req = get_req_json_dat(
-            params_in = cmd, main_handler = self.runner_handler
-        )
-        dic_str = lst_req.result_out()'''
 
         try:
             self.do_load_html.reset_lst_html()
