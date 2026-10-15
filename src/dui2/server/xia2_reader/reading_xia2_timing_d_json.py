@@ -1,5 +1,15 @@
 import sys, os, json
-from graph_common import (
+
+try:
+    from graph_common import (
+    reversed_find_str, is_output_key, has_file_extension,
+    is_bravais_setting, find_implicit_parent, find_param_parent,
+    print_graph_table, export_reusable_graph_list, is_dials_command,
+    find_work_dirs, POSITIONAL_IN, POSITIONAL_OUT,
+)
+
+except ModuleNotFoundError:
+    from dui2.server.xia2_reader.graph_common import (
     reversed_find_str, is_output_key, has_file_extension,
     is_bravais_setting, find_implicit_parent, find_param_parent,
     print_graph_table, export_reusable_graph_list, is_dials_command,
@@ -289,9 +299,22 @@ def main():
     except IndexError:
         arg_in = "timing_data.json"
 
-    lst_cmd = get_list_of_commands(arg_in)
-    print_graph_table(lst_cmd)
-    export_reusable_graph_list(lst_cmd)
+
+
+def main():
+    try:
+        arg_in = sys.argv[1]
+
+    except IndexError:
+        print("\n Enter path of file to read ... /xia2-timing.json \n")
+        lst_cmd = []
+
+    else:
+        lst_cmd = get_list_of_commands(arg_in)
+        print_graph_table(lst_cmd)
+        export_reusable_graph_list(lst_cmd)
+
+
 
 
 if __name__ == "__main__":
