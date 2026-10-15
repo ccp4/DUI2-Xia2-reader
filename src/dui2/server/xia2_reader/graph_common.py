@@ -282,18 +282,9 @@ def export_reusable_graph_list(list_of_commands):
 
 
 def build_reusable_graph_list(list_of_commands):
-
     lst_nod = []
-    #for uni in self.step_list:
-
     bigger_lin = 0
-
-
-
     for cmd_dict in list_of_commands:
-
-        print("\n cmd_dict =", cmd_dict, "\n")
-
         if bigger_lin < cmd_dict['curr_poss']:
             bigger_lin = cmd_dict['curr_poss']
 

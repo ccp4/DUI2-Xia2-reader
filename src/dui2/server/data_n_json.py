@@ -203,16 +203,6 @@ def get_info_data(uni_cmd, cmd_dict, step_list):
                 logging.info(
                     " err catch , wrong line, NOT sending reflections file"
                 )
-        old_approach = '''
-    elif uni_cmd[0] == "read_xia2_debug":
-        xia2_debug_dir_path = uni_cmd[1]
-        try:
-            return_list = get_tree(xia2_debug_dir_path)
-
-        except FileNotFoundError:
-            print("File xia2-debug.txt Not Found Err Catch")
-            return_list = []
-        '''
 
     elif uni_cmd[0] == "get_cloudrun_availability":
             try:
