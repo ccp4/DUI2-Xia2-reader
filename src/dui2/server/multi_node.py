@@ -727,16 +727,25 @@ class Runner(object):
                         )
 
                     xia2_debug_dir_path = unalias_cmd_lst[1][0]
-                    print("xia2_debug_dir_path =", xia2_debug_dir_path)
+                    print("xia2_debug_dir_path =", xia2_debug_dir_path, "\n\n")
                     spit_out(
                         str_out = "err.code=0", req_obj = req_obj,
                         out_type = 'utf-8'
                     )
-                    self.clear_run_dirs_n_reset()
+                    print("\n\n len(self.step_list) = ", len(self.step_list))
+                    print(
+                        "self.step_list[0].child_node_lst = ",
+                        self.step_list[0].child_node_lst, "\n\n")
+
                     try:
-                        return_list = get_tree(xia2_debug_dir_path)
-                        self._recover_state(return_list)
-                        #self._save_state()
+                        print("self.bigger_lin(multi_node) =", self.bigger_lin)
+
+                        self.step_list[0].child_node_lst.append(self.bigger_lin + 1)
+
+                        return_list = get_tree(
+                            xia2_debug_dir_path, self.bigger_lin
+                        )
+                        self._extend_node_list(return_list)
                         spit_out(
                             str_out = "reading xia2_debug ... Done",
                             req_obj = req_obj, out_type = 'utf-8'
@@ -748,6 +757,13 @@ class Runner(object):
                             str_out = "FAILED reading xia2_debug",
                             req_obj = req_obj, out_type = 'utf-8'
                         )
+
+
+                    print("\n\n len(self.step_list) = ", len(self.step_list))
+                    print("self.step_list[0].child_node_lst = ", self.step_list[0].child_node_lst, "\n\n")
+                    ''':uni.parent_node_lst,
+                    "child_node_lst"        :uni.child_node_lst,'''
+
 
                 elif unalias_cmd_lst == [['run_predict_n_report']]:
                     try:
@@ -1073,30 +1089,41 @@ class Runner(object):
 
         lst_nod = recovery_data["step_list"]
         for uni_dic in lst_nod:
-            new_node = CmdNode(
-                parent_lst_in = None, data_init = self.data_init
-            )
-            new_node._base_dir       = uni_dic["_base_dir"]
-            new_node.cmd_dict_ini    = uni_dic["cmd_dict_ini"]
-            new_node.full_cmd_lst    = uni_dic["full_cmd_lst"]
-            new_node.lst2run         = uni_dic["lst2run"]
-            new_node._lst_expt_in    = uni_dic["_lst_expt_in"]
-            new_node._lst_refl_in    = uni_dic["_lst_refl_in"]
-            new_node._lst_expt_out   = uni_dic["_lst_expt_out"]
-            new_node._lst_refl_out   = uni_dic["_lst_refl_out"]
-            new_node._run_dir        = uni_dic["_run_dir"]
-            new_node._html_rep       = uni_dic["_html_rep"]
-            new_node._predic_refl    = uni_dic["_predic_refl"]
-            new_node.log_file_path   = uni_dic["log_file_path"]
-            new_node.number          = uni_dic["number"]
-            new_node.child_node_lst  = uni_dic["child_node_lst"]
-            new_node.parent_node_lst = uni_dic["parent_node_lst"]
-            new_node.status          = uni_dic["status"]
-
-            if new_node.status == "Busy":
-                new_node.status = "Failed"
-
+            new_node = self.build_node_from_dict(uni_dic)
             self.step_list.append(new_node)
+
+    def _extend_node_list(self, recovery_data):
+        self.bigger_lin =   recovery_data["bigger_lin"]
+        lst_nod = recovery_data["step_list"]
+        for uni_dic in lst_nod:
+            new_node = self.build_node_from_dict(uni_dic)
+            self.step_list.append(new_node)
+
+    def build_node_from_dict(self, uni_dic):
+        new_node = CmdNode(
+            parent_lst_in = None, data_init = self.data_init
+        )
+        new_node._base_dir       = uni_dic["_base_dir"]
+        new_node.cmd_dict_ini    = uni_dic["cmd_dict_ini"]
+        new_node.full_cmd_lst    = uni_dic["full_cmd_lst"]
+        new_node.lst2run         = uni_dic["lst2run"]
+        new_node._lst_expt_in    = uni_dic["_lst_expt_in"]
+        new_node._lst_refl_in    = uni_dic["_lst_refl_in"]
+        new_node._lst_expt_out   = uni_dic["_lst_expt_out"]
+        new_node._lst_refl_out   = uni_dic["_lst_refl_out"]
+        new_node._run_dir        = uni_dic["_run_dir"]
+        new_node._html_rep       = uni_dic["_html_rep"]
+        new_node._predic_refl    = uni_dic["_predic_refl"]
+        new_node.log_file_path   = uni_dic["log_file_path"]
+        new_node.number          = uni_dic["number"]
+        new_node.child_node_lst  = uni_dic["child_node_lst"]
+        new_node.parent_node_lst = uni_dic["parent_node_lst"]
+        new_node.status          = uni_dic["status"]
+
+        if new_node.status == "Busy":
+            new_node.status = "Failed"
+
+        return new_node
 
     def set_dir_path(self, dir_path_in):
         if len(dir_path_in) > 1 and dir_path_in[-1] != os.sep:

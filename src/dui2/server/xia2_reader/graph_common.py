@@ -274,19 +274,27 @@ def print_graph_table(list_of_commands):
 
     print("=" * 90)
 
-def export_reusable_graph_list(list_of_commands):
+def export_reusable_graph_list(list_of_commands, bigger_lin_in = 0):
     all_dat = build_reusable_graph_list(list_of_commands)
 
     with open("run_data", "w") as fp:
         json.dump(all_dat, fp, indent=4)
 
 
-def build_reusable_graph_list(list_of_commands):
+def build_reusable_graph_list(list_of_commands = None, bigger_lin_in = 0):
     lst_nod = []
-    bigger_lin = 0
+    bigger_lin = bigger_lin_in
     for cmd_dict in list_of_commands:
         if bigger_lin < cmd_dict['curr_poss']:
             bigger_lin = cmd_dict['curr_poss']
+
+        parent_node_lst = cmd_dict['parent_pos_lst']
+
+        print("parent_node_lst =", parent_node_lst)
+
+        if  parent_node_lst == []:
+            print("adding ref to node [0]")
+            parent_node_lst = [0]
 
         node = {
             "_base_dir"             :os.getcwd(),
@@ -315,7 +323,7 @@ def build_reusable_graph_list(list_of_commands):
             "_predic_refl"          :None,
             "log_file_path"         :cmd_dict.get('log_file_path'),
             "number"                :cmd_dict['curr_poss'],
-            "parent_node_lst"       :cmd_dict['parent_pos_lst'],
+            "parent_node_lst"       :parent_node_lst,
             "child_node_lst"        :cmd_dict['chidren_pos_lst'],
             "status"                :"Succeeded"
         }

@@ -160,13 +160,18 @@ def write_log_copy(log_path, log_lines):
     return new_path
 
 
-def get_list_of_commands(path_in):
+def get_list_of_commands(path_in, bigger_lin_in = 0):
     print("file 2 read = ", path_in)
+
+
     log_file = open(path_in, 'r', encoding="utf-8")
     lines_str = log_file.readlines()
     log_file.close()
     list_of_commands = []
-    curr_poss = 0
+    curr_poss = bigger_lin_in
+
+    print("curr_poss(get_list_of_commands)=", curr_poss)
+
     for position, single_line in enumerate(lines_str):
         if single_line[0:15] == "# command line:":
             new_cmd_str = lines_str[position + 1][1:]
@@ -254,9 +259,9 @@ def get_list_of_commands(path_in):
         ):
             producer_of[file_name] = curr_dict['curr_poss']
 
-    return list_of_commands
+    return list_of_commands, curr_poss
 
-def get_tree(path_to_xia2_run_dir):
+def get_tree(path_to_xia2_run_dir, bigger_lin_from_dui2):
     print("path_to_xia2_run_dir =", path_to_xia2_run_dir)
     ended_str = os.sep + "xia2-debug.txt"
     if path_to_xia2_run_dir.endswith(ended_str):
@@ -267,8 +272,13 @@ def get_tree(path_to_xia2_run_dir):
         print("adding: \'", ended_str, "\' to given path")
         path_to_debug_file = path_to_xia2_run_dir + ended_str
 
-    lst_cmd = get_list_of_commands(path_to_debug_file)
-    dict_w_lst_cmd = build_reusable_graph_list(lst_cmd)
+    lst_cmd, bigger_lin_out = get_list_of_commands(
+        path_in = path_to_debug_file,
+        bigger_lin_in = bigger_lin_from_dui2 + 1
+    )
+    dict_w_lst_cmd = build_reusable_graph_list(
+        list_of_commands = lst_cmd, bigger_lin_in = bigger_lin_out
+    )
     return dict_w_lst_cmd
 
 def main():
@@ -280,8 +290,10 @@ def main():
         lst_cmd = []
 
     else:
-        lst_cmd = get_list_of_commands(arg_in)
-        print_graph_table(lst_cmd)
+        lst_cmd, bigger_lin_out = get_list_of_commands(
+            path_in = arg_in, bigger_lin_in = 0
+        )
+        print_graph_table(list_of_commands = lst_cmd)
 
         export_reusable_graph_list(lst_cmd)
 
