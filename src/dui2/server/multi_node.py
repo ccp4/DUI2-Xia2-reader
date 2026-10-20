@@ -28,6 +28,8 @@ import glob, json, time
 from dui2.server.data_n_json import get_info_data, spit_out
 from dui2.server.xia2_reader.reading_xia2_debug_d_txt  import get_tree
 
+from dui2.server.xia2_reader.reading_xia2_timing_d_json  import run_n_get_tree
+
 from dui2.shared_modules import format_utils
 
 def get_pair_list():
@@ -47,6 +49,7 @@ def get_pair_list():
         ("gmt",     "get_mtz"                               ),
         ("tmt",     "transfer_mtz"                          ),
         ("rxd",     "read_xia2_debug"                       ),
+        ("rxd",     "xia2_run_timing"                       ),
         ("gt",      "get_template"                          ),
         ("gfp",     "get_files_path"                        ),
         ("gi",      "get_image"                             ),
@@ -758,11 +761,46 @@ class Runner(object):
                             req_obj = req_obj, out_type = 'utf-8'
                         )
 
+                ###########################################################  xia2_run_timing
 
-                    print("\n\n len(self.step_list) = ", len(self.step_list))
-                    print("self.step_list[0].child_node_lst = ", self.step_list[0].child_node_lst, "\n\n")
-                    ''':uni.parent_node_lst,
-                    "child_node_lst"        :uni.child_node_lst,'''
+                elif unalias_cmd_lst[0][0] == 'xia2_run_timing':
+                    try:
+                        req_obj.send_response(201)
+                        req_obj.send_header('Content-type', 'text/plain')
+                        req_obj.end_headers()
+
+                    except AttributeError:
+                        logging.info(
+                            "Attribute Err catch," +
+                            " not supposed send header info #3"
+                        )
+
+                    run_xia2_dir_path = unalias_cmd_lst[1][0]
+                    print("run_xia2_dir_path =", run_xia2_dir_path, "\n\n")
+                    spit_out(
+                        str_out = "err.code=0", req_obj = req_obj,
+                        out_type = 'utf-8'
+                    )
+
+                    try:
+                        print("self.bigger_lin(multi_node) =", self.bigger_lin)
+
+                        self.step_list[0].child_node_lst.append(self.bigger_lin + 1)
+                        return_list = run_n_get_tree(
+                            run_xia2_dir_path, self.bigger_lin
+                        )
+                        self._extend_node_list(return_list)
+                        spit_out(
+                            str_out = "running xia2_timimg ... Done",
+                            req_obj = req_obj, out_type = 'utf-8'
+                        )
+
+                    except FileNotFoundError:
+                        print("Not Found Err Catch while running Xia2_timimg")
+                        spit_out(
+                            str_out = "FAILED running xia2_timimg",
+                            req_obj = req_obj, out_type = 'utf-8'
+                        )
 
 
                 elif unalias_cmd_lst == [['run_predict_n_report']]:

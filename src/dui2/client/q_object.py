@@ -1695,22 +1695,60 @@ class MainObject(QObject):
         )
         self.check_nxt_btn()
 
-        ##########################################################################################################
+        ##########################################################################
 
     def Xia2_execution(self):
-        print("\n Xia2_execution \n")
-
-    def read_Xia2(self):
+        print("\n Xia2_execution ... 1 \n")
         cmd = {"nod_lst":"", "cmd_str":["dir_path"]}
 
         lst_req = get_req_json_dat(
             params_in = cmd, main_handler = self.runner_handler
         )
         dic_str = lst_req.result_out()
-
-        #init_path = "/tmp/"
         init_path = str(dic_str[0])
+        self.open_widget = FileBrowser(
+            parent = None, path_ini = init_path,
+            limit_path = init_path, only_dir = True,
+            runner_handler = self.runner_handler,
+            wind_titl = "Open Xia2 Directory ... << FOR RUUNIG >>"
+        )
+        self.open_widget.resize(self.open_widget.size() * 2)
+        self.open_widget.select_done.connect(self.run_xia2_go)
 
+    def run_xia2_go(self, ini_dir_path, is_dir = True):
+        print("\n picked: ", ini_dir_path, " for reading xia2 debug file \n")
+        print("\n Xia2_execution ... 2 \n")
+        cmd = {"nod_lst":"", "cmd_lst":["xia2_run_timing", ini_dir_path]}
+
+        try:
+            self.do_load_html.reset_lst_html()
+            self.log_show.reset_mem()
+
+            post_thread = PostRequestWithOutput(
+                cmd_in = cmd, main_handler = self.runner_handler
+            )
+            post_thread.finished.connect(self.running_xia2_ended)
+            post_thread.start()
+            self.thrd_lst.append(post_thread)
+
+        except requests.exceptions.RequestException:
+            print(
+                "something went wrong with the << xia2_read_go >> request"
+            )
+
+    def running_xia2_ended(self):
+        self.new_node = None
+        self.request_display()
+        self.do_image_view.reset()
+        self.refresh_output()
+
+    def read_Xia2(self):
+        cmd = {"nod_lst":"", "cmd_str":["dir_path"]}
+        lst_req = get_req_json_dat(
+            params_in = cmd, main_handler = self.runner_handler
+        )
+        dic_str = lst_req.result_out()
+        init_path = str(dic_str[0])
         self.open_widget = FileBrowser(
             parent = None, path_ini = init_path,
             limit_path = init_path, only_dir = True,
@@ -1741,19 +1779,13 @@ class MainObject(QObject):
                 "something went wrong with the << xia2_read_go >> request"
             )
 
-
-        print("dic_str = ...")
-
     def xia2_reading_ended(self):
-        #self.curr_nod_num = 0
         self.new_node = None
-        #self.curr_widg_key = "root"
         self.request_display()
         self.do_image_view.reset()
         self.refresh_output()
-        #self.import_init()
 
-        ##########################################################################################################
+        ##########################################################################
 
     def respose_n1_from_reset(self, line):
         logging.info("respose_from_reset(err code):" + str(line))

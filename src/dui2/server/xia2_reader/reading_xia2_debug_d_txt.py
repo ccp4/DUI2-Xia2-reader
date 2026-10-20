@@ -300,7 +300,7 @@ def main():
         )
         print_graph_table(list_of_commands = lst_cmd)
 
-        export_reusable_graph_list(lst_cmd)
+    export_reusable_graph_list(lst_cmd)
 
 
 if __name__ == "__main__":

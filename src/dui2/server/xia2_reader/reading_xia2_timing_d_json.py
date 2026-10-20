@@ -5,7 +5,7 @@ try:
     reversed_find_str, is_output_key, has_file_extension,
     is_bravais_setting, find_implicit_parent, find_param_parent,
     print_graph_table, export_reusable_graph_list, is_dials_command,
-    find_work_dirs, POSITIONAL_IN, POSITIONAL_OUT,
+    find_work_dirs, build_reusable_graph_list, POSITIONAL_IN, POSITIONAL_OUT,
 )
 
 except ModuleNotFoundError:
@@ -13,7 +13,7 @@ except ModuleNotFoundError:
     reversed_find_str, is_output_key, has_file_extension,
     is_bravais_setting, find_implicit_parent, find_param_parent,
     print_graph_table, export_reusable_graph_list, is_dials_command,
-    find_work_dirs, POSITIONAL_IN, POSITIONAL_OUT,
+    find_work_dirs, build_reusable_graph_list, POSITIONAL_IN, POSITIONAL_OUT,
 )
 
 
@@ -197,14 +197,16 @@ def find_log_files(list_of_commands):
             last_number = run_number
 
 
-def get_list_of_commands(path_in):
+def get_list_of_commands(path_in, bigger_lin_in = 0):
     print("file 2 read = ", path_in)
+    curr_poss = bigger_lin_in
+    print("curr_poss(get_list_of_commands)=", curr_poss)
+
     json_file = open(path_in, 'r', encoding="utf-8")
     entries_lst = json.load(json_file)
     json_file.close()
 
     list_of_commands = []
-    curr_poss = 0
     for entry in entries_lst:
         exe_cmd, par_lst = split_cmd_line(entry["command"])
         if not is_dials_command(exe_cmd) or exe_cmd == 'dials.report':
@@ -233,11 +235,15 @@ def get_list_of_commands(path_in):
         curr_poss += 1
         list_of_commands.append(cmd_dict)
 
-
     find_work_dirs(list_of_commands)
     find_log_files(list_of_commands)
 
+    # node number (curr_poss) -> command dict, numbers start at bigger_lin_in
+    cmd_by_poss = {}
+    for cmd_dict in list_of_commands:
+        cmd_by_poss[cmd_dict['curr_poss']] = cmd_dict
     # file name -> position of the most recent command that wrote it
+
     producer_of = {}
     for cur_num, curr_dict in enumerate(list_of_commands):
         for file_name in curr_dict['from_prev_lst']:
@@ -251,7 +257,7 @@ def get_list_of_commands(path_in):
 
             if parent_poss is not None:
                 add_connection(
-                    list_of_commands[parent_poss], curr_dict, file_name
+                    cmd_by_poss[parent_poss], curr_dict, file_name
                 )
 
             elif has_file_extension(file_name):
@@ -263,7 +269,7 @@ def get_list_of_commands(path_in):
             )
             if parent_poss is not None:
                 add_connection(
-                    list_of_commands[parent_poss], curr_dict, single_par
+                    cmd_by_poss[parent_poss], curr_dict, single_par
                 )
 
         if curr_dict['exe_cmd'] in USES_PREVIOUS_OUTPUT and cur_num > 0:
@@ -274,7 +280,7 @@ def get_list_of_commands(path_in):
         for file_name in curr_dict['for_next_lst']:
             producer_of[file_name] = curr_dict['curr_poss']
 
-    return list_of_commands
+    return list_of_commands, curr_poss
 
 
 def print_commands(list_of_commands):
@@ -292,13 +298,25 @@ def print_commands(list_of_commands):
             )
 
 
-def main():
-    try:
-        arg_in = sys.argv[1]
+def run_n_get_tree(path_to_xia2_run_dir, bigger_lin_from_dui2):
+    print("\n path_to_xia2_timing =", path_to_xia2_run_dir)
+    ended_str = os.sep + "xia2-timing.json"
+    if path_to_xia2_run_dir.endswith(ended_str):
+        print("using path: \'", path_to_xia2_run_dir, "\' as given by user")
+        path_to_timing_file = path_to_xia2_run_dir
 
-    except IndexError:
-        arg_in = "timing_data.json"
+    else:
+        print("adding: \'", ended_str, "\' to given path")
+        path_to_timing_file = path_to_xia2_run_dir + ended_str
 
+    lst_cmd, bigger_lin_out = get_list_of_commands(
+        path_in = path_to_timing_file,
+        bigger_lin_in = bigger_lin_from_dui2 + 1
+    )
+    dict_w_lst_cmd = build_reusable_graph_list(
+        list_of_commands = lst_cmd, bigger_lin_in = bigger_lin_out
+    )
+    return dict_w_lst_cmd
 
 
 def main():
@@ -310,11 +328,12 @@ def main():
         lst_cmd = []
 
     else:
-        lst_cmd = get_list_of_commands(arg_in)
-        print_graph_table(lst_cmd)
-        export_reusable_graph_list(lst_cmd)
+        lst_cmd, bigger_lin_out = get_list_of_commands(
+            path_in = arg_in, bigger_lin_in = 0
+        )
+        print_graph_table(list_of_commands = lst_cmd)
 
-
+    export_reusable_graph_list(lst_cmd)
 
 
 if __name__ == "__main__":
