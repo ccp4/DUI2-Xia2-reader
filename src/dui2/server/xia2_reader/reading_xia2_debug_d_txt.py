@@ -221,6 +221,11 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
 
     find_work_dirs(list_of_commands)
 
+    # node number (curr_poss) -> command dict, numbers start at bigger_lin_in
+    cmd_by_poss = {}
+    for cmd_dict in list_of_commands:
+        cmd_by_poss[cmd_dict['curr_poss']] = cmd_dict
+
     # file name -> position of the most recent command that wrote it
     producer_of = {}
     for cur_num, curr_dict in enumerate(list_of_commands):
@@ -241,7 +246,7 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
                 curr_dict['external_files_lst'].append(file_name)
                 continue
 
-            add_connection(list_of_commands[parent_poss], curr_dict, file_name)
+            add_connection(cmd_by_poss[parent_poss], curr_dict, file_name)
 
         for single_par in curr_dict['tuning_params_lst']:
             parent_poss = find_param_parent(
@@ -249,7 +254,7 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
             )
             if parent_poss is not None:
                 add_connection(
-                    list_of_commands[parent_poss], curr_dict, single_par
+                    cmd_by_poss[parent_poss], curr_dict, single_par
                 )
 
         for file_name in (

@@ -402,14 +402,16 @@ class ImportWidget(QWidget):
             self.rad_but_img_file.isChecked()
         ):
             only_dir_bool = False
+            title_str = "Open image inside directory"
 
         elif self.rad_but_directory.isChecked():
             only_dir_bool = True
+            title_str = "Open IMGs Directory"
 
         self.open_widget = FileBrowser(
             parent = self, path_ini = init_path,
             limit_path = path_serv_limit, only_dir = only_dir_bool,
-            runner_handler = self.runner_handler
+            runner_handler = self.runner_handler, wind_titl = title_str
         )
         self.open_widget.resize(self.open_widget.size() * 2)
         self.open_widget.select_done.connect(self.set_selection)

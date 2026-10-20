@@ -278,13 +278,15 @@ class FileBrowser(QDialog):
     select_done = Signal(str, bool)
     def __init__(
         self, parent = None, path_ini = "", limit_path = None,
-        only_dir = False, runner_handler = None
+        only_dir = False, runner_handler = None, wind_titl = "Open IMGs"
     ):
         super(FileBrowser, self).__init__(parent)
 
         self.main_handler = runner_handler
 
-        self.setWindowTitle("Open IMGs")
+        title_str = wind_titl
+
+        self.setWindowTitle(title_str)
         main_v_layout = QVBoxLayout()
         self.show_hidden_check = QCheckBox("Show Hidden Files")
         self.show_hidden_check.setChecked(False)

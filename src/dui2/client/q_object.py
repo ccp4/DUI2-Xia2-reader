@@ -1714,7 +1714,8 @@ class MainObject(QObject):
         self.open_widget = FileBrowser(
             parent = None, path_ini = init_path,
             limit_path = init_path, only_dir = True,
-            runner_handler = self.runner_handler
+            runner_handler = self.runner_handler,
+            wind_titl = "Open Xia2 Directory"
         )
         self.open_widget.resize(self.open_widget.size() * 2)
         self.open_widget.select_done.connect(self.xia2_read_go)
