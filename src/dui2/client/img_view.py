@@ -1077,6 +1077,9 @@ class DoImageView(QObject):
             self.mouse_moving = False
 
     def get_resolution_if_stopped_moving(self):
+        if self.cur_nod_num is None:
+            return
+
         x_pnt = self.mouse_xy[0]
         y_pnt = self.mouse_xy[1]
         panel_num = 0

@@ -1750,6 +1750,7 @@ class MainObject(QObject):
         #self.curr_widg_key = "root"
         self.request_display()
         self.do_image_view.reset()
+        self.refresh_output()
         #self.import_init()
 
         ##########################################################################################################
