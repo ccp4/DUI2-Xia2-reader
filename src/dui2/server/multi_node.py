@@ -632,6 +632,7 @@ class CmdNode(object):
 
         return j_obj
 
+
 class Runner(object):
     def __init__(self, recovery_data = None, dat_ini = None):
         #self.list_of_posts = []

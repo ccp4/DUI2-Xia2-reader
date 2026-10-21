@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, shutil, subprocess
 
 try:
     from graph_common import (
@@ -299,6 +299,75 @@ def main():
             path_in = arg_in, bigger_lin_in = 0
         )
         print_graph_table(list_of_commands = lst_cmd)
+    ##########################################################################
+
+    cur_wor_dir = os.getcwd()
+    print("\n os.getcwd() =", cur_wor_dir)
+
+    path_to_dir = arg_in[0:-15] + os.sep + "predicts_n_reports"
+    print("path_to_dir =", path_to_dir)
+    os.mkdir(path_to_dir)
+
+    #os.chdir(path_to_dir)
+
+    '''for num, cmd_node in enumerate(lst_cmd):
+        print("\n", "num =", num)
+        print(cmd_node['expt_for_next_lst'])
+        print(cmd_node['refl_for_next_lst'], "\n")'''
+
+
+
+    # running HTML report generation
+    rep_lst_dat_in = ['dials.report']
+    for expt_2_add in lst_cmd[1]['expt_for_next_lst']:
+        rep_lst_dat_in.append(expt_2_add)
+
+    for refl_2_add in lst_cmd[1]['refl_for_next_lst']:
+        rep_lst_dat_in.append(refl_2_add)
+
+    print("\n running:" + str(rep_lst_dat_in))
+
+    new_line = "Generating HTML report"
+    print(new_line)
+
+    lst_rep_out = []
+    rep_lst_dat_in[0] = str(shutil.which(rep_lst_dat_in[0]))
+    rep_proc = subprocess.Popen(
+        rep_lst_dat_in,
+        shell = False,
+        cwd = path_to_dir,
+        stdout = subprocess.PIPE,
+        stderr = subprocess.STDOUT,
+        universal_newlines = True
+    )
+    while rep_proc.poll() is None or new_line != '':
+        new_line = rep_proc.stdout.readline()
+        print(new_line)
+        lst_rep_out.append(new_line)
+
+
+    #TODO: consider if we need to capture the output for this command
+
+    rep_proc.stdout.close()
+    # in case needed there is the output of the report here:
+    #logging.info("report stdout <<< \n", lst_rep_out, "\n >>>")
+
+    tmp_html_path = path_to_dir + os.sep + "dials.report.html"
+
+    if os.path.exists(tmp_html_path):
+        self._html_rep = tmp_html_path
+        lst_rep_out.append("HTML Report ready")
+
+    else:
+        lst_rep_out.append("No need for HTML report in this step")
+
+    for line_2_print in lst_rep_out:
+        print(">>> ", line_2_print)
+
+    os.chdir(cur_wor_dir)
+    print("done \n")
+
+    ##########################################################################
 
     export_reusable_graph_list(lst_cmd)
 
