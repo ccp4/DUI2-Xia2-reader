@@ -266,25 +266,6 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
 
     return list_of_commands, curr_poss
 
-def get_tree(path_to_xia2_run_dir, bigger_lin_from_dui2):
-    print("path_to_xia2_run_dir =", path_to_xia2_run_dir)
-    ended_str = os.sep + "xia2-debug.txt"
-    if path_to_xia2_run_dir.endswith(ended_str):
-        print("using path: \'", path_to_xia2_run_dir, "\' as given by user")
-        path_to_debug_file = path_to_xia2_run_dir
-
-    else:
-        print("adding: \'", ended_str, "\' to given path")
-        path_to_debug_file = path_to_xia2_run_dir + ended_str
-
-    lst_cmd, bigger_lin_out = get_list_of_commands(
-        path_in = path_to_debug_file,
-        bigger_lin_in = bigger_lin_from_dui2 + 1
-    )
-    dict_w_lst_cmd = build_reusable_graph_list(
-        list_of_commands = lst_cmd, bigger_lin_in = bigger_lin_out
-    )
-    return dict_w_lst_cmd
 
 def run_predicts_n_reports(lst_cmd, bigger_lin_out, arg_in):
     cur_wor_dir = os.getcwd()
@@ -352,6 +333,27 @@ def run_predicts_n_reports(lst_cmd, bigger_lin_out, arg_in):
 
     os.chdir(cur_wor_dir)
     print("done \n")
+
+
+def get_tree(path_to_xia2_run_dir, bigger_lin_from_dui2):
+    print("path_to_xia2_run_dir =", path_to_xia2_run_dir)
+    ended_str = os.sep + "xia2-debug.txt"
+    if path_to_xia2_run_dir.endswith(ended_str):
+        print("using path: \'", path_to_xia2_run_dir, "\' as given by user")
+        path_to_debug_file = path_to_xia2_run_dir
+
+    else:
+        print("adding: \'", ended_str, "\' to given path")
+        path_to_debug_file = path_to_xia2_run_dir + ended_str
+
+    lst_cmd, bigger_lin_out = get_list_of_commands(
+        path_in = path_to_debug_file,
+        bigger_lin_in = bigger_lin_from_dui2 + 1
+    )
+    dict_w_lst_cmd = build_reusable_graph_list(
+        list_of_commands = lst_cmd, bigger_lin_in = bigger_lin_out
+    )
+    return dict_w_lst_cmd
 
 
 def main():

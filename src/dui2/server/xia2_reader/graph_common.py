@@ -274,7 +274,7 @@ def print_graph_table(list_of_commands):
 
     print("=" * 90)
 
-def export_reusable_graph_list(list_of_commands, bigger_lin_in = 0):
+def export_reusable_graph_list(list_of_commands):
     all_dat = build_reusable_graph_list(list_of_commands)
 
     with open("run_data", "w") as fp:
