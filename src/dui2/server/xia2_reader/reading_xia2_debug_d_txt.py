@@ -286,21 +286,7 @@ def get_tree(path_to_xia2_run_dir, bigger_lin_from_dui2):
     )
     return dict_w_lst_cmd
 
-def main():
-    try:
-        arg_in = sys.argv[1]
-
-    except IndexError:
-        print("\n Enter path of file to read ... /xia2-debug.txt \n")
-        lst_cmd = []
-
-    else:
-        lst_cmd, bigger_lin_out = get_list_of_commands(
-            path_in = arg_in, bigger_lin_in = 0
-        )
-        print_graph_table(list_of_commands = lst_cmd)
-    ##########################################################################
-
+def run_predicts_n_reports(lst_cmd, bigger_lin_out, arg_in):
     cur_wor_dir = os.getcwd()
     print("\n os.getcwd() =", cur_wor_dir)
 
@@ -367,7 +353,21 @@ def main():
     os.chdir(cur_wor_dir)
     print("done \n")
 
-    ##########################################################################
+
+def main():
+    try:
+        arg_in = sys.argv[1]
+
+    except IndexError:
+        print("\n Enter path of file to read ... /xia2-debug.txt \n")
+        lst_cmd = []
+
+    else:
+        lst_cmd, bigger_lin_out = get_list_of_commands(
+            path_in = arg_in, bigger_lin_in = 0
+        )
+        run_predicts_n_reports(lst_cmd, bigger_lin_out, arg_in)
+        print_graph_table(list_of_commands = lst_cmd)
 
     export_reusable_graph_list(lst_cmd)
 
