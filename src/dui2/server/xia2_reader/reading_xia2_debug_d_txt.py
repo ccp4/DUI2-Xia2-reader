@@ -267,72 +267,85 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
     return list_of_commands, curr_poss
 
 
-def run_predicts_n_reports(lst_cmd, bigger_lin_out, arg_in):
+def run_predicts_n_reports(all_dat, arg_in):
+
+    lst_cmd = all_dat['step_list']
+
+    print("\n lst_cmd =", lst_cmd, "\n")
+
     cur_wor_dir = os.getcwd()
     print("\n os.getcwd() =", cur_wor_dir)
-
+    '''
     path_to_dir = arg_in[0:-15] + os.sep + "predicts_n_reports"
     print("path_to_dir =", path_to_dir)
+    '''
+    path_to_dir = "predicts_n_reports"
     os.mkdir(path_to_dir)
+    os.chdir(path_to_dir)
 
-    #os.chdir(path_to_dir)
-
-    '''for num, cmd_node in enumerate(lst_cmd):
-        print("\n", "num =", num)
-        print(cmd_node['expt_for_next_lst'])
-        print(cmd_node['refl_for_next_lst'], "\n")'''
+    new_cur_wor_dir = os.getcwd()
+    print("NEW path_to_dir =", new_cur_wor_dir)
 
 
 
-    # running HTML report generation
-    rep_lst_dat_in = ['dials.report']
-    for expt_2_add in lst_cmd[1]['expt_for_next_lst']:
-        rep_lst_dat_in.append(expt_2_add)
+    for cmd_node in lst_cmd:
+        rep_lst_dat_in = ['dials.report']
+        for expt_2_add in cmd_node['_lst_expt_out']:
+            rep_lst_dat_in.append(expt_2_add)
 
-    for refl_2_add in lst_cmd[1]['refl_for_next_lst']:
-        rep_lst_dat_in.append(refl_2_add)
+        for refl_2_add in cmd_node['_lst_refl_out']:
+            rep_lst_dat_in.append(refl_2_add)
 
-    print("\n running:" + str(rep_lst_dat_in))
+        number_str = str(cmd_node['number'])
+        output_html_file = "dials.report_n_"+ number_str +".html"
+        rep_lst_dat_in.append("output.html=" + output_html_file)
 
-    new_line = "Generating HTML report"
-    print(new_line)
+        print("\n running:" + str(rep_lst_dat_in))
 
-    lst_rep_out = []
-    rep_lst_dat_in[0] = str(shutil.which(rep_lst_dat_in[0]))
-    rep_proc = subprocess.Popen(
-        rep_lst_dat_in,
-        shell = False,
-        cwd = path_to_dir,
-        stdout = subprocess.PIPE,
-        stderr = subprocess.STDOUT,
-        universal_newlines = True
-    )
-    while rep_proc.poll() is None or new_line != '':
-        new_line = rep_proc.stdout.readline()
+        new_line = "Generating HTML report"
         print(new_line)
-        lst_rep_out.append(new_line)
 
+        lst_rep_out = []
+        rep_lst_dat_in[0] = str(shutil.which(rep_lst_dat_in[0]))
+        rep_proc = subprocess.Popen(
+            rep_lst_dat_in,
+            shell = False,
+            cwd = new_cur_wor_dir,
+            stdout = subprocess.PIPE,
+            stderr = subprocess.STDOUT,
+            universal_newlines = True
+        )
+        while rep_proc.poll() is None or new_line != '':
+            new_line = rep_proc.stdout.readline()
+            print(new_line)
+            lst_rep_out.append(new_line)
 
-    #TODO: consider if we need to capture the output for this command
+        #TODO: consider if we need to capture the output for this command
 
-    rep_proc.stdout.close()
-    # in case needed there is the output of the report here:
-    #logging.info("report stdout <<< \n", lst_rep_out, "\n >>>")
+        rep_proc.stdout.close()
+        # in case needed there is the output of the report here:
+        #logging.info("report stdout <<< \n", lst_rep_out, "\n >>>")
 
-    tmp_html_path = path_to_dir + os.sep + "dials.report.html"
+        tmp_html_path = new_cur_wor_dir + os.sep + output_html_file
 
-    if os.path.exists(tmp_html_path):
-        self._html_rep = tmp_html_path
-        lst_rep_out.append("HTML Report ready")
+        if os.path.exists(tmp_html_path):
+            lst_rep_out.append("HTML Report ready")
+            cmd_node['_html_rep'] = str(tmp_html_path)
 
-    else:
-        lst_rep_out.append("No need for HTML report in this step")
+        else:
+            lst_rep_out.append("No need for HTML report in this step")
 
-    for line_2_print in lst_rep_out:
-        print(">>> ", line_2_print)
+        for line_2_print in lst_rep_out:
+            print(">>> ", line_2_print)
 
     os.chdir(cur_wor_dir)
+
+    all_dat['step_list'] = lst_cmd
+
     print("done \n")
+
+
+    return all_dat
 
 
 def get_tree(path_to_xia2_run_dir, bigger_lin_from_dui2):
@@ -350,10 +363,18 @@ def get_tree(path_to_xia2_run_dir, bigger_lin_from_dui2):
         path_in = path_to_debug_file,
         bigger_lin_in = bigger_lin_from_dui2 + 1
     )
-    dict_w_lst_cmd = build_reusable_graph_list(
+    ###########################################################################
+
+    all_dat = build_reusable_graph_list(lst_cmd)
+    all_dat = run_predicts_n_reports(all_dat, ended_str)
+
+    ###########################################################################
+
+    old_obsolett = '''dict_w_lst_cmd = build_reusable_graph_list(
         list_of_commands = lst_cmd, bigger_lin_in = bigger_lin_out
-    )
-    return dict_w_lst_cmd
+    )'''
+
+    return all_dat
 
 
 def main():
@@ -368,10 +389,12 @@ def main():
         lst_cmd, bigger_lin_out = get_list_of_commands(
             path_in = arg_in, bigger_lin_in = 0
         )
-        run_predicts_n_reports(lst_cmd, bigger_lin_out, arg_in)
+
+        all_dat = build_reusable_graph_list(lst_cmd)
+        all_dat = run_predicts_n_reports(all_dat, arg_in)
         print_graph_table(list_of_commands = lst_cmd)
 
-    export_reusable_graph_list(lst_cmd)
+    export_reusable_graph_list(all_dat)
 
 
 if __name__ == "__main__":

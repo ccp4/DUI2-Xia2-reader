@@ -253,7 +253,6 @@ def full_path_lst(file_lst, cmd_dict):
     return path_lst
 
 
-
 def print_graph_table(list_of_commands):
     # one row per connection, same format for every input file type
     fmt_str = "%-5s %-30s %-5s %-30s %s"
@@ -274,9 +273,8 @@ def print_graph_table(list_of_commands):
 
     print("=" * 90)
 
-def export_reusable_graph_list(list_of_commands):
-    all_dat = build_reusable_graph_list(list_of_commands)
 
+def export_reusable_graph_list(all_dat):
     with open("run_data", "w") as fp:
         json.dump(all_dat, fp, indent=4)
 
