@@ -279,7 +279,7 @@ def export_reusable_graph_list(all_dat):
         json.dump(all_dat, fp, indent=4)
 
 
-def build_reusable_graph_list(list_of_commands = None, bigger_lin_in = 0):
+def build_reusable_graph_list(list_of_commands = None, bigger_lin_in = 0, import_lin = 0):
     lst_nod = []
     bigger_lin = bigger_lin_in
     for cmd_dict in list_of_commands:

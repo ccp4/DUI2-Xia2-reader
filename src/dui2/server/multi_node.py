@@ -744,12 +744,19 @@ class Runner(object):
                     try:
                         print("self.bigger_lin(multi_node) =", self.bigger_lin)
 
-                        self.step_list[0].child_node_lst.append(self.bigger_lin + 1)
-
+                        #self.step_list[0].child_node_lst.append(self.bigger_lin + 1)
+                        node2run = self._create_xia2_step(xia2_debug_dir_path)
                         return_list = get_tree(
                             xia2_debug_dir_path, self.bigger_lin
                         )
                         self._extend_node_list(return_list)
+
+                        for cmd_nod in self.step_list:
+                            print(
+                                cmd_nod.number, " lst2run:", cmd_nod.lst2run,
+                                " child_node_lst:", cmd_nod.child_node_lst,
+                                " parent_node_lst:", cmd_nod.parent_node_lst,
+                            )
                         spit_out(
                             str_out = "reading xia2_debug ... Done",
                             req_obj = req_obj, out_type = 'utf-8'
@@ -1079,7 +1086,25 @@ class Runner(object):
 
         self.bigger_lin = tmp_big + 1
 
+    def _create_xia2_step(self, run_xia2_dir_path):
+        new_step = CmdNode(
+            parent_lst_in = None, data_init = self.data_init
+        )
+        new_step.parent_node_lst = [0]
+        #TODO: Think about a better dir to put there
+        new_step.set_base_dir(dir_in = run_xia2_dir_path)
+        self.find_next_number()
+        new_step.number = self.bigger_lin
+        new_step.lst2run = [["xia2_import"]]
+        self.step_list[0].child_node_lst.append(new_step.number)
+        new_step.full_cmd_lst = [["xia2_import", str(run_xia2_dir_path)]]
+        self.step_list.append(new_step)
+        return new_step
+
     def _create_step(self, prev_step_lst):
+
+        print("\n\n prev_step_lst = ", prev_step_lst, "\n\n")
+
         new_step = CmdNode(
             parent_lst_in = prev_step_lst, data_init = self.data_init
         )

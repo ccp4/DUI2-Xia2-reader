@@ -280,7 +280,18 @@ def run_predicts_n_reports(all_dat, arg_in):
     print("path_to_dir =", path_to_dir)
     '''
     path_to_dir = "predicts_n_reports"
-    os.mkdir(path_to_dir)
+
+    print("path_to_dir =", path_to_dir)
+
+    #os.mkdir(path_to_dir)
+
+    try:
+        os.mkdir(path_to_dir)
+
+    except FileExistsError:
+        print("NOT creating again: ", path_to_dir)
+
+
     os.chdir(path_to_dir)
 
     new_cur_wor_dir = os.getcwd()
@@ -341,7 +352,15 @@ def run_predicts_n_reports(all_dat, arg_in):
     os.chdir(cur_wor_dir)
 
     all_dat['step_list'] = lst_cmd
-    print("done \n")
+    print("\n done \n")
+
+    for num, cmd in enumerate(lst_cmd):
+        print(
+            num, " node(number):", cmd['number'], " lst2run:", cmd['lst2run'],
+            " child_node_lst:", cmd['child_node_lst'],
+            " parent_node_lst:", cmd['parent_node_lst'],
+        )
+
     return all_dat
 
 

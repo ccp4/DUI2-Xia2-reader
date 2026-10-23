@@ -311,10 +311,10 @@ def run_n_get_tree(path_to_xia2_run_dir, bigger_lin_from_dui2):
 
     lst_cmd, bigger_lin_out = get_list_of_commands(
         path_in = path_to_timing_file,
-        bigger_lin_in = bigger_lin_from_dui2 + 1
+        bigger_lin_in = bigger_lin_from_dui2
     )
     dict_w_lst_cmd = build_reusable_graph_list(
-        list_of_commands = lst_cmd, bigger_lin_in = bigger_lin_out
+        list_of_commands = lst_cmd, bigger_lin_in = bigger_lin_out, import_lin = bigger_lin_from_dui2
     )
     return dict_w_lst_cmd
 
