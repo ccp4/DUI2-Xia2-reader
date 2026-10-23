@@ -744,11 +744,7 @@ class Runner(object):
                     try:
                         print("self.bigger_lin(multi_node) =", self.bigger_lin)
 
-                        #self.step_list[0].child_node_lst.append(self.bigger_lin + 1)
-                        node2run = self._create_xia2_step(xia2_debug_dir_path)
-                        return_list = get_tree(
-                            xia2_debug_dir_path, self.bigger_lin
-                        )
+                        return_list = self._create_xia2_step(xia2_debug_dir_path)
                         self._extend_node_list(return_list)
 
                         for cmd_nod in self.step_list:
@@ -1098,8 +1094,13 @@ class Runner(object):
         new_step.lst2run = [["xia2_import"]]
         self.step_list[0].child_node_lst.append(new_step.number)
         new_step.full_cmd_lst = [["xia2_import", str(run_xia2_dir_path)]]
+        return_list = get_tree(
+            run_xia2_dir_path, self.bigger_lin
+        )
+        new_step.child_node_lst.append(int(self.bigger_lin + 1))
+        new_step.status = "Succeeded"
         self.step_list.append(new_step)
-        return new_step
+        return return_list
 
     def _create_step(self, prev_step_lst):
 

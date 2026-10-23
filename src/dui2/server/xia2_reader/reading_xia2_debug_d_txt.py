@@ -264,6 +264,7 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
         ):
             producer_of[file_name] = curr_dict['curr_poss']
 
+    list_of_commands[0]['parent_pos_lst'] = [bigger_lin_in - 1]
     return list_of_commands, curr_poss
 
 
