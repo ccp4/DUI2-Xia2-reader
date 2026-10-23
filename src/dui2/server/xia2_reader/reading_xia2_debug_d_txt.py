@@ -336,15 +336,12 @@ def run_predicts_n_reports(all_dat, arg_in):
             lst_rep_out.append("No need for HTML report in this step")
 
         for line_2_print in lst_rep_out:
-            print(">>> ", line_2_print)
+            print(">>> ", line_2_print[:-1])
 
     os.chdir(cur_wor_dir)
 
     all_dat['step_list'] = lst_cmd
-
     print("done \n")
-
-
     return all_dat
 
 
@@ -363,16 +360,8 @@ def get_tree(path_to_xia2_run_dir, bigger_lin_from_dui2):
         path_in = path_to_debug_file,
         bigger_lin_in = bigger_lin_from_dui2 + 1
     )
-    ###########################################################################
-
     all_dat = build_reusable_graph_list(lst_cmd)
     all_dat = run_predicts_n_reports(all_dat, ended_str)
-
-    ###########################################################################
-
-    old_obsolett = '''dict_w_lst_cmd = build_reusable_graph_list(
-        list_of_commands = lst_cmd, bigger_lin_in = bigger_lin_out
-    )'''
 
     return all_dat
 
@@ -382,14 +371,13 @@ def main():
         arg_in = sys.argv[1]
 
     except IndexError:
-        print("\n Enter path of file to read ... /xia2-debug.txt \n")
-        lst_cmd = []
+        print("\n Enter path of file to read /FULL/PATH/TO/xia2-debug.txt \n")
+        all_dat = {}
 
     else:
         lst_cmd, bigger_lin_out = get_list_of_commands(
             path_in = arg_in, bigger_lin_in = 0
         )
-
         all_dat = build_reusable_graph_list(lst_cmd)
         all_dat = run_predicts_n_reports(all_dat, arg_in)
         print_graph_table(list_of_commands = lst_cmd)
