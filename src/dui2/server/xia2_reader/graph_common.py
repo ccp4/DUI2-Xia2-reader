@@ -191,7 +191,6 @@ def spread_work_dirs(list_of_commands, dir_of_file, ambiguous_set):
             elif len(dir_set) > 1 and cmd_dict not in conflict_lst:
                 conflict_lst.append(cmd_dict)
 
-
     return conflict_lst
 
 

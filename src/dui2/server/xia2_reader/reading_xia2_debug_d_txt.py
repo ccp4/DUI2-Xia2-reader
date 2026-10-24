@@ -162,16 +162,12 @@ def write_log_copy(log_path, log_lines):
 
 def get_list_of_commands(path_in, bigger_lin_in = 0):
     print("file 2 read = ", path_in)
-
-
     log_file = open(path_in, 'r', encoding="utf-8")
     lines_str = log_file.readlines()
     log_file.close()
     list_of_commands = []
     curr_poss = bigger_lin_in
-
     print("curr_poss(get_list_of_commands)=", curr_poss)
-
     for position, single_line in enumerate(lines_str):
         if single_line[0:15] == "# command line:":
             new_cmd_str = lines_str[position + 1][1:]
@@ -269,11 +265,8 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
 
 
 def run_predicts_n_reports(all_dat, arg_in):
-
     lst_cmd = all_dat['step_list']
-
     print("\n lst_cmd =", lst_cmd, "\n")
-
     cur_wor_dir = os.getcwd()
     print("\n os.getcwd() =", cur_wor_dir)
     '''
@@ -281,9 +274,7 @@ def run_predicts_n_reports(all_dat, arg_in):
     print("path_to_dir =", path_to_dir)
     '''
     path_to_dir = "predicts_n_reports"
-
     print("path_to_dir =", path_to_dir)
-
     #os.mkdir(path_to_dir)
 
     try:
@@ -292,13 +283,10 @@ def run_predicts_n_reports(all_dat, arg_in):
     except FileExistsError:
         print("NOT creating again: ", path_to_dir)
 
-
     os.chdir(path_to_dir)
 
     new_cur_wor_dir = os.getcwd()
     print("NEW path_to_dir =", new_cur_wor_dir)
-
-
 
     for cmd_node in lst_cmd:
         rep_lst_dat_in = ['dials.report']

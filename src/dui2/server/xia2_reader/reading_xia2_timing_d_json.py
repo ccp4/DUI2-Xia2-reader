@@ -286,12 +286,19 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
 def print_commands(list_of_commands):
     print("\n", "=" * 90)
     t0 = 0.0
-    if list_of_commands != [] and list_of_commands[0]['time_start'] is not None:
+    if(
+        list_of_commands != [] and
+        list_of_commands[0]['time_start'] is not None
+    ):
         t0 = list_of_commands[0]['time_start']
 
     for cmd_dict in list_of_commands:
         timing_str = ""
-        if cmd_dict['time_start'] is not None and cmd_dict['time_end'] is not None:
+        if(
+            cmd_dict['time_start'] is not None
+                and
+            cmd_dict['time_end'] is not None
+        ):
             timing_str = "  (t=%.1fs, %.1fs)" % (
                 cmd_dict['time_start'] - t0,
                 cmd_dict['time_end'] - cmd_dict['time_start'],
@@ -314,7 +321,8 @@ def run_n_get_tree(path_to_xia2_run_dir, bigger_lin_from_dui2):
         bigger_lin_in = bigger_lin_from_dui2
     )
     dict_w_lst_cmd = build_reusable_graph_list(
-        list_of_commands = lst_cmd, bigger_lin_in = bigger_lin_out, import_lin = bigger_lin_from_dui2
+        list_of_commands = lst_cmd, bigger_lin_in = bigger_lin_out,
+        import_lin = bigger_lin_from_dui2
     )
     return dict_w_lst_cmd
 
