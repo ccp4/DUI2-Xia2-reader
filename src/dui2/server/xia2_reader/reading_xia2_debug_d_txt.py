@@ -341,8 +341,8 @@ def run_predicts_n_reports(all_dat, arg_in):
         else:
             lst_rep_out.append("No need for HTML report in this step")
 
-        for line_2_print in lst_rep_out:
-            print(">>> ", line_2_print[:-1])
+        tmp_off = '''for line_2_print in lst_rep_out:
+            print(">>> ", line_2_print[:-1])'''
 
     os.chdir(cur_wor_dir)
 

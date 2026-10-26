@@ -1627,7 +1627,7 @@ class MainObject(QObject):
         self.thrd_lst.append(post_thread)
 
     def line_n1_in(self, nod_num_in):
-        logging.info("nod_num_in(line_n1_in) =" + str(nod_num_in))
+        print("nod_num_in(line_n1_in) =" + str(nod_num_in))
         self.request_display()
         self.new_node = None
 
@@ -1694,8 +1694,6 @@ class MainObject(QObject):
             "self.server_nod_lst = " + str( self.server_nod_lst)
         )
         self.check_nxt_btn()
-
-        ##########################################################################
 
     def Xia2_execution(self):
         print("\n Xia2_execution ... 1 \n")
@@ -1769,7 +1767,7 @@ class MainObject(QObject):
             post_thread = PostRequestWithOutput(
                 cmd_in = cmd, main_handler = self.runner_handler
             )
-            #post_thread.first_line.connect(self.respose_n1_from_...)
+            post_thread.first_line.connect(self.line_n1_in)
             post_thread.finished.connect(self.xia2_reading_ended)
             post_thread.start()
             self.thrd_lst.append(post_thread)
@@ -1784,8 +1782,6 @@ class MainObject(QObject):
         self.request_display()
         self.do_image_view.reset()
         self.refresh_output()
-
-        ##########################################################################
 
     def respose_n1_from_reset(self, line):
         logging.info("respose_from_reset(err code):" + str(line))

@@ -472,6 +472,150 @@ class CmdNode(object):
         if self.n_Broken_Pipes > 0:
             logging.info(" << BrokenPipe err catch >> while sending output")
 
+    ############################################################... run_xia2_read ...### init
+    def run_xia2_read(
+        self, req_obj = None, run_xia2_dir_path = None, bigger_lin = None
+    ):
+
+        #[copied from elsewhere] = parent_lst_in = prev_step_lst, data_init = self.data_init
+
+        self.nod_req = req_obj
+        self.status = "Busy"
+
+        not_neede_here = '''
+        inner_lst = list(self.full_cmd_lst[-1])
+        is_valid_command = find_if_in_list(inner_lst[0])
+        FilNotFonErr = False
+        if is_valid_command:
+            full_string = str(inner_lst[0])
+            for nxt_pars in inner_lst[1:]:
+                full_string += " " + nxt_pars
+
+            print("cmd (from OS shell) = " + full_string)
+            inner_lst[0] = str(shutil.which(inner_lst[0]))
+            logging.info("Running (from Python) >> " + str(inner_lst))
+            try:
+                self.my_proc = subprocess.Popen(
+                    inner_lst,
+                    shell = False,
+                    cwd = self._run_dir,
+                    stdout = subprocess.PIPE,
+                    stderr = subprocess.STDOUT,
+                    universal_newlines = True
+                )
+
+            except FileNotFoundError:
+                new_err_msg = "Dials command NOT properly installed"
+                FilNotFonErr = True
+
+        else:
+            logging.info(
+                " is NOT a Dials Command, NOT Running it "
+            )
+            self.status = "Failed"
+            return
+        '''
+
+        #TODO: Think about a better dir to put there
+        self.set_base_dir(dir_in = run_xia2_dir_path)
+        #self.find_next_number()
+        self.number = bigger_lin
+        self.lst2run = [["xia2_import"]]
+        #self.step_list[0].child_node_lst.append(new_step.number)
+        self.full_cmd_lst = [["xia2_import", str(run_xia2_dir_path)]]
+        return_list = get_tree(
+            run_xia2_dir_path, bigger_lin
+        )
+        self.child_node_lst.append(int(bigger_lin + 1))
+        self.status = "Succeeded"
+
+
+        off_for_now = '''
+        log_line_lst = []
+        self.n_Broken_Pipes = 0
+        self.log_file_path = self._run_dir + os.sep + "out.log"
+        new_line = None
+        if self.nod_req is not None:
+            try:
+                self.nod_req.send_response(201)
+                self.nod_req.send_header('Content-type', 'text/plain')
+                self.nod_req.end_headers()
+
+            except AttributeError:
+                logging.info(
+                    "Attribute Err catch, not supposed send header info #2"
+                )
+
+            try:
+                str_nod_num = "node.number=" + str(self.number) + "\n"
+                spit_out(
+                    str_out = str_nod_num, req_obj = self.nod_req,
+                    out_type = 'utf-8'
+                )
+
+            except BrokenPipeError:
+                logging.info(
+                    "<< BrokenPipe err catch  >> while sending nod_num"
+                )
+
+        logging.info("FilNotFonErr =" + str(FilNotFonErr))
+
+        if FilNotFonErr:
+            new_line = new_err_msg + "\n"
+            self.n_Broken_Pipes += add_log_line(new_line, self.nod_req)
+            log_line_lst = ["\n", new_line, "\n"]
+            self.status = "Failed"
+            return
+
+        else:
+            while self.my_proc.poll() is None or new_line != '':
+                try:
+                    new_line = self.my_proc.stdout.readline()
+
+                except UnicodeDecodeError:
+                    new_line = " <*< Unicode Decode Error >*> \n"
+
+                self.n_Broken_Pipes += add_log_line(new_line, self.nod_req)
+                log_line_lst.append(new_line[:-1])
+
+            log_line_lst_2_write = []
+            for lin_num, lin_str in enumerate(log_line_lst):
+                found_non_empty = False
+                for inner_lin in log_line_lst[lin_num:]:
+                    if inner_lin != '':
+                        found_non_empty = True
+
+                if not found_non_empty:
+                    break
+
+                log_line_lst_2_write.append(lin_str)
+
+        self.my_proc.stdout.close()
+        if self.my_proc.poll() == 0:
+            logging.info("subprocess poll 0")
+
+        else:
+            self.status = "Failed"
+
+        if self.status != "Failed":
+            self.status = "Succeeded"
+
+        lof_file = open(self.log_file_path, "w")
+        for log_line in log_line_lst_2_write:
+            wrstring = log_line + "\n"
+            lof_file.write(wrstring)
+
+        lof_file.close()
+
+        self.set_exe_files_out()
+
+        if self.n_Broken_Pipes > 0:
+            logging.info(" << BrokenPipe err catch >> while sending output")
+        '''
+
+        return return_list
+    ############################################################... run_xia2_read ...### end
+
     def generate_predict_n_report(self, req_obj = None):
         self.n_Broken_Pipes = 0
         self.nod_req = req_obj
@@ -1084,21 +1228,13 @@ class Runner(object):
 
     def _create_xia2_step(self, run_xia2_dir_path):
         new_step = CmdNode(
-            parent_lst_in = None, data_init = self.data_init
+            parent_lst_in = self.step_list[0], data_init = self.data_init
         )
-        new_step.parent_node_lst = [0]
-        #TODO: Think about a better dir to put there
-        new_step.set_base_dir(dir_in = run_xia2_dir_path)
         self.find_next_number()
-        new_step.number = self.bigger_lin
-        new_step.lst2run = [["xia2_import"]]
-        self.step_list[0].child_node_lst.append(new_step.number)
-        new_step.full_cmd_lst = [["xia2_import", str(run_xia2_dir_path)]]
-        return_list = get_tree(
-            run_xia2_dir_path, self.bigger_lin
+        return_list = new_step.run_xia2_read(
+            run_xia2_dir_path = run_xia2_dir_path, bigger_lin = self.bigger_lin
         )
-        new_step.child_node_lst.append(int(self.bigger_lin + 1))
-        new_step.status = "Succeeded"
+        self.step_list[0].child_node_lst.append(new_step.number)
         self.step_list.append(new_step)
         return return_list
 
