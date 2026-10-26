@@ -125,7 +125,9 @@ def find_work_dirs(list_of_commands):
     #    tells that dials.index ran in /full/path/.../index
 
     dir_of_file, ambiguous_set = map_abs_paths(list_of_commands)
-    conflict_lst = spread_work_dirs(list_of_commands, dir_of_file, ambiguous_set)
+    conflict_lst = spread_work_dirs(
+        list_of_commands, dir_of_file, ambiguous_set
+    )
     common_dir = report_n_common_dir(list_of_commands, conflict_lst)
     fill_missing_work_dirs(list_of_commands, common_dir)
 
@@ -136,7 +138,9 @@ def map_abs_paths(list_of_commands):
     for cmd_dict in list_of_commands:
         cmd_dict['work_dir'] = None
         for single_par in cmd_dict['par_lst']:
-            path_str = reversed_find_str(str_in = single_par, lst_sep_lst = ["="])
+            path_str = reversed_find_str(
+                str_in = single_par, lst_sep_lst = ["="]
+            )
             if os.path.isabs(path_str):
                 file_name = reversed_find_str(str_in = path_str)
                 dir_name = os.path.dirname(os.path.normpath(path_str))
@@ -278,7 +282,9 @@ def export_reusable_graph_list(all_dat):
         json.dump(all_dat, fp, indent=4)
 
 
-def build_reusable_graph_list(list_of_commands = None, bigger_lin_in = 0, import_lin = 0):
+def build_reusable_graph_list(
+    list_of_commands = None, bigger_lin_in = 0, import_lin = 0
+):
     lst_nod = []
     bigger_lin = bigger_lin_in
     for cmd_dict in list_of_commands:

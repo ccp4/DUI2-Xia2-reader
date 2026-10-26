@@ -132,7 +132,9 @@ def find_log_block(lines_str, cmd_line_pos):
             and LOG_HEADER_MID in header
             and header.endswith(":")
         ):
-            num_str = header[len(LOG_HEADER_START):header.find(LOG_HEADER_MID)]
+            num_str = header[
+                len(LOG_HEADER_START):header.find(LOG_HEADER_MID)
+            ]
             if not num_str.isdecimal():
                 continue
 
@@ -141,8 +143,12 @@ def find_log_block(lines_str, cmd_line_pos):
                 # the closest echoed log ends before this command line
                 return None, []
 
-            log_path = header[header.find(LOG_HEADER_MID) + len(LOG_HEADER_MID):-1]
-            return log_path, lines_str[header_pos + 1:header_pos + 1 + num_lines]
+            log_path = header[
+                header.find(LOG_HEADER_MID) + len(LOG_HEADER_MID):-1
+            ]
+            return log_path, lines_str[
+                header_pos + 1:header_pos + 1 + num_lines
+            ]
 
     return None, []
 
