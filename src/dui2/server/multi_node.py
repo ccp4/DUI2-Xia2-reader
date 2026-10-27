@@ -963,6 +963,11 @@ class Runner(object):
                             "Attribute Err catch," +
                             " not supposed send header info #4"
                         )
+                    FIXME = '''
+                            see if the next << spit_out >> does not confuses
+                            client side, it mignt think that is comimg from
+                            node = 0
+                            '''
 
                     spit_out(
                         str_out = "err.code=0",
