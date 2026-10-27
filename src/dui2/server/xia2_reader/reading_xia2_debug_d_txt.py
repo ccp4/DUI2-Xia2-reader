@@ -272,7 +272,7 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
 
 def run_predicts_n_reports(all_dat, arg_in):
     lst_cmd = all_dat['step_list']
-    print("\n lst_cmd =", lst_cmd, "\n")
+    #print("\n lst_cmd =", lst_cmd, "\n")
     cur_wor_dir = os.getcwd()
     print("\n os.getcwd() =", cur_wor_dir)
     '''
@@ -323,7 +323,7 @@ def run_predicts_n_reports(all_dat, arg_in):
         )
         while rep_proc.poll() is None or new_line != '':
             new_line = rep_proc.stdout.readline()
-            print(new_line)
+            #print(new_line)
             lst_rep_out.append(new_line)
 
         #TODO: consider if we need to capture the output for this command
@@ -348,13 +348,14 @@ def run_predicts_n_reports(all_dat, arg_in):
 
     all_dat['step_list'] = lst_cmd
     print("\n done \n")
-
+    tmp_off = '''
     for num, cmd in enumerate(lst_cmd):
         print(
             num, " node(number):", cmd['number'], " lst2run:", cmd['lst2run'],
             " child_node_lst:", cmd['child_node_lst'],
             " parent_node_lst:", cmd['parent_node_lst'],
         )
+    '''
 
     return all_dat
 

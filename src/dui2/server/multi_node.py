@@ -880,7 +880,7 @@ class Runner(object):
                         str_out = "err.code=0", req_obj = req_obj,
                         out_type = 'utf-8'
                     )
-                    print("\n\n len(self.step_list) = ", len(self.step_list))
+                    print("\n len(self.step_list) = ", len(self.step_list))
                     print(
                         "self.step_list[0].child_node_lst = ",
                         self.step_list[0].child_node_lst, "\n\n")
@@ -890,13 +890,14 @@ class Runner(object):
 
                         return_list = self._create_xia2_step(xia2_debug_dir_path)
                         self._extend_node_list(return_list)
-
+                        tmp_off = '''
                         for cmd_nod in self.step_list:
                             print(
                                 cmd_nod.number, " lst2run:", cmd_nod.lst2run,
                                 " child_node_lst:", cmd_nod.child_node_lst,
                                 " parent_node_lst:", cmd_nod.parent_node_lst,
                             )
+                        '''
                         spit_out(
                             str_out = "reading xia2_debug ... Done",
                             req_obj = req_obj, out_type = 'utf-8'

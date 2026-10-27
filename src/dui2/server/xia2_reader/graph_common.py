@@ -182,7 +182,7 @@ def spread_work_dirs(list_of_commands, dir_of_file, ambiguous_set):
 
             if len(dir_set) == 1:
                 new_work_dir = dir_set.pop()
-                print("new_work_dir =", new_work_dir)
+                #print("new_work_dir =", new_work_dir)
                 cmd_dict['work_dir'] = new_work_dir
                 found_new = True
                 for file_name in no_path_lst:
@@ -208,8 +208,9 @@ def report_n_common_dir(list_of_commands, conflict_lst):
                       cmd_dict['curr_poss'], cmd_dict['exe_cmd'])
 
             else:
-                print("Dir not found for:",
-                      cmd_dict['curr_poss'], cmd_dict['exe_cmd'])
+                tmp_off = '''print("Dir not found for:",
+                      cmd_dict['curr_poss'], cmd_dict['exe_cmd']
+                )'''
 
         elif common_dir is None:
             common_dir = cmd_dict['work_dir']
@@ -293,7 +294,7 @@ def build_reusable_graph_list(
 
         parent_node_lst = cmd_dict['parent_pos_lst']
 
-        print("parent_node_lst =", parent_node_lst)
+        #print("parent_node_lst =", parent_node_lst)
 
         if  parent_node_lst == []:
             print("adding ref to node [0]")
