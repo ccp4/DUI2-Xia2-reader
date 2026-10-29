@@ -383,8 +383,6 @@ class PostRequestWithOutput(QThread):
         self.do_predict_n_report = do_pred_n_rept
         data_init.register_thread(self)
 
-        print("\n Hi from PostRequestWithOutput __init__")
-
     def run(self):
         if self.my_handler == None:
             try:
@@ -394,7 +392,6 @@ class PostRequestWithOutput(QThread):
                 self.request = requests.post(
                     self.uni_url, stream = True, data = data_in
                 )
-
                 line_str = ''
                 not_yet_read = True
                 while True:
@@ -458,9 +455,6 @@ class PostRequestWithOutput(QThread):
     def get_it_str(self, line_str):
         if not self.already_read:
             try:
-
-                print("first_line = ", line_str, "\n")
-
                 nod_p_num = int(line_str.split("=")[1])
                 self.number = nod_p_num
                 self.first_line.emit(self.number)

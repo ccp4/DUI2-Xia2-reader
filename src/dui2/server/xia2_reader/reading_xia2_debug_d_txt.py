@@ -305,11 +305,11 @@ def run_predicts_n_reports(all_dat, arg_in):
         number_str = str(cmd_node['number'])
         output_html_file = "dials.report_n_"+ number_str +".html"
         rep_lst_dat_in.append("output.html=" + output_html_file)
-
+        #TODO: next line goes to the client side output
         print("\n running:" + str(rep_lst_dat_in))
 
         new_line = "Generating HTML report"
-        print(new_line)
+        #print(new_line)
 
         lst_rep_out = []
         rep_lst_dat_in[0] = str(shutil.which(rep_lst_dat_in[0]))

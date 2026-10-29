@@ -26,7 +26,7 @@ class ConnectThread(QThread):
         )
 
     def call_back_str(self, str_out):
-        logging.info("..call_back_str.." + str_out)
+        print("..call_back_str.." + str_out)
         self.logging.infoing.emit(str_out)
 
 

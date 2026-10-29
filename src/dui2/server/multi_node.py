@@ -761,10 +761,6 @@ class Runner(object):
 
                     xia2_debug_dir_path = unalias_cmd_lst[1][0]
                     print("xia2_debug_dir_path =", xia2_debug_dir_path, "\n\n")
-                    print("\n len(self.step_list) = ", len(self.step_list))
-                    print(
-                        "self.step_list[0].child_node_lst = ",
-                        self.step_list[0].child_node_lst, "\n\n")
 
                     # Busy node goes into the tree BEFORE the slow part and
                     # its number is the first line, so the client's
@@ -773,21 +769,22 @@ class Runner(object):
                         xia2_debug_dir_path
                     )
                     spit_out(
-                        str_out = "node.number=" + str(xia2_node.number),
+                        str_out = "node.number=" + str(xia2_node.number) + "\n",
                         req_obj = req_obj, out_type = 'utf-8'
-                    )
-                    spit_out(
-                        str_out = "err.code=0", req_obj = req_obj,
-                        out_type = 'utf-8'
                     )
 
                     try:
-                        print("self.bigger_lin(multi_node) =", self.bigger_lin)
+                        print(
+                            "\n self.bigger_lin(multi_node) =",
+                            self.bigger_lin
+                        )
 
                         return_list = xia2_node.run_xia2_read(
                             run_xia2_dir_path = xia2_debug_dir_path,
                             bigger_lin = xia2_node.number
                         )
+
+                        print("   ...   Done run_xia2_read   ...   \n")
                         self._extend_node_list(return_list)
                         # link to the expanded branch only once it exists
                         xia2_node.child_node_lst.append(
@@ -1154,9 +1151,6 @@ class Runner(object):
         return new_step
 
     def _create_step(self, prev_step_lst):
-
-        print("\n\n prev_step_lst = ", prev_step_lst, "\n\n")
-
         new_step = CmdNode(
             parent_lst_in = prev_step_lst, data_init = self.data_init
         )
