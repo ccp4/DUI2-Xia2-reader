@@ -1047,17 +1047,18 @@ class MainObject(QObject):
                 self.update_reindex_table_header(cur_nod["parent_node_lst"])
 
         except KeyError:
+            print("Key Err Catch (clicked_4_navigation) level 1")
             try:
                 if key2find in self.opt_cmd_lst:
                     self.change_widget("optional")
                     self.update_all_param()
 
                 else:
-                    logging.info("command widget not there yet")
+                    print("command widget not there yet")
                     return
 
             except KeyError:
-                logging.info("Key Err Catch (clicked_4_navigation) ")
+                print("Key Err Catch (clicked_4_navigation) level 2")
                 return
 
         self.refresh_output()
