@@ -49,7 +49,7 @@ def get_pair_list():
         ("gmt",     "get_mtz"                               ),
         ("tmt",     "transfer_mtz"                          ),
         ("rxd",     "read_xia2_debug"                       ),
-        ("rxd",     "xia2_run_timing"                       ),
+        ("xrt",     "xia2_run_timing"                       ),
         ("gt",      "get_template"                          ),
         ("gfp",     "get_files_path"                        ),
         ("gi",      "get_image"                             ),
@@ -487,17 +487,10 @@ class CmdNode(object):
     def run_xia2_read(
         self, req_obj = None, run_xia2_dir_path = None, bigger_lin = None
     ):
-
-        #[copied from elsewhere] = parent_lst_in = prev_step_lst, data_init = self.data_init
-
         self.nod_req = req_obj
-
-        # node setup now happens in << set_xia2_busy >>, child link and
-        # final status are set by the Runner once the new nodes exist
         return_list = get_tree(
             run_xia2_dir_path, bigger_lin
         )
-
         return return_list
     ############################################################... run_xia2_read ...### end
 
@@ -738,12 +731,12 @@ class Runner(object):
                         )
 
                     spit_out(
-                        str_out = "err.code=0", req_obj = req_obj,
+                        str_out = "err.code=0\n", req_obj = req_obj,
                         out_type = 'utf-8'
                     )
                     self.clear_run_dirs_n_reset()
                     spit_out(
-                        str_out = "Reset tree ... Done",
+                        str_out = "Reset tree ... Done\n",
                         req_obj = req_obj, out_type = 'utf-8'
                     )
 
@@ -800,11 +793,13 @@ class Runner(object):
                         print("Not Found Err Catch while reading Xia2_debug")
                         xia2_node.status = "Failed"
                         spit_out(
-                            str_out = "FAILED reading xia2_debug",
+                            str_out = "FAILED reading xia2_debug\n",
                             req_obj = req_obj, out_type = 'utf-8'
                         )
+                        #FIXME: the next commented code is a suggestion
+                        #by Claude that I am not fully convinced:
 
-                    except Exception as xia2_err:
+                    '''except Exception as xia2_err:
                         # anything else must not leave the node Busy forever
                         logging.info(
                             "Err catch while reading Xia2_debug: " +
@@ -814,7 +809,7 @@ class Runner(object):
                         spit_out(
                             str_out = "FAILED reading xia2_debug",
                             req_obj = req_obj, out_type = 'utf-8'
-                        )
+                        )'''
 
                 ###########################################################  xia2_run_timing
 
@@ -829,8 +824,9 @@ class Runner(object):
                             "Attribute Err catch," +
                             " not supposed send header info #3"
                         )
-
-                    run_xia2_dir_path = unalias_cmd_lst[1][0]
+                    #TODO: This needs to be re-done entirely following the same
+                    #      logic as << read_xia2_debug >>
+                    '''run_xia2_dir_path = unalias_cmd_lst[1][0]
                     print("run_xia2_dir_path =", run_xia2_dir_path, "\n\n")
                     spit_out(
                         str_out = "err.code=0", req_obj = req_obj,
@@ -855,8 +851,7 @@ class Runner(object):
                         spit_out(
                             str_out = "FAILED running xia2_timimg",
                             req_obj = req_obj, out_type = 'utf-8'
-                        )
-
+                        )'''
 
                 elif unalias_cmd_lst == [['run_predict_n_report']]:
                     try:
@@ -1140,7 +1135,7 @@ class Runner(object):
 
     def _create_xia2_busy_step(self, run_xia2_dir_path):
         new_step = CmdNode(
-            parent_lst_in = self.step_list[0], data_init = self.data_init
+            parent_lst_in = [self.step_list[0]], data_init = self.data_init
         )
         self.find_next_number()
         new_step.set_xia2_busy(
