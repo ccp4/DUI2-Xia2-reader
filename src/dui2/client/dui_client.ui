@@ -926,6 +926,21 @@
                   </widget>
                   <widget class="QWidget" name="Xia2ForkPage">
                    <layout class="QGridLayout" name="gridLayout_32">
+                    <property name="leftMargin">
+                     <number>2</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>2</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>2</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>2</number>
+                    </property>
+                    <property name="spacing">
+                     <number>2</number>
+                    </property>
                     <item row="0" column="0">
                      <widget class="QScrollArea" name="Xia2ForkScrollArea">
                       <property name="widgetResizable">
@@ -936,8 +951,8 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>421</width>
-                         <height>324</height>
+                         <width>429</width>
+                         <height>332</height>
                         </rect>
                        </property>
                       </widget>
