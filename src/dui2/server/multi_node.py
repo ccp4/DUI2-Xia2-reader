@@ -772,6 +772,11 @@ class Runner(object):
                             self.bigger_lin
                         )
 
+                        spit_out(
+                            str_out = "reading xia2_debug ... Start\n",
+                            req_obj = req_obj, out_type = 'utf-8'
+                        )
+
                         return_list = xia2_node.run_xia2_read(
                             run_xia2_dir_path = xia2_debug_dir_path,
                             bigger_lin = xia2_node.number
@@ -785,7 +790,7 @@ class Runner(object):
                         )
                         xia2_node.status = "Succeeded"
                         spit_out(
-                            str_out = "reading xia2_debug ... Done",
+                            str_out = "reading xia2_debug ... Done\n",
                             req_obj = req_obj, out_type = 'utf-8'
                         )
 

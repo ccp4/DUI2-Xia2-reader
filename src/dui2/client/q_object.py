@@ -1792,6 +1792,11 @@ class MainObject(QObject):
             post_thread = PostRequestWithOutput(
                 cmd_in = cmd, main_handler = self.runner_handler
             )
+
+
+            post_thread.new_line_out.connect(self.log_show.add_line)
+
+
             post_thread.first_line.connect(self.line_n1_in)
             post_thread.finished.connect(self.xia2_reading_ended)
             post_thread.start()
