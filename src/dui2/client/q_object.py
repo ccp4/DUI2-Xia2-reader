@@ -1033,33 +1033,33 @@ class MainObject(QObject):
 
         cmd_ini = cur_nod["cmd2show"][0]
         key2find = cmd_ini[6:]
-        #try:
-        self.change_widget(key2find)
-        self.update_all_param()
-        if key2find == "reindex":
-            cmd = {
-                "nod_lst":cur_nod["parent_node_lst"],
-                "cmd_str":["get_bravais_sum"]
-            }
-            lst_req = get_req_json_dat(
-                params_in = cmd, main_handler = self.runner_handler
-            )
+        try:
+            self.change_widget(key2find)
+            self.update_all_param()
+            if key2find == "reindex":
+                cmd = {
+                    "nod_lst":cur_nod["parent_node_lst"],
+                    "cmd_str":["get_bravais_sum"]
+                }
+                lst_req = get_req_json_dat(
+                    params_in = cmd, main_handler = self.runner_handler
+                )
 
-            try:
-                self.best_rd_idx_opt = int(cur_nod["cmd2show"][1]) - 1
+                try:
+                    self.best_rd_idx_opt = int(cur_nod["cmd2show"][1]) - 1
 
-            except IndexError:
-                row_str = self.new_node.get_full_command_list()[0][14:]
-                new_node_row = int(row_str)
-                self.best_rd_idx_opt = new_node_row - 1
+                except IndexError:
+                    row_str = self.new_node.get_full_command_list()[0][14:]
+                    new_node_row = int(row_str)
+                    self.best_rd_idx_opt = new_node_row - 1
 
-            json_data_lst = lst_req.result_out()
-            self.r_index_widg.add_opts_lst(
-                json_data = json_data_lst[0],
-                selected_pos = self.best_rd_idx_opt
-            )
-            self.update_reindex_table_header(cur_nod["parent_node_lst"])
-        '''
+                json_data_lst = lst_req.result_out()
+                self.r_index_widg.add_opts_lst(
+                    json_data = json_data_lst[0],
+                    selected_pos = self.best_rd_idx_opt
+                )
+                self.update_reindex_table_header(cur_nod["parent_node_lst"])
+
         except KeyError:
             print("Key Err Catch (clicked_4_navigation) level 1")
             try:
@@ -1074,7 +1074,6 @@ class MainObject(QObject):
             except KeyError:
                 print("Key Err Catch (clicked_4_navigation) level 2")
                 return
-        '''
 
         self.refresh_output()
         self.display()
