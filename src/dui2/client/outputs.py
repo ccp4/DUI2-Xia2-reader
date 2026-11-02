@@ -726,8 +726,11 @@ class ShowLog(QObject):
                 if replace_w_this:
                     str_cmd_key = replace_w_this
 
-                else:
+                elif self.main_obj.new_node.m_cmd_lst[0].startswith("dials"):
                     str_cmd_key = self.main_obj.new_node.m_cmd_lst[0][6:]
+
+                else:
+                    str_cmd_key = self.main_obj.new_node.m_cmd_lst[0]
 
                 txt2show =self.main_obj.help_msg_dict[str_cmd_key]
 

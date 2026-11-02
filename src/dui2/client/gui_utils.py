@@ -59,7 +59,7 @@ widgets_defs = {
         ]
     },
 
-    "mport" : {
+    "xia2_import" : {
         "tooltip"       : "Dui2(xia2_import) ... dials.import ...",
         "icon"          : "resources/import.png",
         "main_cmd"      :["xia2_import"],

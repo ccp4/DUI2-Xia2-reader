@@ -461,9 +461,9 @@ class MainObject(QObject):
         self.param_widgets["import"]["main_page"] = self.window.ImportPage
 
         ############################################################################# xia2_import
-        self.param_widgets["mport"]["simple"] = self.xia2_imp_widg
-        self.param_widgets["mport"]["advanced"] = None
-        self.param_widgets["mport"]["main_page"] = self.window.Xia2ForkPage
+        self.param_widgets["xia2_import"]["simple"] = self.xia2_imp_widg
+        self.param_widgets["xia2_import"]["advanced"] = None
+        self.param_widgets["xia2_import"]["main_page"] = self.window.Xia2ForkPage
         ############################################################################# xia2_import
 
         self.param_widgets["split_experiments"]["simple"] = split_widg
@@ -1032,7 +1032,12 @@ class MainObject(QObject):
             cur_nod = self.tree_scene.nod_lst_2_paint[node_numb]
 
         cmd_ini = cur_nod["cmd2show"][0]
-        key2find = cmd_ini[6:]
+        if cmd_ini.startswith("dials"):
+            key2find = cmd_ini[6:]
+
+        else:
+            key2find = cmd_ini
+
         try:
             self.change_widget(key2find)
             self.update_all_param()
@@ -1222,7 +1227,12 @@ class MainObject(QObject):
 
     def add_next2do_button(self):
         try:
-            str_key = self.server_nod_lst[self.curr_nod_num]["cmd2show"][0][6:]
+            str_key = self.server_nod_lst[self.curr_nod_num]["cmd2show"][0]
+            if(
+                str_key.startswith("dials")
+            ):
+                str_key = str_key[6:]
+
             self.update_nxt_butt(str_key)
 
         except (IndexError, AttributeError):
