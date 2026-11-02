@@ -267,6 +267,39 @@ def from_path_2_dir(str_path_in):
     return str_path_out
 
 
+class Xia2ImportWidget(QWidget):
+    '''
+        This widget is similar to ImportWidget in that sense is at the
+        beginning of the provenance graph and imports something, but there
+        is where the similitude end.
+
+        It imports work from a Xia2 execution, ad behave quite differently
+    '''
+    all_items_changed = Signal(list)
+    def __init__(self, parent = None):
+        super(Xia2ImportWidget, self).__init__()
+        self.runner_handler = parent
+        data_init = IniData()
+        self.run_local = data_init.get_if_local()
+        self.win_exe = data_init.get_win_exe()
+
+    def update_param(self, str_path, str_value):
+        print(
+            "update_param(Xia2ImportWidget)" +
+            str(str_path) + "," + str(str_value) + "... dummy"
+        )
+    def reset_pars(self):
+        print("reset_pars(Xia2ImportWidget)")
+
+    def set_ed_pars(self):
+        print("set_ed_pars(Xia2ImportWidget)")
+
+    def update_all_pars(self, tup_lst_pars):
+        logging.info(
+            "tup_lst_pars(Xia2 import, update_all_pars)= " + str(tup_lst_pars)
+        )
+        #self.reset_pars()
+
 class ImportWidget(QWidget):
     '''
         This widget behaves differently from most of the other  << simple >>

@@ -58,6 +58,17 @@ widgets_defs = {
             "combine_experiments"
         ]
     },
+
+    "mport" : {
+        "tooltip"       : "Dui2(xia2_import) ... dials.import ...",
+        "icon"          : "resources/import.png",
+        "main_cmd"      :["xia2_import"],
+        "nxt_widg_lst"  :[
+            "find_spots", "apply_mask", "split_experiments",
+            "combine_experiments"
+        ]
+    },
+
     "apply_mask" : {
         "tooltip"       : "dials.generate_mask && dials.apply_mask ...",
         "icon"          : "resources/mask.png",
@@ -240,7 +251,7 @@ widgets_defs = {
 
 def get_widget_def_dict(in_dic, ui_path):
     out_dic = {}
-    logging.info("Loading Icons")
+    print("Loading Icons")
     for key, value in in_dic.items():
         new_inner_dict = dict(value)
         nxt_ico = QIcon()

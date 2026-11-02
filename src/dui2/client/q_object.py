@@ -56,6 +56,8 @@ from dui2.client.simpler_param_widgets import MergeWidget
 from dui2.client.simpler_param_widgets import OptionalWidget
 from dui2.client.simpler_param_widgets import SplitWidget
 
+from dui2.client.simpler_param_widgets import Xia2ImportWidget
+
 from dui2.client.simpler_param_widgets import (
     FindspotsSimplerParameterTab, IndexSimplerParamTab,
     SsxIndexSimplerParamTab, SsxIntegrateSimplerParamTab,
@@ -95,6 +97,12 @@ class MainObject(QObject):
         self.imp_widg = ImportWidget(self.runner_handler)
         self.imp_widg.all_items_changed.connect(self.all_items_param_changed)
         self.window.ImportScrollArea.setWidget(self.imp_widg)
+
+        ############################################################################# xia2_import
+        self.xia2_imp_widg = Xia2ImportWidget(self.runner_handler)
+        self.xia2_imp_widg.all_items_changed.connect(self.all_items_param_changed)
+        self.window.Xia2ForkScrollArea.setWidget(self.xia2_imp_widg)
+        ############################################################################# xia2_import
 
         split_widg = SplitWidget()
         split_widg.all_items_changed.connect(self.all_items_param_changed)
@@ -451,6 +459,12 @@ class MainObject(QObject):
         self.param_widgets["import"]["simple"] = self.imp_widg
         self.param_widgets["import"]["advanced"] = None
         self.param_widgets["import"]["main_page"] = self.window.ImportPage
+
+        ############################################################################# xia2_import
+        self.param_widgets["mport"]["simple"] = self.xia2_imp_widg
+        self.param_widgets["mport"]["advanced"] = None
+        self.param_widgets["mport"]["main_page"] = self.window.Xia2ForkPage
+        ############################################################################# xia2_import
 
         self.param_widgets["split_experiments"]["simple"] = split_widg
         self.param_widgets["split_experiments"]["advanced"] = None
@@ -1019,33 +1033,33 @@ class MainObject(QObject):
 
         cmd_ini = cur_nod["cmd2show"][0]
         key2find = cmd_ini[6:]
-        try:
-            self.change_widget(key2find)
-            self.update_all_param()
-            if key2find == "reindex":
-                cmd = {
-                    "nod_lst":cur_nod["parent_node_lst"],
-                    "cmd_str":["get_bravais_sum"]
-                }
-                lst_req = get_req_json_dat(
-                    params_in = cmd, main_handler = self.runner_handler
-                )
+        #try:
+        self.change_widget(key2find)
+        self.update_all_param()
+        if key2find == "reindex":
+            cmd = {
+                "nod_lst":cur_nod["parent_node_lst"],
+                "cmd_str":["get_bravais_sum"]
+            }
+            lst_req = get_req_json_dat(
+                params_in = cmd, main_handler = self.runner_handler
+            )
 
-                try:
-                    self.best_rd_idx_opt = int(cur_nod["cmd2show"][1]) - 1
+            try:
+                self.best_rd_idx_opt = int(cur_nod["cmd2show"][1]) - 1
 
-                except IndexError:
-                    row_str = self.new_node.get_full_command_list()[0][14:]
-                    new_node_row = int(row_str)
-                    self.best_rd_idx_opt = new_node_row - 1
+            except IndexError:
+                row_str = self.new_node.get_full_command_list()[0][14:]
+                new_node_row = int(row_str)
+                self.best_rd_idx_opt = new_node_row - 1
 
-                json_data_lst = lst_req.result_out()
-                self.r_index_widg.add_opts_lst(
-                    json_data = json_data_lst[0],
-                    selected_pos = self.best_rd_idx_opt
-                )
-                self.update_reindex_table_header(cur_nod["parent_node_lst"])
-
+            json_data_lst = lst_req.result_out()
+            self.r_index_widg.add_opts_lst(
+                json_data = json_data_lst[0],
+                selected_pos = self.best_rd_idx_opt
+            )
+            self.update_reindex_table_header(cur_nod["parent_node_lst"])
+        '''
         except KeyError:
             print("Key Err Catch (clicked_4_navigation) level 1")
             try:
@@ -1060,6 +1074,7 @@ class MainObject(QObject):
             except KeyError:
                 print("Key Err Catch (clicked_4_navigation) level 2")
                 return
+        '''
 
         self.refresh_output()
         self.display()
