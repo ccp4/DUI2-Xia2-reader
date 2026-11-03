@@ -9,6 +9,9 @@ try:
         POSITIONAL_IN, POSITIONAL_OUT
     )
 
+    def spit_out(str_out = " None ", req_obj = None, out_type = None):
+        print(str_out)
+
 except ModuleNotFoundError:
     from dui2.server.xia2_reader.graph_common import (
         reversed_find_str, is_output_key, has_file_extension,
@@ -17,6 +20,9 @@ except ModuleNotFoundError:
         build_reusable_graph_list, is_dials_command, find_work_dirs,
         POSITIONAL_IN, POSITIONAL_OUT
     )
+
+    from dui2.server.data_n_json import spit_out
+
 
 def split_cmd_line(new_cmd_str):
     new_cmd_str = new_cmd_str.strip()
@@ -270,7 +276,7 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
     return list_of_commands, curr_poss
 
 
-def run_predicts_n_reports(all_dat, arg_in):
+def run_predicts_n_reports(all_dat = None, arg_in = None, req_obj = None):
     lst_cmd = all_dat['step_list']
     #print("\n lst_cmd =", lst_cmd, "\n")
     cur_wor_dir = os.getcwd()
@@ -305,8 +311,11 @@ def run_predicts_n_reports(all_dat, arg_in):
         number_str = str(cmd_node['number'])
         output_html_file = "dials.report_n_"+ number_str +".html"
         rep_lst_dat_in.append("output.html=" + output_html_file)
-        #TODO: next line goes to the client side output
-        print("\n running:" + str(rep_lst_dat_in))
+
+        spit_out(
+            str_out = str(rep_lst_dat_in) + "\n",
+            req_obj = req_obj, out_type = 'utf-8'
+        )
 
         new_line = "Generating HTML report"
         #print(new_line)
@@ -360,7 +369,16 @@ def run_predicts_n_reports(all_dat, arg_in):
     return all_dat
 
 
-def get_tree(path_to_xia2_run_dir, bigger_lin_from_dui2):
+def get_tree(
+    path_to_xia2_run_dir = None, bigger_lin_from_dui2 = None, req_obj = None
+):
+
+
+    spit_out(
+        str_out = "   ...   get_tree 1   ...   \n",
+        req_obj = req_obj, out_type = 'utf-8'
+    )
+
     print("path_to_xia2_run_dir =", path_to_xia2_run_dir)
     ended_str = os.sep + "xia2-debug.txt"
     if path_to_xia2_run_dir.endswith(ended_str):
@@ -376,7 +394,19 @@ def get_tree(path_to_xia2_run_dir, bigger_lin_from_dui2):
         bigger_lin_in = bigger_lin_from_dui2 + 1
     )
     all_dat = build_reusable_graph_list(lst_cmd)
-    all_dat = run_predicts_n_reports(all_dat, ended_str)
+    spit_out(
+        str_out = "   ...   get_tree 2   ...   \n",
+        req_obj = req_obj, out_type = 'utf-8'
+    )
+
+    all_dat = run_predicts_n_reports(
+        all_dat = all_dat, arg_in = ended_str, req_obj = req_obj
+    )
+
+    spit_out(
+        str_out = "   ...   get_tree 3   ...   \n",
+        req_obj = req_obj, out_type = 'utf-8'
+    )
 
     return all_dat
 

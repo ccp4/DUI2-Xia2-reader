@@ -171,6 +171,7 @@ def find_if_in_list(inner_command):
 
 
 def add_log_line(new_line, nod_req):
+    #TODO: look if this function is still needed
     Error_Broken_Pipes = 0
     try:
         spit_out(
@@ -487,9 +488,19 @@ class CmdNode(object):
     def run_xia2_read(
         self, req_obj = None, run_xia2_dir_path = None, bigger_lin = None
     ):
-        self.nod_req = req_obj
+        spit_out(
+            str_out = "   ...   run_xia2_read Start \n",
+            req_obj = req_obj, out_type = 'utf-8'
+        )
         return_list = get_tree(
-            run_xia2_dir_path, bigger_lin
+            path_to_xia2_run_dir = run_xia2_dir_path,
+            bigger_lin_from_dui2 = bigger_lin, req_obj = req_obj
+
+        )
+
+        spit_out(
+            str_out = "   ...   run_xia2_read Done \n",
+            req_obj = req_obj, out_type = 'utf-8'
         )
         return return_list
     ############################################################... run_xia2_read ...### end
@@ -767,23 +778,22 @@ class Runner(object):
                     )
 
                     try:
-                        print(
-                            "\n self.bigger_lin(multi_node) =",
-                            self.bigger_lin
-                        )
-
                         spit_out(
                             str_out = "reading xia2_debug ... Start\n",
                             req_obj = req_obj, out_type = 'utf-8'
                         )
 
                         return_list = xia2_node.run_xia2_read(
+                            req_obj = req_obj,
                             run_xia2_dir_path = xia2_debug_dir_path,
                             bigger_lin = xia2_node.number
                         )
 
-                        print("   ...   Done run_xia2_read   ...   \n")
                         self._extend_node_list(return_list)
+                        spit_out(
+                            str_out = "reading xia2_debug extending list \n",
+                            req_obj = req_obj, out_type = 'utf-8'
+                        )
                         # link to the expanded branch only once it exists
                         xia2_node.child_node_lst.append(
                             int(xia2_node.number + 1)

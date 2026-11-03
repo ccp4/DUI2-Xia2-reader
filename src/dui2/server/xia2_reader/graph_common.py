@@ -259,13 +259,14 @@ def full_path_lst(file_lst, cmd_dict):
 
 def print_graph_table(list_of_commands):
     # one row per connection, same format for every input file type
-    fmt_str = "%-5s %-30s %-5s %-30s %s"
     print("\n", "=" * 90)
-    print(fmt_str % ("from", "parent", "to", "child", "via"))
+    print("from", "parent", "to", "child", "via")
     print("-" * 90)
     for cmd_dict in list_of_commands:
         for parent_poss in sorted(cmd_dict['parent_pos_lst']):
             lbl_lst = []
+            FIXME = '''
+            fmt_str = "%-5s %-30s %-5s %-30s %s"
             for label in cmd_dict['files_from_parent_dict'][parent_poss]:
                 lbl_lst.append(short_label(label))
 
@@ -273,6 +274,12 @@ def print_graph_table(list_of_commands):
                 parent_poss, list_of_commands[parent_poss]['exe_cmd'],
                 cmd_dict['curr_poss'], cmd_dict['exe_cmd'],
                 ", ".join(sorted(lbl_lst)),
+            ))
+            '''
+            fmt_str = "%-5s %-30s %-5s %-30s"
+            print(fmt_str % (
+                parent_poss, list_of_commands[parent_poss]['exe_cmd'],
+                cmd_dict['curr_poss'], cmd_dict['exe_cmd']
             ))
 
     print("=" * 90)
