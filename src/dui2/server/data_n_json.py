@@ -66,8 +66,6 @@ from dials.command_line.cosym import phil_scope as phil_scope_cosym
 from dui2.server.img_uploader import flex_arr_2_json
 from dui2.server.init_first import IniData
 
-#from dui2.server.xia2_reader.reading_xia2_debug_d_txt  import get_tree
-
 
 def spit_out(str_out = None, req_obj = None, out_type = None):
     if req_obj is None:

@@ -486,17 +486,25 @@ class CmdNode(object):
         self.status = "Busy"
 
     def run_xia2_read(
-        self, req_obj = None, run_xia2_dir_path = None, bigger_lin = None
+        self, req_obj = None, run_xia2_dir_path = None,
+        bigger_lin = None, run_xia2 = False
     ):
         spit_out(
             str_out = "   ...   run_xia2_read Start \n",
             req_obj = req_obj, out_type = 'utf-8'
         )
-        return_list = get_tree(
-            path_to_xia2_run_dir = run_xia2_dir_path,
-            bigger_lin_from_dui2 = bigger_lin, req_obj = req_obj
 
-        )
+        if run_xia2:
+            return_list = run_n_get_tree(
+                path_to_xia2_run_dir = run_xia2_dir_path,
+                bigger_lin_from_dui2 = bigger_lin
+            )
+
+        else:
+            return_list = get_tree(
+                path_to_xia2_run_dir = run_xia2_dir_path,
+                bigger_lin_from_dui2 = bigger_lin, req_obj = req_obj
+            )
 
         spit_out(
             str_out = "   ...   run_xia2_read Done \n",
@@ -752,6 +760,16 @@ class Runner(object):
                     )
 
                 elif unalias_cmd_lst[0][0] == 'read_xia2_debug':
+                    #FIXME the name of this dui_command should consider both cases
+
+                    run_xia2 = False
+                    for cmd_elem in unalias_cmd_lst:
+                        if(
+                            cmd_elem[0].startswith("run_xia2") and
+                            cmd_elem[0].endswith("True")
+                        ):
+                            run_xia2 = True
+
                     try:
                         req_obj.send_response(201)
                         req_obj.send_header('Content-type', 'text/plain')
@@ -778,15 +796,24 @@ class Runner(object):
                     )
 
                     try:
-                        spit_out(
-                            str_out = "reading xia2_debug ... Start\n",
-                            req_obj = req_obj, out_type = 'utf-8'
-                        )
+
+                        if run_xia2:
+                            spit_out(
+                                str_out = "  ... Runnig Xia2 ...  \n",
+                                req_obj = req_obj, out_type = 'utf-8'
+                            )
+
+                        else:
+                            spit_out(
+                                str_out = "  ... Not runnig Xia2 ...  \n",
+                                req_obj = req_obj, out_type = 'utf-8'
+                            )
 
                         return_list = xia2_node.run_xia2_read(
                             req_obj = req_obj,
                             run_xia2_dir_path = xia2_debug_dir_path,
-                            bigger_lin = xia2_node.number
+                            bigger_lin = xia2_node.number,
+                            run_xia2 = run_xia2
                         )
 
                         self._extend_node_list(return_list)
@@ -823,48 +850,6 @@ class Runner(object):
                         xia2_node.status = "Failed"
                         spit_out(
                             str_out = "FAILED reading xia2_debug",
-                            req_obj = req_obj, out_type = 'utf-8'
-                        )'''
-
-                ###########################################################  xia2_run_timing
-
-                elif unalias_cmd_lst[0][0] == 'xia2_run_timing':
-                    try:
-                        req_obj.send_response(201)
-                        req_obj.send_header('Content-type', 'text/plain')
-                        req_obj.end_headers()
-
-                    except AttributeError:
-                        logging.info(
-                            "Attribute Err catch," +
-                            " not supposed send header info #3"
-                        )
-                    #TODO: This needs to be re-done entirely following the same
-                    #      logic as << read_xia2_debug >>
-                    '''run_xia2_dir_path = unalias_cmd_lst[1][0]
-                    print("run_xia2_dir_path =", run_xia2_dir_path, "\n\n")
-                    spit_out(
-                        str_out = "err.code=0", req_obj = req_obj,
-                        out_type = 'utf-8'
-                    )
-
-                    try:
-                        print("self.bigger_lin(multi_node) =", self.bigger_lin)
-
-                        self.step_list[0].child_node_lst.append(self.bigger_lin + 1)
-                        return_list = run_n_get_tree(
-                            run_xia2_dir_path, self.bigger_lin
-                        )
-                        self._extend_node_list(return_list)
-                        spit_out(
-                            str_out = "running xia2_timimg ... Done",
-                            req_obj = req_obj, out_type = 'utf-8'
-                        )
-
-                    except FileNotFoundError:
-                        print("Not Found Err Catch while running Xia2_timimg")
-                        spit_out(
-                            str_out = "FAILED running xia2_timimg",
                             req_obj = req_obj, out_type = 'utf-8'
                         )'''
 
