@@ -1,6 +1,14 @@
 # pieces shared by the scripts that build the command dependency graph,
 # no matter which file they read (timing_data.json or xia2-debug.txt)
-import os, json
+import os, json, shutil, subprocess
+
+try:
+    from dui2.server.data_n_json import spit_out
+
+except ModuleNotFoundError:
+    def spit_out(str_out = " None ", req_obj = None, out_type = None):
+        print(str_out)
+
 
 # parts of a parameter name (before "=") that mark it as a written file
 # e.g.: output.experiments=..., mtz.hklout=..., json=...
@@ -347,3 +355,96 @@ def build_reusable_graph_list(
     }
     return all_dat
 
+
+
+def run_predicts_n_reports(all_dat = None, arg_in = None, req_obj = None):
+    lst_cmd = all_dat['step_list']
+    #print("\n lst_cmd =", lst_cmd, "\n")
+    cur_wor_dir = os.getcwd()
+    print("\n os.getcwd() =", cur_wor_dir)
+    '''
+    path_to_dir = arg_in[0:-15] + os.sep + "predicts_n_reports"
+    print("path_to_dir =", path_to_dir)
+    '''
+    path_to_dir = "predicts_n_reports"
+    print("path_to_dir =", path_to_dir)
+    #os.mkdir(path_to_dir)
+
+    try:
+        os.mkdir(path_to_dir)
+
+    except FileExistsError:
+        print("NOT creating again: ", path_to_dir)
+
+    os.chdir(path_to_dir)
+
+    new_cur_wor_dir = os.getcwd()
+    print("NEW path_to_dir =", new_cur_wor_dir)
+
+    for cmd_node in lst_cmd:
+        rep_lst_dat_in = ['dials.report']
+        for expt_2_add in cmd_node['_lst_expt_out']:
+            rep_lst_dat_in.append(expt_2_add)
+
+        for refl_2_add in cmd_node['_lst_refl_out']:
+            rep_lst_dat_in.append(refl_2_add)
+
+        number_str = str(cmd_node['number'])
+        output_html_file = "dials.report_n_"+ number_str +".html"
+        rep_lst_dat_in.append("output.html=" + output_html_file)
+
+        spit_out(
+            str_out = str(rep_lst_dat_in) + "\n",
+            req_obj = req_obj, out_type = 'utf-8'
+        )
+
+        new_line = "Generating HTML report"
+        #print(new_line)
+
+        lst_rep_out = []
+        rep_lst_dat_in[0] = str(shutil.which(rep_lst_dat_in[0]))
+        rep_proc = subprocess.Popen(
+            rep_lst_dat_in,
+            shell = False,
+            cwd = new_cur_wor_dir,
+            stdout = subprocess.PIPE,
+            stderr = subprocess.STDOUT,
+            universal_newlines = True
+        )
+        while rep_proc.poll() is None or new_line != '':
+            new_line = rep_proc.stdout.readline()
+            #print(new_line)
+            lst_rep_out.append(new_line)
+
+        #TODO: consider if we need to capture the output for this command
+
+        rep_proc.stdout.close()
+        # in case needed there is the output of the report here:
+        #logging.info("report stdout <<< \n", lst_rep_out, "\n >>>")
+
+        tmp_html_path = new_cur_wor_dir + os.sep + output_html_file
+
+        if os.path.exists(tmp_html_path):
+            lst_rep_out.append("HTML Report ready")
+            cmd_node['_html_rep'] = str(tmp_html_path)
+
+        else:
+            lst_rep_out.append("No need for HTML report in this step")
+
+        tmp_off = '''for line_2_print in lst_rep_out:
+            print(">>> ", line_2_print[:-1])'''
+
+    os.chdir(cur_wor_dir)
+
+    all_dat['step_list'] = lst_cmd
+    print("\n done \n")
+    tmp_off = '''
+    for num, cmd in enumerate(lst_cmd):
+        print(
+            num, " node(number):", cmd['number'], " lst2run:", cmd['lst2run'],
+            " child_node_lst:", cmd['child_node_lst'],
+            " parent_node_lst:", cmd['parent_node_lst'],
+        )
+    '''
+
+    return all_dat

@@ -497,7 +497,7 @@ class CmdNode(object):
         if run_xia2:
             return_list = run_n_get_tree(
                 path_to_xia2_run_dir = run_xia2_dir_path,
-                bigger_lin_from_dui2 = bigger_lin
+                bigger_lin_from_dui2 = bigger_lin, req_obj = req_obj
             )
 
         else:

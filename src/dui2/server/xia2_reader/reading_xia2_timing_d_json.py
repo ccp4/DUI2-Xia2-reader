@@ -5,7 +5,8 @@ try:
     reversed_find_str, is_output_key, has_file_extension,
     is_bravais_setting, find_implicit_parent, find_param_parent,
     print_graph_table, export_reusable_graph_list, is_dials_command,
-    find_work_dirs, build_reusable_graph_list, POSITIONAL_IN, POSITIONAL_OUT,
+    find_work_dirs, build_reusable_graph_list, run_predicts_n_reports,
+    POSITIONAL_IN, POSITIONAL_OUT,
 )
 
 except ModuleNotFoundError:
@@ -13,7 +14,8 @@ except ModuleNotFoundError:
     reversed_find_str, is_output_key, has_file_extension,
     is_bravais_setting, find_implicit_parent, find_param_parent,
     print_graph_table, export_reusable_graph_list, is_dials_command,
-    find_work_dirs, build_reusable_graph_list, POSITIONAL_IN, POSITIONAL_OUT,
+    find_work_dirs, build_reusable_graph_list, run_predicts_n_reports,
+    POSITIONAL_IN, POSITIONAL_OUT,
 )
 
 
@@ -305,7 +307,9 @@ def print_commands(list_of_commands):
             )
 
 
-def run_n_get_tree(path_to_xia2_run_dir, bigger_lin_from_dui2):
+def run_n_get_tree(
+    path_to_xia2_run_dir = None, bigger_lin_from_dui2 = None, req_obj = None
+):
     print("\n path_to_xia2_timing =", path_to_xia2_run_dir)
     ended_str = os.sep + "xia2-timing.json"
     if path_to_xia2_run_dir.endswith(ended_str):
@@ -324,6 +328,11 @@ def run_n_get_tree(path_to_xia2_run_dir, bigger_lin_from_dui2):
         list_of_commands = lst_cmd, bigger_lin_in = bigger_lin_out,
         import_lin = bigger_lin_from_dui2
     )
+
+    dict_w_lst_cmd = run_predicts_n_reports(
+        all_dat = dict_w_lst_cmd, arg_in = ended_str, req_obj = req_obj
+    )
+
     return dict_w_lst_cmd
 
 
