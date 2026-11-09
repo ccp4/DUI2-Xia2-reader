@@ -349,7 +349,7 @@ def main():
             path_in = arg_in, bigger_lin_in = 0
         )
         all_dat = build_reusable_graph_list(lst_cmd)
-        all_dat = run_predicts_n_reports(all_dat, arg_in)
+        all_dat = run_predicts_n_reports(all_dat, arg_in, req_obj = None)
         print_graph_table(list_of_commands = lst_cmd)
 
     export_reusable_graph_list(all_dat)

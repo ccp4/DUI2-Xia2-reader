@@ -1,18 +1,7 @@
 import sys, os, shutil
 
-try:
-    from graph_common import (
-        reversed_find_str, is_output_key, has_file_extension,
-        is_bravais_setting, find_implicit_parent, find_param_parent,
-        print_graph_table, export_reusable_graph_list,
-        build_reusable_graph_list, is_dials_command, find_work_dirs,
-        run_predicts_n_reports, POSITIONAL_IN, POSITIONAL_OUT
-    )
 
-    def spit_out(str_out = " None ", req_obj = None, out_type = None):
-        print(str_out)
-
-except ModuleNotFoundError:
+if __package__:
     from dui2.server.xia2_reader.graph_common import (
         reversed_find_str, is_output_key, has_file_extension,
         is_bravais_setting, find_implicit_parent, find_param_parent,
@@ -22,6 +11,18 @@ except ModuleNotFoundError:
     )
 
     from dui2.server.data_n_json import spit_out
+
+else:
+    from graph_common import (
+        reversed_find_str, is_output_key, has_file_extension,
+        is_bravais_setting, find_implicit_parent, find_param_parent,
+        print_graph_table, export_reusable_graph_list,
+        build_reusable_graph_list, is_dials_command, find_work_dirs,
+        run_predicts_n_reports, POSITIONAL_IN, POSITIONAL_OUT
+    )
+    def spit_out(str_out = " None ", req_obj = None, out_type = None):
+        print(str_out)
+
 
 
 def split_cmd_line(new_cmd_str):
@@ -331,7 +332,7 @@ def main():
             path_in = arg_in, bigger_lin_in = 0
         )
         all_dat = build_reusable_graph_list(lst_cmd)
-        all_dat = run_predicts_n_reports(all_dat, arg_in)
+        all_dat = run_predicts_n_reports(all_dat, arg_in, req_obj = None)
         print_graph_table(list_of_commands = lst_cmd)
 
     export_reusable_graph_list(all_dat)

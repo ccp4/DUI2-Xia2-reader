@@ -2,12 +2,13 @@
 # no matter which file they read (timing_data.json or xia2-debug.txt)
 import os, json, shutil, subprocess
 
-try:
+if __package__:
     from dui2.server.data_n_json import spit_out
 
-except ModuleNotFoundError:
+else:
     def spit_out(str_out = " None ", req_obj = None, out_type = None):
         print(str_out)
+
 
 
 # parts of a parameter name (before "=") that mark it as a written file
