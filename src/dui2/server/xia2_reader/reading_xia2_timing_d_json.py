@@ -341,16 +341,18 @@ def main():
         arg_in = sys.argv[1]
 
     except IndexError:
-        print("\n Enter path of file to read ... /xia2-timing.json \n")
-        lst_cmd = []
+        print("\n Enter path of file to read /FULL/PATH/TO/xia2-debug.txt \n")
+        all_dat = {}
 
     else:
         lst_cmd, bigger_lin_out = get_list_of_commands(
             path_in = arg_in, bigger_lin_in = 0
         )
+        all_dat = build_reusable_graph_list(lst_cmd)
+        all_dat = run_predicts_n_reports(all_dat, arg_in)
         print_graph_table(list_of_commands = lst_cmd)
 
-    export_reusable_graph_list(lst_cmd)
+    export_reusable_graph_list(all_dat)
 
 
 if __name__ == "__main__":
