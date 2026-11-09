@@ -323,7 +323,7 @@ def main():
         arg_in = sys.argv[1]
 
     except IndexError:
-        print("\n Enter path of file to read /FULL/PATH/TO/xia2-debug.txt \n")
+        print("\n Enter path of file to read /FULL/PATH/TO/xia2-timing.json \n")
         all_dat = {}
 
     else:
