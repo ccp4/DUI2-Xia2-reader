@@ -310,11 +310,10 @@ def build_reusable_graph_list(
 
         parent_node_lst = cmd_dict['parent_pos_lst']
 
-        #print("parent_node_lst =", parent_node_lst)
 
         if  parent_node_lst == []:
-            print("adding ref to node [0]")
-            parent_node_lst = [0]
+            parent_node_lst = [bigger_lin - 1]
+            print("parent_node_lst(fixed) =", parent_node_lst)
 
         node = {
             "_base_dir"             :os.getcwd(),

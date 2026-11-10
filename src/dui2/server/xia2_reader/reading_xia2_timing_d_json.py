@@ -302,10 +302,17 @@ def run_n_get_tree(
         path_in = path_to_timing_file,
         bigger_lin_in = bigger_lin_from_dui2 + 1
     )
-    dict_w_lst_cmd = build_reusable_graph_list(
+
+    ############################################################## same 1
+    '''dict_w_lst_cmd = build_reusable_graph_list(
         list_of_commands = lst_cmd, bigger_lin_in = bigger_lin_out,
         import_lin = bigger_lin_from_dui2
-    )
+    )'''
+    ############################################################## same 2
+    dict_w_lst_cmd = build_reusable_graph_list(lst_cmd)
+
+
+
     dict_w_lst_cmd = run_predicts_n_reports(
         all_dat = dict_w_lst_cmd, arg_in = ended_str, req_obj = req_obj
     )
