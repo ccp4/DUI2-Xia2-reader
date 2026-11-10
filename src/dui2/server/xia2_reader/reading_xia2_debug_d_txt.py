@@ -280,13 +280,6 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
 def get_tree(
     path_to_xia2_run_dir = None, bigger_lin_from_dui2 = None, req_obj = None
 ):
-
-
-    spit_out(
-        str_out = "   ...   get_tree 1   ...   \n",
-        req_obj = req_obj, out_type = 'utf-8'
-    )
-
     print("path_to_xia2_run_dir =", path_to_xia2_run_dir)
     ended_str = os.sep + "xia2-debug.txt"
     if path_to_xia2_run_dir.endswith(ended_str):
@@ -302,20 +295,10 @@ def get_tree(
         bigger_lin_in = bigger_lin_from_dui2 + 1
     )
     all_dat = build_reusable_graph_list(lst_cmd)
-    spit_out(
-        str_out = "   ...   get_tree 2   ...   \n",
-        req_obj = req_obj, out_type = 'utf-8'
-    )
 
     all_dat = run_predicts_n_reports(
         all_dat = all_dat, arg_in = ended_str, req_obj = req_obj
     )
-
-    spit_out(
-        str_out = "   ...   get_tree 3   ...   \n",
-        req_obj = req_obj, out_type = 'utf-8'
-    )
-
     return all_dat
 
 
