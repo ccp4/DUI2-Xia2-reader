@@ -310,11 +310,13 @@ def build_reusable_graph_list(
 
         parent_node_lst = cmd_dict['parent_pos_lst']
 
-
         if  parent_node_lst == []:
             parent_node_lst = [bigger_lin - 1]
             print("parent_node_lst(fixed) =", parent_node_lst)
 
+        tun_par_lst = cmd_dict['tuning_params_lst']
+        tun_par_lst = [cmd_dict['exe_cmd']] + tun_par_lst
+        lst2run = [tun_par_lst]
         node = {
             "_base_dir"             :os.getcwd(),
             "cmd_dict_ini"          :{
@@ -322,8 +324,7 @@ def build_reusable_graph_list(
                                         "cmd_lst":[[None]]
                                     },
             "full_cmd_lst"          :cmd_dict['exe_cmd'],
-            "lst2run"               :[[cmd_dict['exe_cmd']]],
-
+            "lst2run"               :lst2run,
             "_lst_expt_in"          :full_path_lst(
                                         cmd_dict['expt_from_prev_lst'], cmd_dict
                                     ),

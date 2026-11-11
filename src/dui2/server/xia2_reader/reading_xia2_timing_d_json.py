@@ -64,6 +64,9 @@ def classify_params(par_lst):
             skip_next = True
 
         elif "=" in single_par:
+
+            print("\n single_par = ", single_par)
+
             key = single_par[0:single_par.find("=")]
             value = single_par[single_par.find("=") + 1:]
             if value == "" or " " in value:
@@ -74,10 +77,12 @@ def classify_params(par_lst):
             if is_output_key(key):
                 # ignore non file outputs like output.project_name=AUTOMATIC
                 if "." in file_name:
+                    print("appending(for_next_lst)", file_name)
                     for_next_lst.append(file_name)
 
             else:
                 from_prev_lst.append(file_name)
+                print("appending(from_prev_lst)", file_name)
 
         else:
             from_prev_lst.append(reversed_find_str(str_in = single_par))
@@ -220,6 +225,7 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
         cmd_dict = {
             'exe_cmd'                   :exe_cmd,
             'par_lst'                   :par_lst,
+            'tuning_params_lst'         :[],
             'from_prev_lst'             :from_prev_lst,
             'for_next_lst'              :for_next_lst,
             'expt_from_prev_lst'        :expt_from_prev_lst,
@@ -281,6 +287,9 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
 
         for file_name in curr_dict['for_next_lst']:
             producer_of[file_name] = curr_dict['curr_poss']
+
+
+    print("\n producer_of =", producer_of)
 
     return list_of_commands, curr_poss
 
