@@ -6,7 +6,7 @@ try:
     is_bravais_setting, find_implicit_parent, find_param_parent,
     print_graph_table, export_reusable_graph_list, is_dials_command,
     find_work_dirs, build_reusable_graph_list, run_predicts_n_reports,
-    POSITIONAL_IN, POSITIONAL_OUT,
+    to_dui2_tree, POSITIONAL_IN, POSITIONAL_OUT,
 )
 
 except ModuleNotFoundError:
@@ -15,7 +15,7 @@ except ModuleNotFoundError:
     is_bravais_setting, find_implicit_parent, find_param_parent,
     print_graph_table, export_reusable_graph_list, is_dials_command,
     find_work_dirs, build_reusable_graph_list, run_predicts_n_reports,
-    POSITIONAL_IN, POSITIONAL_OUT,
+    to_dui2_tree, POSITIONAL_IN, POSITIONAL_OUT,
 )
 
 
@@ -291,6 +291,7 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
 
     print("\n producer_of =", producer_of)
 
+    to_dui2_tree(list_of_commands, root_poss = bigger_lin_in - 1)
     return list_of_commands, curr_poss
 
 

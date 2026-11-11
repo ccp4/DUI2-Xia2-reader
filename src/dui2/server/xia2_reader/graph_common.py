@@ -240,6 +240,122 @@ def fill_missing_work_dirs(list_of_commands, common_dir):
             cmd_dict['work_dir'] = extra_dir_left + "/scale/"
 
 
+# DUI2 grows its tree one step after another: a new node continues from the
+# node it was launched from and inherits from it (and, through it, from all
+# older nodes) every file it does not write itself, see CmdNode.__init__ and
+# CmdNode.set_exe_files_out in multi_node.py, so in DUI2:
+#  - a branch only splits on dials.split_experiments
+#  - branches only join on a command that reads from more than one branch
+#    (dials.combine_experiments in DUI2, multi sweep symmetry/scale in xia2)
+# the parents found through files are not like that, e.g.: dials.index reads
+# imported.expt (from dials.import) and strong.refl (from dials.find_spots)
+# which looks like a split after dials.import that joins again on dials.index
+#
+# to_dui2_tree turns the file connections into "lanes": a lane is a chain of
+# commands where each command is the child of the previous command in the
+# same lane, no matter which of the older commands wrote the files it reads
+
+SPLIT_COMMANDS = ["dials.split_experiments"]
+
+
+def file_stem(label):
+    # "output.experiments=/a/b/split_3.expt" -> "split_3"
+    file_name = reversed_find_str(str_in = label)
+    if "." in file_name:
+        file_name = file_name[0:file_name.rfind(".")]
+
+    return file_name
+
+
+def to_dui2_tree(list_of_commands, root_poss):
+    # must run after the file connections (parent_pos_lst and
+    # files_from_parent_dict) are set, it replaces 'parent_pos_lst' and
+    # 'chidren_pos_lst', the file connections stay in 'file_parent_pos_lst'
+    lane_root = {}          # lane -> lane it was merged into (union-find)
+    lane_tail = {}          # lane -> curr_poss of the last command in it
+    lane_of_cmd = {}        # curr_poss -> lane of that command
+    split_lane = {}         # (split curr_poss, file stem) -> lane
+    split_poss_set = set()
+
+    def find_lane(lane):
+        while lane_root[lane] != lane:
+            lane = lane_root[lane]
+
+        return lane
+
+    def new_lane(tail_poss):
+        lane = len(lane_root)
+        lane_root[lane] = lane
+        lane_tail[lane] = tail_poss
+        return lane
+
+    prev_lane = None
+    for cmd_dict in list_of_commands:
+        cmd_dict['file_parent_pos_lst'] = list(cmd_dict['parent_pos_lst'])
+
+        # lanes this command reads from
+        in_lane_lst = []
+        for parent_poss in cmd_dict['file_parent_pos_lst']:
+            if parent_poss not in lane_of_cmd:
+                continue
+
+            if parent_poss in split_poss_set:
+                # every output of a split starts a lane of its own
+                lane_lst = []
+                for label in cmd_dict['files_from_parent_dict'][parent_poss]:
+                    key = (parent_poss, file_stem(label))
+                    if key not in split_lane:
+                        split_lane[key] = new_lane(parent_poss)
+
+                    lane_lst.append(split_lane[key])
+
+            else:
+                lane_lst = [lane_of_cmd[parent_poss]]
+
+            for lane in lane_lst:
+                lane = find_lane(lane)
+                if lane not in in_lane_lst:
+                    in_lane_lst.append(lane)
+
+        if in_lane_lst == []:
+            if cmd_dict['exe_cmd'] == "dials.import" or prev_lane is None:
+                # a new sweep, hangs from the node that imported xia2
+                in_lane_lst = [new_lane(root_poss)]
+
+            else:
+                # nothing read from older commands, carry on like DUI2
+                in_lane_lst = [find_lane(prev_lane)]
+
+        parent_pos_lst = []
+        for lane in in_lane_lst:
+            if lane_tail[lane] not in parent_pos_lst:
+                parent_pos_lst.append(lane_tail[lane])
+
+        # reading from more than one lane joins them into the first one
+        curr_lane = in_lane_lst[0]
+        for lane in in_lane_lst[1:]:
+            lane_root[lane] = curr_lane
+
+        cmd_dict['parent_pos_lst'] = parent_pos_lst
+        lane_tail[curr_lane] = cmd_dict['curr_poss']
+        lane_of_cmd[cmd_dict['curr_poss']] = curr_lane
+        prev_lane = curr_lane
+        if cmd_dict['exe_cmd'] in SPLIT_COMMANDS:
+            split_poss_set.add(cmd_dict['curr_poss'])
+
+    cmd_by_poss = {}
+    for cmd_dict in list_of_commands:
+        cmd_dict['chidren_pos_lst'] = []
+        cmd_by_poss[cmd_dict['curr_poss']] = cmd_dict
+
+    for cmd_dict in list_of_commands:
+        for parent_poss in cmd_dict['parent_pos_lst']:
+            if parent_poss in cmd_by_poss:
+                cmd_by_poss[parent_poss]['chidren_pos_lst'].append(
+                    cmd_dict['curr_poss']
+                )
+
+
 def full_path_lst(file_lst, cmd_dict):
     # file names (no path) of a command -> the same files with full path,
     # as written in the command if it was there, otherwise in 'work_dir',
@@ -314,6 +430,18 @@ def build_reusable_graph_list(
             parent_node_lst = [bigger_lin - 1]
             print("parent_node_lst(fixed) =", parent_node_lst)
 
+        lst_expt_in = full_path_lst(cmd_dict['expt_from_prev_lst'], cmd_dict)
+        lst_refl_in = full_path_lst(cmd_dict['refl_from_prev_lst'], cmd_dict)
+        lst_expt_out = full_path_lst(cmd_dict['expt_for_next_lst'], cmd_dict)
+        lst_refl_out = full_path_lst(cmd_dict['refl_for_next_lst'], cmd_dict)
+        # like CmdNode.set_exe_files_out, a step that writes no .expt/.refl
+        # hands on what it read, so a DUI2 step launched from it gets files
+        if lst_expt_out == []:
+            lst_expt_out = list(lst_expt_in)
+
+        if lst_refl_out == []:
+            lst_refl_out = list(lst_refl_in)
+
         tun_par_lst = cmd_dict['tuning_params_lst']
         tun_par_lst = [cmd_dict['exe_cmd']] + tun_par_lst
         lst2run = [tun_par_lst]
@@ -325,18 +453,10 @@ def build_reusable_graph_list(
                                     },
             "full_cmd_lst"          :cmd_dict['exe_cmd'],
             "lst2run"               :lst2run,
-            "_lst_expt_in"          :full_path_lst(
-                                        cmd_dict['expt_from_prev_lst'], cmd_dict
-                                    ),
-            "_lst_refl_in"          :full_path_lst(
-                                        cmd_dict['refl_from_prev_lst'], cmd_dict
-                                    ),
-            "_lst_expt_out"         :full_path_lst(
-                                        cmd_dict['expt_for_next_lst'], cmd_dict
-                                    ),
-            "_lst_refl_out"         :full_path_lst(
-                                        cmd_dict['refl_for_next_lst'], cmd_dict
-                                    ),
+            "_lst_expt_in"          :lst_expt_in,
+            "_lst_refl_in"          :lst_refl_in,
+            "_lst_expt_out"         :lst_expt_out,
+            "_lst_refl_out"         :lst_refl_out,
             "_run_dir"              :cmd_dict['work_dir'],
 
             "_html_rep"             :None,

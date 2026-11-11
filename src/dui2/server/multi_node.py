@@ -821,10 +821,13 @@ class Runner(object):
                             str_out = "reading xia2_debug extending list \n",
                             req_obj = req_obj, out_type = 'utf-8'
                         )
-                        # link to the expanded branch only once it exists
-                        xia2_node.child_node_lst.append(
-                            int(xia2_node.number + 1)
-                        )
+                        # link to the expanded branch only once it exists,
+                        # one child per sweep (each dials.import hangs here)
+                        for uni_dic in return_list["step_list"]:
+                            if xia2_node.number in uni_dic["parent_node_lst"]:
+                                xia2_node.child_node_lst.append(
+                                    int(uni_dic["number"])
+                                )
                         xia2_node.status = "Succeeded"
                         spit_out(
                             str_out = "reading xia2_debug ... Done\n",

@@ -7,7 +7,7 @@ if __package__:
         is_bravais_setting, find_implicit_parent, find_param_parent,
         print_graph_table, export_reusable_graph_list,
         build_reusable_graph_list, is_dials_command, find_work_dirs,
-        run_predicts_n_reports, POSITIONAL_IN, POSITIONAL_OUT
+        run_predicts_n_reports, to_dui2_tree, POSITIONAL_IN, POSITIONAL_OUT
     )
 
     from dui2.server.data_n_json import spit_out
@@ -18,7 +18,7 @@ else:
         is_bravais_setting, find_implicit_parent, find_param_parent,
         print_graph_table, export_reusable_graph_list,
         build_reusable_graph_list, is_dials_command, find_work_dirs,
-        run_predicts_n_reports, POSITIONAL_IN, POSITIONAL_OUT
+        run_predicts_n_reports, to_dui2_tree, POSITIONAL_IN, POSITIONAL_OUT
     )
     def spit_out(str_out = " None ", req_obj = None, out_type = None):
         print(str_out)
@@ -273,7 +273,7 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
         ):
             producer_of[file_name] = curr_dict['curr_poss']
 
-    list_of_commands[0]['parent_pos_lst'] = [bigger_lin_in - 1]
+    to_dui2_tree(list_of_commands, root_poss = bigger_lin_in - 1)
     return list_of_commands, curr_poss
 
 
