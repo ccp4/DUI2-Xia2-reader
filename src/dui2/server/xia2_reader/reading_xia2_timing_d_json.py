@@ -42,9 +42,11 @@ def split_cmd_line(cmd_str):
 
 
 def classify_params(par_lst):
-    # returns file names (no path) of possible inputs and of written outputs
+    # returns file names (no path) of possible inputs and of written outputs,
+    # plus the remaining parameters (as given) in tuning_params_lst
     from_prev_lst = []
     for_next_lst = []
+    tuning_params_lst = []
     skip_next = False
     for pos, single_par in enumerate(par_lst):
         if skip_next:
@@ -64,30 +66,33 @@ def classify_params(par_lst):
             skip_next = True
 
         elif "=" in single_par:
-
-            print("\n single_par = ", single_par)
-
             key = single_par[0:single_par.find("=")]
             value = single_par[single_par.find("=") + 1:]
             if value == "" or " " in value:
                 # not a file, e.g.: dispersion.kernel_size=3 3
+                tuning_params_lst.append(single_par)
                 continue
 
             file_name = reversed_find_str(str_in = value, lst_sep_lst = [os.sep])
-            if is_output_key(key):
-                # ignore non file outputs like output.project_name=AUTOMATIC
-                if "." in file_name:
-                    print("appending(for_next_lst)", file_name)
-                    for_next_lst.append(file_name)
+            if is_output_key(key) and "." in file_name:
+                for_next_lst.append(file_name)
+
+            elif not is_output_key(key) and (
+                "input" in key or has_file_extension(file_name)
+            ):
+                from_prev_lst.append(file_name)
 
             else:
-                from_prev_lst.append(file_name)
-                print("appending(from_prev_lst)", file_name)
+                # values, and non file outputs like output.project_name=...
+                tuning_params_lst.append(single_par)
 
-        else:
+        elif has_file_extension(reversed_find_str(str_in = single_par)):
             from_prev_lst.append(reversed_find_str(str_in = single_par))
 
-    return from_prev_lst, for_next_lst
+        else:
+            tuning_params_lst.append(single_par)
+
+    return from_prev_lst, for_next_lst, tuning_params_lst
 
 
 def find_expt_n_refl(file_lst):
@@ -219,13 +224,15 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
         if not is_dials_command(exe_cmd) or exe_cmd == 'dials.report':
             continue
 
-        from_prev_lst, for_next_lst = classify_params(par_lst)
+        (
+            from_prev_lst, for_next_lst, tuning_params_lst
+        ) = classify_params(par_lst)
         expt_from_prev_lst, refl_from_prev_lst = find_expt_n_refl(from_prev_lst)
         expt_for_next_lst, refl_for_next_lst = find_expt_n_refl(for_next_lst)
         cmd_dict = {
             'exe_cmd'                   :exe_cmd,
             'par_lst'                   :par_lst,
-            'tuning_params_lst'         :[],
+            'tuning_params_lst'         :tuning_params_lst,
             'from_prev_lst'             :from_prev_lst,
             'for_next_lst'              :for_next_lst,
             'expt_from_prev_lst'        :expt_from_prev_lst,
@@ -271,7 +278,7 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
             elif has_file_extension(file_name):
                 curr_dict['external_files_lst'].append(file_name)
 
-        for single_par in curr_dict['par_lst']:
+        for single_par in curr_dict['tuning_params_lst']:
             parent_poss = find_param_parent(
                 single_par, list_of_commands[0:cur_num]
             )
