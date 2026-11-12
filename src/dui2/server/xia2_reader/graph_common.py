@@ -7,7 +7,7 @@ if __package__:
 
 else:
     def spit_out(str_out = " None ", req_obj = None, out_type = None):
-        print(str_out)
+        print(str_out, end = "")
 
 
 
@@ -400,31 +400,67 @@ def build_reusable_graph_list(
 
 
 
+def send_line(new_line, req_obj):
+    # like add_log_line in multi_node, returns 1 when the client is gone
+    try:
+        spit_out(str_out = new_line, req_obj = req_obj, out_type = 'utf-8')
+
+    except BrokenPipeError:
+        return 1
+
+    return 0
+
+
+def run_n_spit_out(lst_dat_in, run_dir, req_obj):
+    # runs one command in run_dir, sending each line it prints as it comes,
+    # returns the number of lines that could not be sent (BrokenPipe)
+    n_broken_pipes = 0
+    exe_path = shutil.which(lst_dat_in[0])
+    if exe_path is None:
+        new_line = "command not found: " + str(lst_dat_in[0]) + "\n"
+        return send_line(new_line, req_obj)
+
+    lst_dat_in[0] = str(exe_path)
+    run_proc = subprocess.Popen(
+        lst_dat_in,
+        shell = False,
+        cwd = run_dir,
+        stdout = subprocess.PIPE,
+        stderr = subprocess.STDOUT,
+        universal_newlines = True
+    )
+    new_line = None
+    while run_proc.poll() is None or new_line != '':
+        new_line = run_proc.stdout.readline()
+        if new_line != '':
+            n_broken_pipes += send_line(new_line, req_obj)
+
+    run_proc.stdout.close()
+    return n_broken_pipes
+
+
 def run_predicts_n_reports(all_dat = None, arg_in = None, req_obj = None):
     lst_cmd = all_dat['step_list']
-    #print("\n lst_cmd =", lst_cmd, "\n")
-    cur_wor_dir = os.getcwd()
-    print("\n os.getcwd() =", cur_wor_dir)
-    '''
-    path_to_dir = arg_in[0:-15] + os.sep + "predicts_n_reports"
+    # every report and prediction goes in the same dir, with the node number
+    # in the file name, the commands run there (cwd) without os.chdir
+    path_to_dir = os.path.abspath("predicts_n_reports")
     print("path_to_dir =", path_to_dir)
-    '''
-    path_to_dir = "predicts_n_reports"
-    print("path_to_dir =", path_to_dir)
-    #os.mkdir(path_to_dir)
-
     try:
         os.mkdir(path_to_dir)
 
     except FileExistsError:
         print("NOT creating again: ", path_to_dir)
 
-    os.chdir(path_to_dir)
-
-    new_cur_wor_dir = os.getcwd()
-    print("NEW path_to_dir =", new_cur_wor_dir)
-
+    n_broken_pipes = 0
     for cmd_node in lst_cmd:
+        number_str = str(cmd_node['number'])
+        new_line = (
+            "HTML Report + Reflection Prediction (node " + number_str +
+            ") ... START\n"
+        )
+        n_broken_pipes += send_line(new_line, req_obj)
+
+        # running HTML report generation
         rep_lst_dat_in = ['dials.report']
         for expt_2_add in cmd_node['_lst_expt_out']:
             rep_lst_dat_in.append(expt_2_add)
@@ -432,62 +468,58 @@ def run_predicts_n_reports(all_dat = None, arg_in = None, req_obj = None):
         for refl_2_add in cmd_node['_lst_refl_out']:
             rep_lst_dat_in.append(refl_2_add)
 
-        number_str = str(cmd_node['number'])
-        output_html_file = "dials.report_n_"+ number_str +".html"
+        output_html_file = "dials.report_n_" + number_str + ".html"
         rep_lst_dat_in.append("output.html=" + output_html_file)
+        n_broken_pipes += send_line(str(rep_lst_dat_in) + "\n", req_obj)
+        n_broken_pipes += run_n_spit_out(rep_lst_dat_in, path_to_dir, req_obj)
 
-        spit_out(
-            str_out = str(rep_lst_dat_in) + "\n",
-            req_obj = req_obj, out_type = 'utf-8'
-        )
-
-        new_line = "Generating HTML report"
-        #print(new_line)
-
-        lst_rep_out = []
-        rep_lst_dat_in[0] = str(shutil.which(rep_lst_dat_in[0]))
-        rep_proc = subprocess.Popen(
-            rep_lst_dat_in,
-            shell = False,
-            cwd = new_cur_wor_dir,
-            stdout = subprocess.PIPE,
-            stderr = subprocess.STDOUT,
-            universal_newlines = True
-        )
-        while rep_proc.poll() is None or new_line != '':
-            new_line = rep_proc.stdout.readline()
-            #print(new_line)
-            lst_rep_out.append(new_line)
-
-        #TODO: consider if we need to capture the output for this command
-
-        rep_proc.stdout.close()
-        # in case needed there is the output of the report here:
-        #logging.info("report stdout <<< \n", lst_rep_out, "\n >>>")
-
-        tmp_html_path = new_cur_wor_dir + os.sep + output_html_file
-
+        tmp_html_path = path_to_dir + os.sep + output_html_file
         if os.path.exists(tmp_html_path):
-            lst_rep_out.append("HTML Report ready")
             cmd_node['_html_rep'] = str(tmp_html_path)
+            new_line = "HTML Report ready\n"
 
         else:
-            lst_rep_out.append("No need for HTML report in this step")
+            new_line = "No need for HTML report in this step\n"
 
-        tmp_off = '''for line_2_print in lst_rep_out:
-            print(">>> ", line_2_print[:-1])'''
+        n_broken_pipes += send_line(new_line, req_obj)
 
-    os.chdir(cur_wor_dir)
+        # running prediction generation, like CmdNode.generate_predict_n_report
+        # but with the node number in the output name (all share one dir)
+        if cmd_node['_lst_expt_out'] == []:
+            new_line = "No experiments, no Reflection Prediction here\n"
+            n_broken_pipes += send_line(new_line, req_obj)
+
+        else:
+            pred_lst_dat_in = ['dials.predict']
+            for expt_2_add in cmd_node['_lst_expt_out']:
+                pred_lst_dat_in.append(expt_2_add)
+
+            output_pred_file = "predicted_n_" + number_str + ".refl"
+            pred_lst_dat_in.append("output=" + output_pred_file)
+            n_broken_pipes += send_line(str(pred_lst_dat_in) + "\n", req_obj)
+            n_broken_pipes += run_n_spit_out(
+                pred_lst_dat_in, path_to_dir, req_obj
+            )
+
+            tmp_predic_path = path_to_dir + os.sep + output_pred_file
+            if os.path.exists(tmp_predic_path):
+                cmd_node['_predic_refl'] = str(tmp_predic_path)
+                new_line = "Reflection Prediction ready\n"
+
+            else:
+                new_line = "No need for Reflection Prediction in this step\n"
+
+            n_broken_pipes += send_line(new_line, req_obj)
+
+        new_line = (
+            "HTML Report + Reflection Prediction (node " + number_str +
+            ") ... END\n"
+        )
+        n_broken_pipes += send_line(new_line, req_obj)
+
+    if n_broken_pipes > 0:
+        print("<< BrokenPipe err catch >> while sending output")
 
     all_dat['step_list'] = lst_cmd
     print("\n done \n")
-    tmp_off = '''
-    for num, cmd in enumerate(lst_cmd):
-        print(
-            num, " node(number):", cmd['number'], " lst2run:", cmd['lst2run'],
-            " child_node_lst:", cmd['child_node_lst'],
-            " parent_node_lst:", cmd['parent_node_lst'],
-        )
-    '''
-
     return all_dat
