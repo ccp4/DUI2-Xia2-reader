@@ -34,7 +34,6 @@ def check_if_predict_n_report(str_key):
     if str_key in [
         "refine_bravais_settings",
         "generate_mask",
-        "apply_mask",
         "export",
     ]:
         return False
@@ -54,7 +53,7 @@ widgets_defs = {
         "icon"          : "resources/import.png",
         "main_cmd"      :["dials.import"],
         "nxt_widg_lst"  :[
-            "find_spots", "apply_mask", "split_experiments",
+            "find_spots", "generate_mask", "split_experiments",
             "combine_experiments"
         ]
     },
@@ -64,15 +63,15 @@ widgets_defs = {
         "icon"          : "resources/import.png",
         "main_cmd"      :["xia2_import"],
         "nxt_widg_lst"  :[
-            "find_spots", "apply_mask", "split_experiments",
+            "find_spots", "generate_mask", "split_experiments",
             "combine_experiments"
         ]
     },
 
-    "apply_mask" : {
-        "tooltip"       : "dials.generate_mask && dials.apply_mask ...",
+    "generate_mask" : {
+        "tooltip"       : "dials.generate_mask ",
         "icon"          : "resources/mask.png",
-        "main_cmd"      :['dials.generate_mask','dials.apply_mask'],
+        "main_cmd"      :['dials.generate_mask'],
         "nxt_widg_lst"  :["find_spots"]
     },
     "find_spots" : {
@@ -233,7 +232,7 @@ widgets_defs = {
         "icon"              : "resources/split.png",
         "main_cmd"          :["dials.split_experiments"],
         "nxt_widg_lst"      :[
-            "find_spots", "apply_mask", "refine", "integrate", "export",
+            "find_spots", "generate_mask", "refine", "integrate", "export",
             "merge", "combine_experiments","optional"
         ]
     },

@@ -665,7 +665,6 @@ class HelpRequest(QThread):
         self.lst_cmd = [
             "import",
             "generate_mask",
-            "apply_mask",
             "find_spots",
             "filter_reflections",
             "find_rotation_axis",

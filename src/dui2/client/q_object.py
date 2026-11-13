@@ -480,9 +480,9 @@ class MainObject(QObject):
         self.param_widgets["filter_reflections"]["advanced"] = None
         self.param_widgets["filter_reflections"]["main_page"] = self.window.FilterPage
 
-        self.param_widgets["apply_mask"]["simple"] = self.mask_widg
-        self.param_widgets["apply_mask"]["advanced"] = None
-        self.param_widgets["apply_mask"]["main_page"] = self.window.MaskPage
+        self.param_widgets["generate_mask"]["simple"] = self.mask_widg
+        self.param_widgets["generate_mask"]["advanced"] = None
+        self.param_widgets["generate_mask"]["main_page"] = self.window.MaskPage
 
         self.param_widgets["index"]["simple"] = index_simpl_widg
         self.param_widgets["index"]["advanced"] = id_advanced_parameters

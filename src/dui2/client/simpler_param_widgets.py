@@ -933,11 +933,19 @@ class MaskWidget(QWidget):
 
     def build_full_list(self):
         first_list = list(self.comp_list)
-        first_list.append(["output.mask", "tmp_mask.pickle"])
+        first_list.append(
+            ["output.mask", "tmp_mask.pickle"]
+        )
+
+        first_list.append(
+            ["output.experiments", "masked.expt"]
+        )
         full_list = [
             first_list,
             [
-                ["input.mask", "tmp_mask.pickle"]
+                [
+                    "input.mask", "tmp_mask.pickle"
+                ]
             ]
         ]
         return full_list

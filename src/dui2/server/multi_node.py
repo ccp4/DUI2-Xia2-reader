@@ -80,7 +80,6 @@ def get_pair_list():
         ("cep",     "combine_experiments_params"            ),
         ("ip",      "dials.import"                          ),
         ("gm",      "dials.generate_mask"                   ),
-        ("am",      "dials.apply_mask"                      ),
         ("fd",      "dials.find_spots"                      ),
         ("fl",      "dials.filter_reflections"              ),
         ("fr",      "dials.find_rotation_axis"              ),
@@ -916,20 +915,23 @@ class Runner(object):
                 elif unalias_cmd_lst[0][0] == 'mask_app':
                     untrusted_list = unalias_cmd_lst[0][1:]
                     phil_file_name = self.mask_app_build(untrusted_list)
+
+                    print("\n\n here before run_dials_command")
+
                     self.run_dials_command(
                         cmd_dict = {
                             'nod_lst': cmd_dict["nod_lst"], 'cmd_lst': [
                                 [
                                     'dials.generate_mask',
-                                    '..'+ os.sep + phil_file_name
-                                ],
-                                [
-                                    'dials.apply_mask',
-                                    'input.mask=tmp_mask.pickle'
+                                    '..'+ os.sep + phil_file_name,
+                                    'output.experiments=masked.expt'
                                 ]
                             ]
                         }, req_obj = req_obj
                     )
+
+                    print("here after run_dials_command \n\n")
+
 
                 elif unalias_cmd_lst == [["stop"]]:
                     for lin2go in cmd_dict["nod_lst"]:
