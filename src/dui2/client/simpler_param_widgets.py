@@ -940,14 +940,8 @@ class MaskWidget(QWidget):
         first_list.append(
             ["output.experiments", "masked.expt"]
         )
-        full_list = [
-            first_list,
-            [
-                [
-                    "input.mask", "tmp_mask.pickle"
-                ]
-            ]
-        ]
+
+        full_list = [first_list]
         return full_list
 
     def comp_list_update(self):
