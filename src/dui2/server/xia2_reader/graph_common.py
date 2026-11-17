@@ -93,14 +93,118 @@ def bravais_solution_num(file_lst):
     return None
 
 
-def build_cmd_dict_ini(cmd_dict, parent_node_lst):
+# xia2 (Experts/LatticeExpert.py) gives dials.reindex "space_group=<number>",
+# the lowest symmetry space group of the chosen lattice
+SPACEGROUP_TO_LATTICE = {
+    "1": "aP", "3": "mP", "5": "mC", "16": "oP", "20": "oC", "22": "oF",
+    "23": "oI", "75": "tP", "79": "tI", "143": "hP", "146": "hR",
+    "195": "cP", "196": "cF", "197": "cI",
+}
+
+
+def get_program_name(exe_cmd):
+    return reversed_find_str(str_in = exe_cmd, lst_sep_lst = [os.sep])
+
+
+def get_param_value(par_lst, key):
+    # "key=value" in par_lst -> "value", None when the key is not there
+    for single_par in par_lst:
+        if single_par.startswith(key + "="):
+            return single_par[len(key) + 1:].strip()
+
+    return None
+
+
+def solution_from_bravais_summary(cmd_dict, prev_cmd_lst):
+    # xia2 (Modules/Indexer/DialsIndexer.py) does NOT give the chosen
+    # bravais_setting_N.expt to dials.reindex, it loads that file itself and
+    # reindexes only the reflections with:
+    #   change_of_basis_op=<cb_op of N>  space_group=<number of N's lattice>
+    # so, like DUI2 does (solution number -> cb_op), but the other way,
+    # N is the entry of bravais_summary.json with that cb_op and lattice
+    cb_op = get_param_value(cmd_dict["par_lst"], "change_of_basis_op")
+    if cb_op is None:
+        return None
+
+    rbs_dict = None
+    for prev_dict in reversed(prev_cmd_lst):
+        if get_program_name(prev_dict["exe_cmd"]) == (
+            "dials.refine_bravais_settings"
+        ):
+            rbs_dict = prev_dict
+            break
+
+    if rbs_dict is None:
+        return None
+
+    # xia2 runs dials.refine_bravais_settings and this dials.reindex
+    # in the same directory
+    work_dir = rbs_dict["work_dir"]
+    if work_dir is None:
+        work_dir = cmd_dict["work_dir"]
+
+    if work_dir is None:
+        return None
+
+    try:
+        with open(os.path.join(work_dir, "bravais_summary.json")) as fp:
+            summary_dict = json.load(fp)
+
+    except (OSError, ValueError):
+        return None
+
+    lattice = SPACEGROUP_TO_LATTICE.get(
+        get_param_value(cmd_dict["par_lst"], "space_group")
+    )
+    found_lst = []
+    for sol_num, sol_dict in summary_dict.items():
+        if str(sol_dict.get("cb_op")).replace(" ", "") != cb_op.replace(" ", ""):
+            continue
+
+        if lattice is not None and sol_dict.get("bravais") != lattice:
+            continue
+
+        found_lst.append(sol_num)
+
+    if len(found_lst) == 1:
+        return str(int(found_lst[0]))
+
+    return None
+
+
+def solution_from_next_cmd(cmd_dict, next_cmd_lst):
+    # the bravais_setting_N.expt that xia2 loaded travels to the next
+    # command (e.g.: dials.refine) together with the reindexed reflections
+    for next_dict in next_cmd_lst:
+        if any(
+            refl_name in next_dict["refl_from_prev_lst"]
+            for refl_name in cmd_dict["refl_for_next_lst"]
+        ):
+            sol_set = set()
+            for file_str in next_dict["expt_from_prev_lst"]:
+                sol_num = bravais_solution_num([file_str])
+                if sol_num is not None:
+                    sol_set.add(sol_num)
+
+            if len(sol_set) == 1:
+                return sol_set.pop()
+
+            return None
+
+    return None
+
+
+def build_cmd_dict_ini(cmd_dict, parent_node_lst, prev_cmd_lst, next_cmd_lst):
     # the request DUI2 would have sent to run the same step,
     # e.g.: {"nod_lst": [4], "cmd_lst": [["dials.reindex", "3"]]}
-    program_name = reversed_find_str(
-        str_in = cmd_dict["exe_cmd"], lst_sep_lst = [os.sep]
-    )
-    if program_name == "dials.reindex":
+    if get_program_name(cmd_dict["exe_cmd"]) == "dials.reindex":
         sol_num = bravais_solution_num(cmd_dict["expt_from_prev_lst"])
+        if sol_num is None:
+            sol_num = solution_from_bravais_summary(cmd_dict, prev_cmd_lst)
+
+        if sol_num is None:
+            sol_num = solution_from_next_cmd(cmd_dict, next_cmd_lst)
+
         if sol_num is not None:
             return {
                 "nod_lst":list(parent_node_lst),
@@ -373,7 +477,7 @@ def build_reusable_graph_list(
 ):
     lst_nod = []
     bigger_lin = bigger_lin_in
-    for cmd_dict in list_of_commands:
+    for cmd_num, cmd_dict in enumerate(list_of_commands):
         if bigger_lin < cmd_dict["curr_poss"]:
             bigger_lin = cmd_dict["curr_poss"]
 
@@ -401,7 +505,9 @@ def build_reusable_graph_list(
         node = {
             "_base_dir"             :os.getcwd(),
             "cmd_dict_ini"          :build_cmd_dict_ini(
-                                        cmd_dict, parent_node_lst
+                                        cmd_dict, parent_node_lst,
+                                        list_of_commands[0:cmd_num],
+                                        list_of_commands[cmd_num + 1:]
                                     ),
             "full_cmd_lst"          :cmd_dict["exe_cmd"],
             "lst2run"               :lst2run,
