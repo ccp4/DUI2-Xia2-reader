@@ -79,6 +79,37 @@ def is_bravais_setting(file_name):
     return file_name[len(prefix):-len(suffix)].isdecimal()
 
 
+def bravais_solution_num(file_lst):
+    # DUI2 (CmdNode.set_in_fil_n_par) goes from the solution number
+    # (position in the reindex table) to the file: 3 -> bravais_setting_3.expt
+    # here it goes the other way: bravais_setting_3.expt -> "3",
+    # None when no bravais_setting_N.expt is in the list
+    prefix, suffix = "bravais_setting_", ".expt"
+    for file_str in file_lst:
+        file_name = reversed_find_str(str_in = file_str)
+        if is_bravais_setting(file_name):
+            return str(int(file_name[len(prefix):-len(suffix)]))
+
+    return None
+
+
+def build_cmd_dict_ini(cmd_dict, parent_node_lst):
+    # the request DUI2 would have sent to run the same step,
+    # e.g.: {"nod_lst": [4], "cmd_lst": [["dials.reindex", "3"]]}
+    program_name = reversed_find_str(
+        str_in = cmd_dict["exe_cmd"], lst_sep_lst = [os.sep]
+    )
+    if program_name == "dials.reindex":
+        sol_num = bravais_solution_num(cmd_dict["expt_from_prev_lst"])
+        if sol_num is not None:
+            return {
+                "nod_lst":list(parent_node_lst),
+                "cmd_lst":[["dials.reindex", sol_num]]
+            }
+
+    return {"nod_lst":[None], "cmd_lst":[[None]]}
+
+
 def is_bravais_summary(file_name):
     return file_name == "bravais_summary.json"
 
@@ -369,10 +400,9 @@ def build_reusable_graph_list(
         lst2run = [tun_par_lst]
         node = {
             "_base_dir"             :os.getcwd(),
-            "cmd_dict_ini"          :{
-                                        "nod_lst":[None],
-                                        "cmd_lst":[[None]]
-                                    },
+            "cmd_dict_ini"          :build_cmd_dict_ini(
+                                        cmd_dict, parent_node_lst
+                                    ),
             "full_cmd_lst"          :cmd_dict["exe_cmd"],
             "lst2run"               :lst2run,
             "_lst_expt_in"          :lst_expt_in,
