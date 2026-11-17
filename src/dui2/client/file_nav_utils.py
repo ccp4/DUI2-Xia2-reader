@@ -30,7 +30,7 @@ from dui2.client.exec_utils import get_req_json_dat
 from dui2.client.init_firts import IniData
 
 def get_number_from_string(dict_in):
-    str_in = dict_in['name']
+    str_in = dict_in["name"]
     num_char = ""
     for char_part in str_in:
         if char_part in "0123456789":
@@ -43,7 +43,7 @@ def get_number_from_string(dict_in):
 
 
 def f_key(dic_in):
-    return dic_in['isdir']
+    return dic_in["isdir"]
 
 
 def sort_dict_list(lst_in, key_in):
@@ -58,8 +58,8 @@ class MyDirView_list(QListWidget):
         self.itemDoubleClicked.connect(self.clicked_twice)
         self.setWrapping(True)
         self.setResizeMode(QListView.Adjust)
-        DirPixMapi = getattr(QStyle, 'SP_DirIcon')
-        FilePixMapi = getattr(QStyle, 'SP_FileIcon')
+        DirPixMapi = getattr(QStyle, "SP_DirIcon")
+        FilePixMapi = getattr(QStyle, "SP_FileIcon")
         self.icon_dict = {
             "True":self.style().standardIcon(DirPixMapi),
             "False":self.style().standardIcon(FilePixMapi)
@@ -393,7 +393,7 @@ class FileBrowser(QDialog):
             parents_list.append(single_dir)
 
         if parents_list[0:2] == ["", ""]:
-            logging.debug("removing \"\" from parents_list")
+            logging.debug('removing "" from parents_list')
             parents_list = parents_list[1:]
 
         self.path_bar.update_list(parents_list, self.root_limit_path)

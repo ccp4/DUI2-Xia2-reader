@@ -174,7 +174,7 @@ def add_log_line(new_line, nod_req):
     Error_Broken_Pipes = 0
     try:
         spit_out(
-            str_out = new_line, req_obj = nod_req, out_type = 'utf-8'
+            str_out = new_line, req_obj = nod_req, out_type = "utf-8"
         )
 
     except BrokenPipeError:
@@ -279,8 +279,8 @@ class CmdNode(object):
         self._run_dir = base_dir
         self._lst_expt_in = []
         self._lst_refl_in = []
-        self.full_cmd_lst = [['root']]
-        self.lst2run = [['dials.root']]
+        self.full_cmd_lst = [["root"]]
+        self.lst2run = [["dials.root"]]
         self.status = "Succeeded"
 
     def set_base_dir(self, dir_in = None):
@@ -398,7 +398,7 @@ class CmdNode(object):
         if self.nod_req is not None:
             try:
                 self.nod_req.send_response(201)
-                self.nod_req.send_header('Content-type', 'text/plain')
+                self.nod_req.send_header("Content-type", "text/plain")
                 self.nod_req.end_headers()
 
             except AttributeError:
@@ -410,7 +410,7 @@ class CmdNode(object):
                 str_nod_num = "node.number=" + str(self.number) + "\n"
                 spit_out(
                     str_out = str_nod_num, req_obj = self.nod_req,
-                    out_type = 'utf-8'
+                    out_type = "utf-8"
                 )
 
             except BrokenPipeError:
@@ -428,7 +428,7 @@ class CmdNode(object):
             return
 
         else:
-            while self.my_proc.poll() is None or new_line != '':
+            while self.my_proc.poll() is None or new_line != "":
                 try:
                     new_line = self.my_proc.stdout.readline()
 
@@ -442,7 +442,7 @@ class CmdNode(object):
             for lin_num, lin_str in enumerate(log_line_lst):
                 found_non_empty = False
                 for inner_lin in log_line_lst[lin_num:]:
-                    if inner_lin != '':
+                    if inner_lin != "":
                         found_non_empty = True
 
                 if not found_non_empty:
@@ -490,7 +490,7 @@ class CmdNode(object):
     ):
         spit_out(
             str_out = "   ...   run_xia2_read Start \n",
-            req_obj = req_obj, out_type = 'utf-8'
+            req_obj = req_obj, out_type = "utf-8"
         )
 
         if run_xia2:
@@ -507,7 +507,7 @@ class CmdNode(object):
 
         spit_out(
             str_out = "   ...   run_xia2_read Done \n",
-            req_obj = req_obj, out_type = 'utf-8'
+            req_obj = req_obj, out_type = "utf-8"
         )
         return return_list
     ############################################################... run_xia2_read ...### end
@@ -547,7 +547,7 @@ class CmdNode(object):
 
         else:
             # running HTML report generation
-            rep_lst_dat_in = ['dials.report']
+            rep_lst_dat_in = ["dials.report"]
             for expt_2_add in self._lst_expt_out:
                 rep_lst_dat_in.append(expt_2_add)
 
@@ -570,7 +570,7 @@ class CmdNode(object):
                 stderr = subprocess.STDOUT,
                 universal_newlines = True
             )
-            while rep_proc.poll() is None or new_line != '':
+            while rep_proc.poll() is None or new_line != "":
                 new_line = rep_proc.stdout.readline()
                 lst_rep_out.append(new_line)
 
@@ -590,7 +590,7 @@ class CmdNode(object):
         self.n_Broken_Pipes += add_log_line(new_line, self.nod_req)
 
         # running prediction generation
-        pred_lst_dat_in = ['dials.predict']
+        pred_lst_dat_in = ["dials.predict"]
         for expt_2_add in self._lst_expt_out:
             pred_lst_dat_in.append(expt_2_add)
 
@@ -609,7 +609,7 @@ class CmdNode(object):
             stderr = subprocess.STDOUT,
             universal_newlines = True
         )
-        while pred_proc.poll() is None or new_line != '':
+        while pred_proc.poll() is None or new_line != "":
             new_line = pred_proc.stdout.readline()
             lst_pred_out.append(new_line)
 
@@ -736,10 +736,10 @@ class Runner(object):
         logging.info("unalias_cmd_lst =" + str(unalias_cmd_lst))
         if req_obj is not None:
             try:
-                if unalias_cmd_lst == [['reset_graph']]:
+                if unalias_cmd_lst == [["reset_graph"]]:
                     try:
                         req_obj.send_response(201)
-                        req_obj.send_header('Content-type', 'text/plain')
+                        req_obj.send_header("Content-type", "text/plain")
                         req_obj.end_headers()
 
                     except AttributeError:
@@ -750,15 +750,15 @@ class Runner(object):
 
                     spit_out(
                         str_out = "err.code=0\n", req_obj = req_obj,
-                        out_type = 'utf-8'
+                        out_type = "utf-8"
                     )
                     self.clear_run_dirs_n_reset()
                     spit_out(
                         str_out = "Reset tree ... Done\n",
-                        req_obj = req_obj, out_type = 'utf-8'
+                        req_obj = req_obj, out_type = "utf-8"
                     )
 
-                elif unalias_cmd_lst[0][0] == 'read_xia2_debug':
+                elif unalias_cmd_lst[0][0] == "read_xia2_debug":
                     #FIXME the name of this dui_command should consider both cases
 
                     run_xia2 = False
@@ -771,7 +771,7 @@ class Runner(object):
 
                     try:
                         req_obj.send_response(201)
-                        req_obj.send_header('Content-type', 'text/plain')
+                        req_obj.send_header("Content-type", "text/plain")
                         req_obj.end_headers()
 
                     except AttributeError:
@@ -791,7 +791,7 @@ class Runner(object):
                     )
                     spit_out(
                         str_out = "node.number=" + str(xia2_node.number) + "\n",
-                        req_obj = req_obj, out_type = 'utf-8'
+                        req_obj = req_obj, out_type = "utf-8"
                     )
 
                     try:
@@ -799,13 +799,13 @@ class Runner(object):
                         if run_xia2:
                             spit_out(
                                 str_out = "  ... Runnig Xia2 ...  \n",
-                                req_obj = req_obj, out_type = 'utf-8'
+                                req_obj = req_obj, out_type = "utf-8"
                             )
 
                         else:
                             spit_out(
                                 str_out = "  ... Not runnig Xia2 ...  \n",
-                                req_obj = req_obj, out_type = 'utf-8'
+                                req_obj = req_obj, out_type = "utf-8"
                             )
 
                         return_list = xia2_node.run_xia2_read(
@@ -818,7 +818,7 @@ class Runner(object):
                         self._extend_node_list(return_list)
                         spit_out(
                             str_out = "reading xia2_debug extending list \n",
-                            req_obj = req_obj, out_type = 'utf-8'
+                            req_obj = req_obj, out_type = "utf-8"
                         )
                         # link to the expanded branch only once it exists,
                         # one child per sweep (each dials.import hangs here)
@@ -830,7 +830,7 @@ class Runner(object):
                         xia2_node.status = "Succeeded"
                         spit_out(
                             str_out = "reading xia2_debug ... Done\n",
-                            req_obj = req_obj, out_type = 'utf-8'
+                            req_obj = req_obj, out_type = "utf-8"
                         )
 
                     except FileNotFoundError:
@@ -838,12 +838,12 @@ class Runner(object):
                         xia2_node.status = "Failed"
                         spit_out(
                             str_out = "FAILED reading xia2_debug\n",
-                            req_obj = req_obj, out_type = 'utf-8'
+                            req_obj = req_obj, out_type = "utf-8"
                         )
                         #FIXME: the next commented code is a suggestion
                         #by Claude that I am not fully convinced:
 
-                    '''except Exception as xia2_err:
+                    """except Exception as xia2_err:
                         # anything else must not leave the node Busy forever
                         logging.info(
                             "Err catch while reading Xia2_debug: " +
@@ -853,12 +853,12 @@ class Runner(object):
                         spit_out(
                             str_out = "FAILED reading xia2_debug",
                             req_obj = req_obj, out_type = 'utf-8'
-                        )'''
+                        )"""
 
-                elif unalias_cmd_lst == [['run_predict_n_report']]:
+                elif unalias_cmd_lst == [["run_predict_n_report"]]:
                     try:
                         req_obj.send_response(201)
-                        req_obj.send_header('Content-type', 'text/plain')
+                        req_obj.send_header("Content-type", "text/plain")
                         req_obj.end_headers()
 
                     except AttributeError:
@@ -866,15 +866,15 @@ class Runner(object):
                             "Attribute Err catch," +
                             " not supposed send header info #4"
                         )
-                    FIXME = '''
+                    FIXME = """
                             see if the next << spit_out >> does not confuses
                             client side, it mignt think that is comimg from
                             node = 0
-                            '''
+                            """
 
                     spit_out(
                         str_out = "err.code=0",
-                        req_obj = req_obj, out_type = 'utf-8'
+                        req_obj = req_obj, out_type = "utf-8"
                     )
                     logging.info("starting << run_predict_n_report >> ...")
                     for lin2go in cmd_dict["nod_lst"]:
@@ -884,16 +884,16 @@ class Runner(object):
 
                     spit_out(
                         str_out = "run_predict_n_report ... Done",
-                        req_obj = req_obj, out_type = 'utf-8'
+                        req_obj = req_obj, out_type = "utf-8"
                     )
                     logging.info("... << run_predict_n_report >> ended")
                     print(" << run_predict_n_report >> done")
                     logging.info(" << run_predict_n_report >> done")
 
-                elif unalias_cmd_lst == [['split_node']]:
+                elif unalias_cmd_lst == [["split_node"]]:
                     try:
                         req_obj.send_response(201)
-                        req_obj.send_header('Content-type', 'text/plain')
+                        req_obj.send_header("Content-type", "text/plain")
                         req_obj.end_headers()
 
                     except AttributeError:
@@ -909,19 +909,19 @@ class Runner(object):
 
                     spit_out(
                         str_out = "lst_nod_out:" + str(lst_nod_out) + "\n",
-                        req_obj = req_obj, out_type = 'utf-8'
+                        req_obj = req_obj, out_type = "utf-8"
                     )
 
-                elif unalias_cmd_lst[0][0] == 'mask_app':
+                elif unalias_cmd_lst[0][0] == "mask_app":
                     untrusted_list = unalias_cmd_lst[0][1:]
                     phil_file_name = self.mask_app_build(untrusted_list)
                     self.run_dials_command(
                         cmd_dict = {
-                            'nod_lst': cmd_dict["nod_lst"], "cmd_lst": [
+                            "nod_lst": cmd_dict["nod_lst"], "cmd_lst": [
                                 [
-                                    'dials.generate_mask',
-                                    '..'+ os.sep + phil_file_name,
-                                    'output.experiments=masked.expt'
+                                    "dials.generate_mask",
+                                    ".."+ os.sep + phil_file_name,
+                                    "output.experiments=masked.expt"
                                 ]
                             ]
                         }, req_obj = req_obj
@@ -938,7 +938,7 @@ class Runner(object):
 
                         spit_out(
                             str_out = str(stat2add),
-                            req_obj = req_obj, out_type = 'utf-8'
+                            req_obj = req_obj, out_type = "utf-8"
                         )
 
             except BrokenPipeError:
@@ -1002,7 +1002,7 @@ class Runner(object):
     def clear_run_dirs_n_reset(self):
         for uni in self.step_list:
             try:
-                if uni.lst2run != [['dials.root']]:
+                if uni.lst2run != [["dials.root"]]:
                     shutil.rmtree(str(uni._run_dir))
 
             except FileNotFoundError:
@@ -1016,12 +1016,12 @@ class Runner(object):
     def run_predict_n_report(self, node, req_obj):
         str_out = " running predict and report for node:" + str(node.number)
         spit_out(
-            str_out = str_out, req_obj = req_obj, out_type = 'utf-8'
+            str_out = str_out, req_obj = req_obj, out_type = "utf-8"
         )
         node.generate_predict_n_report(req_obj)
         spit_out(
             str_out = " ... Done ", req_obj = req_obj,
-            out_type = 'utf-8'
+            out_type = "utf-8"
         )
 
     def mask_app_build(self, untrusted_list):
@@ -1029,7 +1029,7 @@ class Runner(object):
         lst_str = []
         for single_region in untrusted_list:
             logging.info("single_region =" + str(single_region))
-            if single_region[0:17] == 'multipanel.circle':
+            if single_region[0:17] == "multipanel.circle":
                 lst_nums = single_region[18:].split(",")
                 lst_str.append("untrusted {")
                 lst_str.append("  panel = " + str(lst_nums[3]))
@@ -1039,7 +1039,7 @@ class Runner(object):
                 )
                 lst_str.append("}")
 
-            elif single_region[0:20] == 'multipanel.rectangle':
+            elif single_region[0:20] == "multipanel.rectangle":
                 lst_nums = single_region[21:].split(",")
                 lst_str.append("untrusted {")
                 lst_str.append("  panel = " + str(lst_nums[4]))
@@ -1055,10 +1055,10 @@ class Runner(object):
         lst_str.append("}")
 
         self.num_phil_file += 1
-        phil_file_name = 'mask_n_' + str(self.num_phil_file) + '.phil'
+        phil_file_name = "mask_n_" + str(self.num_phil_file) + ".phil"
         logging.info("phil_file_name =" + str(phil_file_name))
 
-        f = open(phil_file_name, 'w', encoding="utf-8")
+        f = open(phil_file_name, "w", encoding="utf-8")
         for str_2_write in lst_str:
             f.write(str_2_write + "\n")
 

@@ -69,21 +69,21 @@ from dui2.server.init_first import IniData
 
 def spit_out(str_out = None, req_obj = None, out_type = None):
     if req_obj is None:
-        if out_type == 'utf-8':
+        if out_type == "utf-8":
             logging.info(" ... " + str(str_out[:-1]), " ... ")
 
         else:
             logging.info(" ... " + str(str_out) + " ... ")
 
-    elif 'ReqHandler' in str(type(req_obj)):
-        if out_type == 'utf-8':
-            req_obj.wfile.write(bytes(str_out, 'utf-8'))
+    elif "ReqHandler" in str(type(req_obj)):
+        if out_type == "utf-8":
+            req_obj.wfile.write(bytes(str_out, "utf-8"))
 
         else:
             req_obj.wfile.write(bytes(str_out))
 
     else:
-        if out_type == 'utf-8':
+        if out_type == "utf-8":
             req_obj.call_back_str(str_out)
 
         else:
@@ -144,7 +144,7 @@ def get_info_data(uni_cmd, cmd_dict, step_list):
                 mtz_dir_path = step_list[lin2go]._run_dir
                 mtz_path = glob.glob(mtz_dir_path + os.sep + "*.mtz")[0]
 
-                with open(mtz_path, 'rb') as fil_h:
+                with open(mtz_path, "rb") as fil_h:
                     byt_data = fil_h.read()
 
                 return_list = byt_data
@@ -178,7 +178,7 @@ def get_info_data(uni_cmd, cmd_dict, step_list):
         for lin2go in cmd_dict["nod_lst"]:
             try:
                 exp_path = str(step_list[lin2go]._lst_expt_out[0])
-                with open(exp_path, 'rb') as fil_h1:
+                with open(exp_path, "rb") as fil_h1:
                     exp_byt_data = fil_h1.read()
 
                 return_list = exp_byt_data
@@ -192,7 +192,7 @@ def get_info_data(uni_cmd, cmd_dict, step_list):
         for lin2go in cmd_dict["nod_lst"]:
             try:
                 ref_path = str(step_list[lin2go]._lst_refl_out[0])
-                with open(ref_path, 'rb') as fil_h2:
+                with open(ref_path, "rb") as fil_h2:
                     ref_byt_data = fil_h2.read()
 
                 return_list = ref_byt_data
@@ -226,16 +226,16 @@ def get_info_data(uni_cmd, cmd_dict, step_list):
                 #mtz_path = mtz_dir_path + os.sep + "integrated.mtz"
 
                 lst_of_cmd = [
-                    "URL          " + dict_4_cloud_run['url'],
-                    "USER         " + dict_4_cloud_run['user'],
-                    "CLOUDRUN_ID  " + dict_4_cloud_run['id'],
-                    "PROJECT      " + dict_4_cloud_run['project'],
-                    "TITLE        " + dict_4_cloud_run['title'],
+                    "URL          " + dict_4_cloud_run["url"],
+                    "USER         " + dict_4_cloud_run["user"],
+                    "CLOUDRUN_ID  " + dict_4_cloud_run["id"],
+                    "PROJECT      " + dict_4_cloud_run["project"],
+                    "TITLE        " + dict_4_cloud_run["title"],
                     "TASK        import",
                     "FILE         " + mtz_path
                 ]
                 cloudrun_cfg_file_path = mtz_dir_path + os.sep + "cloudrun.cfg"
-                with open(cloudrun_cfg_file_path, 'w', encoding="utf-8") as f:
+                with open(cloudrun_cfg_file_path, "w", encoding="utf-8") as f:
                     for sigl_comm in lst_of_cmd:
                         f.write(sigl_comm + "\n")
 
@@ -250,7 +250,7 @@ def get_info_data(uni_cmd, cmd_dict, step_list):
 
                 lst_line = []
                 new_line = None
-                while cloudrun_proc.poll() is None or new_line != '':
+                while cloudrun_proc.poll() is None or new_line != "":
                     new_line = cloudrun_proc.stdout.readline()
                     logging.info("cloudrun new_line =" + str(new_line[:-1]))
                     lst_line.append(new_line)
@@ -263,16 +263,16 @@ def get_info_data(uni_cmd, cmd_dict, step_list):
                         last_star_line = str(out_line[:-1])
 
                 if cloudrun_proc.poll() == 0:
-                    return_list = bytes("ok".encode('utf-8'))
+                    return_list = bytes("ok".encode("utf-8"))
 
                 else:
                     try:
-                        return_list = bytes(last_star_line.encode('utf-8'))
+                        return_list = bytes(last_star_line.encode("utf-8"))
 
                     except UnboundLocalError:
                         return_list = bytes(
                             "Unexpected Unbound Local Err " +
-                            "Catch (transfer_mtz)".encode('utf-8')
+                            "Catch (transfer_mtz)".encode("utf-8")
                         )
                         logging.info(
                             "Unbound Err catch , NOT running cloudrun"
@@ -281,7 +281,7 @@ def get_info_data(uni_cmd, cmd_dict, step_list):
             except TypeError:
                 # most likely cmd_w_path_n_ext == None
                 return_list = bytes(
-                    " Cloudrun not available outside of CCP4 ".encode('utf-8')
+                    " Cloudrun not available outside of CCP4 ".encode("utf-8")
                 )
                 logging.info(
                     "Type Err catch , NOT running cloudrun"
@@ -290,7 +290,7 @@ def get_info_data(uni_cmd, cmd_dict, step_list):
             except IndexError:
                 return_list = bytes(
                     " Failed to launch cloudrun " +
-                    "(Index Err Catch)".encode('utf-8')
+                    "(Index Err Catch)".encode("utf-8")
                 )
                 logging.info(
                     "Index Err catch , NOT running cloudrun"
@@ -299,7 +299,7 @@ def get_info_data(uni_cmd, cmd_dict, step_list):
             except FileNotFoundError:
                 return_list = bytes(
                     "Failed to launch cloudrun " +
-                    "(File Not Found Err Catch)".encode('utf-8')
+                    "(File Not Found Err Catch)".encode("utf-8")
                 )
                 logging.info(
                     "FileNotFound Err catch , NOT running cloudrun"
@@ -313,7 +313,7 @@ def get_info_data(uni_cmd, cmd_dict, step_list):
                 str_file = fil.read()
                 fil.close()
 
-                byt_data = bytes(str_file.encode('utf-8'))
+                byt_data = bytes(str_file.encode("utf-8"))
                 return_list = byt_data
 
             except IndexError:
@@ -909,7 +909,7 @@ def get_help_list(cmd_str):
 
         my_cmd_hlp = []
         try:
-            while my_proc.poll() is None or new_line != '':
+            while my_proc.poll() is None or new_line != "":
                 new_line = my_proc.stdout.readline()
                 my_cmd_hlp.append(new_line[:-1])
 

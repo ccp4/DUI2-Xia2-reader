@@ -38,12 +38,12 @@ def main(par_def = None, connection_out = None):
     format_utils.print_logo()
     print("DUI2 Version = ", __version__)
     class ReqHandler(http.server.BaseHTTPRequestHandler):
-        def _send_ok_headers(self, content_type = 'text/plain', content_length = None):
+        def _send_ok_headers(self, content_type = "text/plain", content_length = None):
             try:
                 self.send_response(200)
-                self.send_header('Content-type', content_type)
+                self.send_header("Content-type", content_type)
                 if content_length is not None:
-                    self.send_header('Content-Length', content_length)
+                    self.send_header("Content-Length", content_length)
                 self.end_headers()
 
             except AttributeError:
@@ -56,7 +56,7 @@ def main(par_def = None, connection_out = None):
             logging.info(log_msg)
             try:
                 self.send_response(401)
-                self.send_header('Content-type', 'text/plain')
+                self.send_header("Content-type", "text/plain")
                 self.end_headers()
 
             except AttributeError:
@@ -65,14 +65,14 @@ def main(par_def = None, connection_out = None):
                     " not supposed send header info"
                 )
 
-            spit_out(str_out = 'rejected: invalid token', req_obj = self, out_type = 'utf-8')
-            spit_out(str_out = '/*EOF*/', req_obj = self, out_type = 'utf-8')
+            spit_out(str_out = "rejected: invalid token", req_obj = self, out_type = "utf-8")
+            spit_out(str_out = "/*EOF*/", req_obj = self, out_type = "utf-8")
 
         def _send_eof(self, label):
             try:
                 logging.info("sending /*EOF*/ (" + label + ")")
                 spit_out(
-                    str_out = '/*EOF*/', req_obj = self, out_type = 'utf-8'
+                    str_out = "/*EOF*/", req_obj = self, out_type = "utf-8"
                 )
 
             except BrokenPipeError:
@@ -86,9 +86,9 @@ def main(par_def = None, connection_out = None):
                 )
 
         def do_POST(self):
-            content_len = int(self.headers.get('Content-Length'))
+            content_len = int(self.headers.get("Content-Length"))
             post_body = self.rfile.read(content_len)
-            body_str = str(post_body.decode('utf-8'))
+            body_str = str(post_body.decode("utf-8"))
             url_dict = parse_qs(body_str)
 
             if "cmd_lst" not in url_dict or "token" not in url_dict:
@@ -185,14 +185,14 @@ def main(par_def = None, connection_out = None):
                 lst_out = cmd_tree_runner.run_get_data(cmd_dict)
 
                 if type(lst_out) is list or type(lst_out) is dict:
-                    self._send_ok_headers('text/plain')
+                    self._send_ok_headers("text/plain")
 
-                    json_str = json.dumps(lst_out) + '\n'
+                    json_str = json.dumps(lst_out) + "\n"
                     spit_out(
                         str_out = json_str, req_obj = self,
-                        out_type = 'utf-8'
+                        out_type = "utf-8"
                     )
-                    if lst_out == ['closed received']:
+                    if lst_out == ["closed received"]:
                         logging.info("Client app closed")
                         logging.info("run_local =" + str(run_local))
                         sep_lin = "#" * 44 + "\n"
@@ -213,7 +213,7 @@ def main(par_def = None, connection_out = None):
                 elif type(lst_out) is bytes:
                     byt_data = zlib.compress(lst_out)
                     siz_dat = str(len(byt_data))
-                    self._send_ok_headers('application/zlib', siz_dat)
+                    self._send_ok_headers("application/zlib", siz_dat)
 
                     spit_out(str_out = byt_data, req_obj = self)
 

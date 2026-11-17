@@ -111,18 +111,18 @@ def get_lst2show(step_list):
 
 def build_hidden_node(node_in = None):
     try:
-        new_lst2run = list(node_in['lst2run'])
+        new_lst2run = list(node_in["lst2run"])
 
     except KeyError:
         new_lst2run = []
 
     node_out = {
-        'number': int(node_in['number']),
-        'status': "Hidden",
-        'child_node_lst': [],
-        'parent_node_lst': list(node_in['parent_node_lst']),
-        'cmd2show': list(node_in['cmd2show']),
-        'lst2run': new_lst2run
+        "number": int(node_in["number"]),
+        "status": "Hidden",
+        "child_node_lst": [],
+        "parent_node_lst": list(node_in["parent_node_lst"]),
+        "cmd2show": list(node_in["cmd2show"]),
+        "lst2run": new_lst2run
     }
 
     return node_out
@@ -157,10 +157,10 @@ class TreeShow(object):
     def _add_tree(
         self, step=None, parent_indent = 0, indent = 0, low_par_nod_num = 0
     ):
-        '''
+        """
         building recursively the a list of objects dictionaries
         which contains info about how to draw the tree
-        '''
+        """
         if step["status"] == "Succeeded":
             stp_prn = " S   "
             stp_stat = "S"
@@ -205,10 +205,10 @@ class TreeShow(object):
 
         new_indent = indent + 1
         if len(step["child_node_lst"]) > 0:
-            '''
+            """
                 making sure all parent nodes of <step>
                 are already in <self.lst_nod>
-            '''
+            """
             for node in self.lst_nod:
                 if node["number"] in step["child_node_lst"]:
                     lst_num = [emt["number"] for emt in self.dat_lst]
@@ -266,10 +266,10 @@ class TreeShow(object):
                 self.max_indent = new_indent
 
     def _output_connect(self):
-        '''
+        """
         inserting/editing what to logging.info in in <stp_prn>
         which is part of each element of <self.dat_lst>
-        '''
+        """
         for pos, obj2prn in enumerate(self.dat_lst):
             if pos > 0:
                 if obj2prn["parent_indent"] < self.dat_lst[pos - 1]["parent_indent"]:
@@ -377,7 +377,7 @@ def split_w_quotes(str_in):
             lst_par_cmd.append(str2add)
             spc_last_pos = posi
 
-        elif char == "\"" or  char == "\'":
+        elif char == '"' or  char == "'":
             if not quote_ini:
                 quote_ini = True
 
@@ -397,9 +397,9 @@ def tup2dict(tup_in):
     return dict_out
 
 def get_par(par_def, lst_in):
-    '''
+    """
     Reused function for handling parameters given via C.L.I.
-    '''
+    """
     if(len(lst_in) == 0):
         logging.info("default params: " + str(par_def))
         return tup2dict(par_def)

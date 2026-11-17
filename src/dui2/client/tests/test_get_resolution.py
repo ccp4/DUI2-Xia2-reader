@@ -27,17 +27,17 @@ import sys, json
 import requests
 import numpy as np
 
-uni_url = 'http://127.0.0.1:45678/'
+uni_url = "http://127.0.0.1:45678/"
 #uni_url = 'http://127.0.0.1:45679/'
 #uni_url = 'http://supercomputo.cimav.edu.mx:45678/'
 
 if __name__ == "__main__":
     full_cmd = {
-        'nod_lst': [1],
-        'cmd_str': [
-            'get_resolution', 'panel=12', 'xy_coordinates=1063.531,41.597'
+        "nod_lst": [1],
+        "cmd_str": [
+            "get_resolution", "panel=12", "xy_coordinates=1063.531,41.597"
         ],
-        'token': 'dummy_4_now'
+        "token": "dummy_4_now"
     }
 
     req_get = requests.get(uni_url, stream = True, params = full_cmd)
@@ -46,10 +46,10 @@ if __name__ == "__main__":
     while True:
         tmp_dat = req_get.raw.readline()
         print("tmp_dat =", tmp_dat)
-        line_str = str(tmp_dat.decode('utf-8'))
+        line_str = str(tmp_dat.decode("utf-8"))
 
-        if '/*EOF*/' in line_str:
-            print('/*EOF*/ received')
+        if "/*EOF*/" in line_str:
+            print("/*EOF*/ received")
             break
 
         else:

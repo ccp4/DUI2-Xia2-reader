@@ -32,7 +32,7 @@ class IniData(object):
     def set_data(self, par_def = None):
         if par_def == None:
             par_def = (
-                ("url", 'http://127.0.0.1:45678/'),
+                ("url", "http://127.0.0.1:45678/"),
                 ("import_init", None),
                 ("all_local", "False"),
                 ("windows_exe", "False"),

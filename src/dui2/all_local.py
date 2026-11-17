@@ -7,7 +7,7 @@ import psutil
 import os
 
 
-logging.basicConfig(filename='run_dui2_all_local.log', level=logging.DEBUG)
+logging.basicConfig(filename="run_dui2_all_local.log", level=logging.DEBUG)
 
 def get_other_procs():
     pid_me = int(os.getpid())
@@ -89,7 +89,7 @@ def main():
     new_port = pipe_server_1.recv()
     if new_port is not None:
         client_par_def = (
-                ("url", 'http://127.0.0.1:' + str(new_port) + '/'),
+                ("url", "http://127.0.0.1:" + str(new_port) + "/"),
                 ("import_init", None),
                 ("all_local", "true"),
                 ("windows_exe", win_str),

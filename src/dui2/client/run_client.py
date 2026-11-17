@@ -58,7 +58,7 @@ def main(par_def = None):
     data_init.set_tmp_dir(tmp_dat_dir)
 
     logging.info(
-        'get_if_local =' + str(data_init.get_if_local()) + 'get_url =' + uni_url
+        "get_if_local =" + str(data_init.get_if_local()) + "get_url =" + uni_url
     )
     cmd = {"nod_lst":[""], "cmd_str":["display"]}
     dummy_nod_lst = None

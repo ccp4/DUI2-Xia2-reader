@@ -252,9 +252,9 @@ class RootWidg(QWidget):
 
 def remove_border_quotes(str_in):
     if(
-        (str_in[0] == "\"" or str_in[0] == "\'")
+        (str_in[0] == '"' or str_in[0] == "'")
         and
-        (str_in[-1] == "\"" or str_in[-1] == "\'" )
+        (str_in[-1] == '"' or str_in[-1] == "'" )
     ):
         str_out = str_in[1:-1]
 
@@ -268,13 +268,13 @@ def from_path_2_dir(str_path_in):
 
 
 class Xia2ImportWidget(QWidget):
-    '''
+    """
         This widget is similar to ImportWidget in that sense is at the
         beginning of the provenance graph and imports something, but there
         is where the similitude end.
 
         It imports work from a Xia2 execution, ad behave quite differently
-    '''
+    """
     all_items_changed = Signal(list)
     def __init__(self, parent = None):
         super(Xia2ImportWidget, self).__init__()
@@ -301,12 +301,12 @@ class Xia2ImportWidget(QWidget):
         #self.reset_pars()
 
 class ImportWidget(QWidget):
-    '''
+    """
         This widget behaves differently from most of the other  << simple >>
         parameter widgets, every time the user changes a parameter DUI should
         refresh all parameter since there are some parameter that exclude
         others
-    '''
+    """
     all_items_changed = Signal(list)
     def __init__(self, parent = None):
         super(ImportWidget, self).__init__()
@@ -351,7 +351,7 @@ class ImportWidget(QWidget):
         self.check_rot_axs = QCheckBox("Invert rotation axis")
         self.dist_text_in = QLineEdit()
         fnt_met = self.dist_text_in.fontMetrics()
-        calc_width = fnt_met.horizontalAdvance('WWWW')
+        calc_width = fnt_met.horizontalAdvance("WWWW")
         self.dist_text_in.setFixedWidth(calc_width)
         #self.dist_text_in.setText("2193")
         self.check_shadow = QCheckBox("Set dynamic shadowing")
@@ -474,7 +474,7 @@ class ImportWidget(QWidget):
             str_path = "input.directory"
 
         lst_par = [
-            [str_path, "\"" + str_value + "\""]
+            [str_path, '"' + str_value + '"']
         ]
 
         ext_par = str(self.imp_extra_txt.text())
@@ -683,11 +683,11 @@ class SplitWidget(QWidget):
 
 
 class MaskWidget(QWidget):
-    '''
+    """
     On this widget the user can choose what shape element to add to the mask
     The elements should be drawn in the image viewer, consequently that part
     of the code is in the << img_view >> module
-    '''
+    """
     all_items_changed = Signal(list)
     component_changed = Signal(str)
     def __init__(self, parent = None):
@@ -1130,11 +1130,11 @@ class FindspotsSimplerParameterTab(SimpleParamTab):
 
 
 class FilterWidget(QWidget):
-    '''
+    """
     On this widget the user can remove reflections manually
     The reflections should be clicked in the image viewer, consequently that
     part of the code is in the << img_view >> module
-    '''
+    """
     all_items_changed = Signal(list)
     just_reseted = Signal()
     def __init__(self, parent = None):
@@ -1163,7 +1163,7 @@ class FilterWidget(QWidget):
 
     def update_all_pars(self, tup_lst_pars):
         self.reset_pars()
-        example = '''tup_lst_pars = (
+        example = """tup_lst_pars = (
             [
                 {
                     'name': 'remove_by_index',
@@ -1171,10 +1171,10 @@ class FilterWidget(QWidget):
                 }
             ],
             None
-        )'''
+        )"""
 
-        if tup_lst_pars[0][0]['name'] == "remove_by_index":
-            ref_lst_str = tup_lst_pars[0][0]['value'].split(",")
+        if tup_lst_pars[0][0]["name"] == "remove_by_index":
+            ref_lst_str = tup_lst_pars[0][0]["value"].split(",")
             for ref_str in ref_lst_str:
                 self.ref_lst.append(int(ref_str))
 
@@ -2112,10 +2112,10 @@ class UploadDialog(QDialog):
 
 
 class ExportWidget(QWidget):
-    '''
+    """
         This widget is a simplified version of ImportWidget since
         there is no need to interact with a remote << FileBrowser >>
-    '''
+    """
     all_items_changed = Signal(list)
     find_scaled_before = Signal()
     def __init__(self, parent = None):
@@ -2162,9 +2162,9 @@ class ExportWidget(QWidget):
         self.is_cloudrun_available = True
 
         self.dict_data = {
-            'url'    :"https://cloud.ccp4.ac.uk",
-            'user'   :"",   'id'     :"",
-            'project':"",   'title'  :"",
+            "url"    :"https://cloud.ccp4.ac.uk",
+            "user"   :"",   "id"     :"",
+            "project":"",   "title"  :"",
         }
 
     def set_parent(self, parent = None):
@@ -2259,7 +2259,7 @@ class ExportWidget(QWidget):
         ext_par_full_text = ""
         for tupl_param in tup_lst_pars[0]:
             try:
-                if tupl_param["name"][-6:] == 'hklout':
+                if tupl_param["name"][-6:] == "hklout":
                     inp_val1 = str(tupl_param["value"])
                     self.exp_txt.setText(inp_val1)
 
@@ -2299,7 +2299,7 @@ class ExportWidget(QWidget):
         )
 
         self.file_name = fileResul[0]
-        if self.file_name != '':
+        if self.file_name != "":
             self.progress_label.setText("Requesting mtz file ...")
             cmd = {"nod_lst":[self.cur_nod_num], "cmd_str":["get_mtz"]}
             self.dowl_thrd = MtzDataRequest(cmd, self.my_handler)
@@ -2322,11 +2322,11 @@ class ExportWidget(QWidget):
         logging.info("CLOUDRUN_DATA=" + str(data_in))
         try:
             data_tup_str = (
-                'url='     + str(data_in['url'])     + ","
-                'user='    + str(data_in['user'])    + ","
-                'id='      + str(data_in['id'])      + ","
-                'project=' + str(data_in['project']) + ","
-                'title='   + str(data_in['title'])
+                "url="     + str(data_in["url"])     + ","
+                "user="    + str(data_in["user"])    + ","
+                "id="      + str(data_in["id"])      + ","
+                "project=" + str(data_in["project"]) + ","
+                "title="   + str(data_in["title"])
             )
         except KeyError:
             logging.info("uncompleted data(CloudRun)")
@@ -2345,7 +2345,7 @@ class ExportWidget(QWidget):
         )
 
     def msg_on_transfer(self, msg_in):
-        if msg_in == b'ok':
+        if msg_in == b"ok":
             self.progress_label.setStyleSheet("color: rgba(65, 175, 175, 255)")
             self.progress_label.setText("Uploaded with CloudRun successfully ")
 
@@ -2362,7 +2362,7 @@ class ExportWidget(QWidget):
 
         except TypeError:
             logging.info("Type Err catch (save_mtz_on_disc)")
-            file_out.write(bytes(mtz_info, 'utf-8'))
+            file_out.write(bytes(mtz_info, "utf-8"))
 
         file_out.close()
 
@@ -2379,10 +2379,10 @@ class ExportWidget(QWidget):
 
 
 class MergeWidget(QWidget):
-    '''
+    """
         This widget is another simplified version of ImportWidget since
         there is no need neither to interact with a remote << FileBrowser >>
-    '''
+    """
     all_items_changed = Signal(list)
     find_scaled_before = Signal()
     def __init__(self, parent = None):
@@ -2418,9 +2418,9 @@ class MergeWidget(QWidget):
         self.is_cloudrun_available = True
 
         self.dict_data = {
-            'url'    :"https://cloud.ccp4.ac.uk",
-            'user'   :"",   'id'     :"",
-            'project':"",   'title'  :"",
+            "url"    :"https://cloud.ccp4.ac.uk",
+            "user"   :"",   "id"     :"",
+            "project":"",   "title"  :"",
         }
 
     def set_parent(self, parent = None):
@@ -2489,7 +2489,7 @@ class MergeWidget(QWidget):
         #    self, "Download MTZ File", ini_file, "Intensity  (*.mtz)"
         #)
         self.file_name = fileResul[0]
-        if self.file_name != '':
+        if self.file_name != "":
             self.progress_label.setText("Requesting mtz file ...")
 
             data_init = IniData()
@@ -2515,11 +2515,11 @@ class MergeWidget(QWidget):
         self.dict_data = data_in
         try:
             data_tup_str = (
-                'url='     + str(data_in['url'])     + ","
-                'user='    + str(data_in['user'])    + ","
-                'id='      + str(data_in['id'])      + ","
-                'project=' + str(data_in['project']) + ","
-                'title='   + str(data_in['title'])
+                "url="     + str(data_in["url"])     + ","
+                "user="    + str(data_in["user"])    + ","
+                "id="      + str(data_in["id"])      + ","
+                "project=" + str(data_in["project"]) + ","
+                "title="   + str(data_in["title"])
             )
         except KeyError:
             logging.info("uncompleted data(CloudRun)")
@@ -2539,7 +2539,7 @@ class MergeWidget(QWidget):
         )
 
     def msg_on_transfer(self, msg_in):
-        if msg_in == b'ok':
+        if msg_in == b"ok":
             self.progress_label.setStyleSheet("color: rgba(65, 175, 175, 255)")
             self.progress_label.setText("Uploaded with CloudRun successfully ")
 
@@ -2558,7 +2558,7 @@ class MergeWidget(QWidget):
 
         except TypeError:
             logging.info("Type Err catch (save_mtz_on_disc)")
-            file_out.write(bytes(mtz_info, 'utf-8'))
+            file_out.write(bytes(mtz_info, "utf-8"))
 
         file_out.close()
 

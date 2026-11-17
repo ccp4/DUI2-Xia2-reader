@@ -24,7 +24,7 @@ copyright (c) CCP4 - DLS
 import sys, json, logging
 import requests
 
-uni_url = 'http://127.0.0.1:45678/'
+uni_url = "http://127.0.0.1:45678/"
 #uni_url = 'http://127.0.0.1:45679/'
 #uni_url = 'http://supercomputo.cimav.edu.mx:45678/'
 
@@ -33,16 +33,16 @@ if __name__ == "__main__":
 
     full_cmd_lst = [
         {
-            'nod_lst': [0],
-            'cmd_lst': [
+            "nod_lst": [0],
+            "cmd_lst": [
                 "dials.import /home/ufn91840/diff_data/X4_wide/X4_wide_M1S4_2_*.cbf"
             ]
         },{
-            'nod_lst': [1],
-            'cmd_lst': ['dials.find_spots spotfinder.threshold.dispersion.global_threshold=0.01']
+            "nod_lst": [1],
+            "cmd_lst": ["dials.find_spots spotfinder.threshold.dispersion.global_threshold=0.01"]
         },{
-            'nod_lst': [2],
-            'cmd_lst': ['dials.index indexing.method=fft1d']
+            "nod_lst": [2],
+            "cmd_lst": ["dials.index indexing.method=fft1d"]
         }
     ]
 
@@ -52,10 +52,10 @@ if __name__ == "__main__":
             tmp_dat = req_post.raw.readline()
             print("tmp_dat =", tmp_dat)
             #tmp_dat = req_post.raw.readline()
-            line_str = str(tmp_dat.decode('utf-8'))
+            line_str = str(tmp_dat.decode("utf-8"))
 
-            if '/*EOF*/' in line_str:
-                print('/*EOF*/ received')
+            if "/*EOF*/" in line_str:
+                print("/*EOF*/ received")
                 break
 
             else:

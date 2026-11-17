@@ -13,7 +13,7 @@ class RequestHandler(BaseHTTPRequestHandler):
     lst_dui2_servers = []
 
     def _send_cors_headers(self):
-        ''' Sets headers required for CORS '''
+        """ Sets headers required for CORS """
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET,PUT,POST,OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "x-api-key,Content-Type")
@@ -24,7 +24,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def send_ok_dict(self, body = None):
-        '''used by both, GET or POST,'''
+        """used by both, GET or POST,"""
         response = {}
         response["connection status"] = "OK"
         response["body"] = body
@@ -41,7 +41,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         dataLength = int(self.headers["Content-Length"])
         print("dataLength =", dataLength)
         data = self.rfile.read(dataLength)
-        body_str = str(data.decode('utf-8'))
+        body_str = str(data.decode("utf-8"))
         print("body_str =", body_str)
         url_dict = json.loads(body_str)
         command = url_dict["command"]
@@ -50,14 +50,14 @@ class RequestHandler(BaseHTTPRequestHandler):
         username = url_dict["data_user"]
         password = url_dict["data_pass"]
 
-        if command == 'register':
+        if command == "register":
             success, token_or_message = self.auth.create_user(
                 username, password
             )
             print(f"Result: {token_or_message}")
             msg_dict = {"token":token_or_message}
 
-        elif command == 'login':
+        elif command == "login":
             success, token_or_message = self.auth.login(username, password)
             if success:
                 token_or_message = token_or_message
@@ -114,12 +114,12 @@ class RequestHandler(BaseHTTPRequestHandler):
         url_dict = parse_qs(urlparse(url_path).query)
 
         try:
-            command = url_dict['command'][0]
-            token = url_dict['token'][0]
-            if command == 'validate':
+            command = url_dict["command"][0]
+            token = url_dict["token"][0]
+            if command == "validate":
                 success, message = self.auth.validate(token)
 
-            elif command == 'logout':
+            elif command == "logout":
                 success, message = self.auth.logout(token)
 
             try:

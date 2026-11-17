@@ -21,7 +21,7 @@ def main():
     logging.info("# time to launch client app with port =" + str(new_port))
 
     par_def = (
-        ("url", 'http://127.0.0.1:' + str(new_port) + '/'),
+        ("url", "http://127.0.0.1:" + str(new_port) + "/"),
         ("all_local", "true"),
     )
 

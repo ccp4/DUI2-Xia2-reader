@@ -32,17 +32,17 @@ def draw_pyplot(img_arr):
     plt.show()
 
 
-uni_url = 'http://127.0.0.1:45678/'
+uni_url = "http://127.0.0.1:45678/"
 #uni_url = 'http://127.0.0.1:45679/'
 #uni_url = 'http://supercomputo.cimav.edu.mx:45678/'
 
 if __name__ == "__main__":
     for img_num in [1,2]:
         print("\n\n img_num =", img_num)
-        '''params_dict = {
+        """params_dict = {
             "algorithm":"dispersion_extended", "nsig_b":4,"nsig_s":5,
             "global_threshold":1, "min_count":2,"gain":1.0,"size":(3, 3)
-        }'''
+        }"""
 
         params_dict = {
             "algorithm":"radial_profile", "n_iqr":6.0, "blur":None,
@@ -55,19 +55,19 @@ if __name__ == "__main__":
         params_str = str(params_dict)
 
         full_cmd = {
-            'nod_lst': [1],
-            'path': None,
-            'cmd_str': [
-                'gtmi', str(img_num),
-                'params=' + params_str,
+            "nod_lst": [1],
+            "path": None,
+            "cmd_str": [
+                "gtmi", str(img_num),
+                "params=" + params_str,
             ],
-            'token': 'dummy_4_now',
+            "token": "dummy_4_now",
         }
 
         req_get = requests.get(
             uni_url, stream = True, params = full_cmd, timeout = 15
         )
-        req_head = req_get.headers.get('content-length', 0)
+        req_head = req_get.headers.get("content-length", 0)
         total_size = int(req_head) + 1
         print("total_size =" + str(total_size))
         block_size = int(total_size / 6 * 1024)

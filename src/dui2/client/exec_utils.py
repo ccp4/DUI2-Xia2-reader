@@ -100,15 +100,15 @@ class get_req_json_dat(QObject):
                     uni_url, stream = True, params = params_out, timeout = 25
                 )
                 logging.info("starting request")
-                str_lst = ''
-                line_str = ''
-                json_out = ''
+                str_lst = ""
+                line_str = ""
+                json_out = ""
                 times_loop = 10
                 for count_times in range(times_loop):
                     tmp_dat = req_get.raw.readline()
-                    line_str = str(tmp_dat.decode('utf-8'))
-                    if '/*EOF*/' in line_str:
-                        logging.info('/*EOF*/ received')
+                    line_str = str(tmp_dat.decode("utf-8"))
+                    if "/*EOF*/" in line_str:
+                        logging.info("/*EOF*/ received")
                         break
 
                     else:
@@ -170,7 +170,7 @@ class GetRequestRealTime(QThread):
                 req_get = requests.get(
                     self.url, stream = True, params = params_out, timeout = 40
                 )
-                req_head = req_get.headers.get('content-length', 0)
+                req_head = req_get.headers.get("content-length", 0)
                 total_size = int(req_head) + 1
                 logging.info("total_size =" + str(total_size))
                 block_size = int(total_size / 6 * 1024)
@@ -245,16 +245,16 @@ def build_advanced_params_widget(cmd_str, h_box_search, handler_in):
 
 def rename_par(key_in):
     dict_transform = {
-        'gain':                         'spotfinder.threshold.dispersion.gain',
-        'nsig_b':           'spotfinder.threshold.dispersion.sigma_background',
-        'nsig_s':               'spotfinder.threshold.dispersion.sigma_strong',
-        'global_threshold': 'spotfinder.threshold.dispersion.global_threshold',
-        'min_count':               'spotfinder.threshold.dispersion.min_local',
-        'size':                  'spotfinder.threshold.dispersion.kernel_size',
-        'n_iqr':                   'spotfinder.threshold.radial_profile.n_iqr',
-        'blur':                     'spotfinder.threshold.radial_profile.blur',
-        'n_bins':                 'spotfinder.threshold.radial_profile.n_bins',
-        'algorithm':                          'spotfinder.threshold.algorithm'
+        "gain":                         "spotfinder.threshold.dispersion.gain",
+        "nsig_b":           "spotfinder.threshold.dispersion.sigma_background",
+        "nsig_s":               "spotfinder.threshold.dispersion.sigma_strong",
+        "global_threshold": "spotfinder.threshold.dispersion.global_threshold",
+        "min_count":               "spotfinder.threshold.dispersion.min_local",
+        "size":                  "spotfinder.threshold.dispersion.kernel_size",
+        "n_iqr":                   "spotfinder.threshold.radial_profile.n_iqr",
+        "blur":                     "spotfinder.threshold.radial_profile.blur",
+        "n_bins":                 "spotfinder.threshold.radial_profile.n_bins",
+        "algorithm":                          "spotfinder.threshold.algorithm"
     }
 
     try:
@@ -266,7 +266,7 @@ def rename_par(key_in):
     return str_out
 
 def build_list_w_pars(dict_in):
-    lst_out = ['dials.find_spots']
+    lst_out = ["dials.find_spots"]
     lst_key = list(dict_in)
     for key in lst_key:
         try:
@@ -392,14 +392,14 @@ class PostRequestWithOutput(QThread):
                 self.request = requests.post(
                     self.uni_url, stream = True, data = data_in
                 )
-                line_str = ''
+                line_str = ""
                 not_yet_read = True
                 while True:
                     tmp_dat = self.request.raw.readline()
-                    line_str = str(tmp_dat.decode('utf-8'))
-                    if '/*EOF*/' in line_str :
+                    line_str = str(tmp_dat.decode("utf-8"))
+                    if "/*EOF*/" in line_str :
                         #TODO: consider a different Signal to say finished
-                        logging.info('>>  /*EOF*/  <<' + str(self.cmd))
+                        logging.info(">>  /*EOF*/  <<" + str(self.cmd))
                         break
 
                     if not_yet_read:
@@ -463,7 +463,7 @@ class PostRequestWithOutput(QThread):
             except IndexError:
                 logging.info("PostRequestWithOutput ... Index err catch")
 
-        elif '/*EOF*/' in line_str :
+        elif "/*EOF*/" in line_str :
             self.about_to_end.emit(self.number, self.do_predict_n_report)
             logging.info(
                 "do_predict_n_report = " + str(self.do_predict_n_report)
@@ -486,9 +486,9 @@ class PostRequestWithOutput(QThread):
 
 
 class CommandParamControl(object):
-    '''
+    """
     keeps track of command to run with parameters included
-    '''
+    """
     def __init__(self, main_list = []):
         self.m_cmd_lst = main_list
         self.par_lst = []
@@ -557,7 +557,7 @@ class CommandParamControl(object):
                 max_nod_num = node["number"]
 
         self.number = max_nod_num + 1
-        self.status = 'Ready'
+        self.status = "Ready"
         self.parent_node_lst = list(parent_s)
 
         #TODO:the next 2 lines are a temporary patch, it needs more studying
@@ -728,7 +728,7 @@ class HelpRequest(QThread):
                 msg_lst = json_hlp[0]
 
             except TypeError:
-                msg_lst = ['']
+                msg_lst = [""]
 
             self.message_acquired.emit(dials_cmd_str, msg_lst)
 

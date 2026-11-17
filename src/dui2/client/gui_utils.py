@@ -71,7 +71,7 @@ widgets_defs = {
     "generate_mask" : {
         "tooltip"       : "dials.generate_mask ",
         "icon"          : "resources/mask.png",
-        "main_cmd"      :['dials.generate_mask'],
+        "main_cmd"      :["dials.generate_mask"],
         "nxt_widg_lst"  :["find_spots"]
     },
     "find_spots" : {
@@ -263,10 +263,10 @@ def get_widget_def_dict(in_dic, ui_path):
 
 
 class find_scale_cmd(object):
-    '''
+    """
     This class works as a function that internally navigates with
     recursive calls to find out if there is a << dials.scale >> command
-    '''
+    """
     def __init__(self, nod_lst, parent_num_lst):
         self.nod_lst = nod_lst
         self.found_scale = False
@@ -285,10 +285,10 @@ class find_scale_cmd(object):
 
 
 class FindNextCmd(object):
-    '''
+    """
     This class works as a function that internally navigates with
     recursive calls to find the possible command to run next
-    '''
+    """
     def __init__(
         self, nod_lst_in, parent_nod_num_lst, str_key, param_widgets
     ):

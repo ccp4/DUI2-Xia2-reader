@@ -24,7 +24,7 @@ copyright (c) CCP4 - DLS
 import sys, json, logging
 import requests
 
-uni_url = 'http://127.0.0.1:45678/'
+uni_url = "http://127.0.0.1:45678/"
 #uni_url = 'http://127.0.0.1:45679/'
 #uni_url = 'http://supercomputo.cimav.edu.mx:45678/'
 
@@ -33,22 +33,22 @@ if __name__ == "__main__":
 
         #correct = '''
         full_cmd = {
-            'nod_lst': [3], 'cmd_lst': ['dials.refine'], 'token': 'dummy_4_now'
+            "nod_lst": [3], "cmd_lst": ["dials.refine"], "token": "dummy_4_now"
         }
         #'''
 
-        wrong_token = '''
+        wrong_token = """
         full_cmd = {
             'nod_lst': [3], 'cmd_lst': ['dials.refine'], 'token': 'dummy_never'
         }
-        #'''
+        #"""
 
-        misspell_key_token = '''
+        misspell_key_token = """
         full_cmd = {
             'nod_lst': [3], 'cmd_lst': ['dials.refine'], 'tock': 'dummy_4_now'
         }
 
-        #'''
+        #"""
 
         #full_cmd = {'nod_lst': [4], 'cmd_lst': ['run_predict_n_report'], 'token': 'dummy_4_now'}
 
@@ -57,10 +57,10 @@ if __name__ == "__main__":
             tmp_dat = req_post.raw.readline()
             print("tmp_dat =", tmp_dat)
             #tmp_dat = req_post.raw.readline()
-            line_str = str(tmp_dat.decode('utf-8'))
+            line_str = str(tmp_dat.decode("utf-8"))
 
-            if '/*EOF*/' in line_str:
-                print('/*EOF*/ received')
+            if "/*EOF*/" in line_str:
+                print("/*EOF*/ received")
                 break
 
             else:

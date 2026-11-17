@@ -242,10 +242,10 @@ class ReindexTable(QTableWidget):
                     item.setBackground(QColor(Qt.red).lighter())
                     item.setForeground(Qt.black)
 
-                    to_remove = '''
+                    to_remove = """
                 elif row == self.better_pos and col == 12:
                     item.setText(u"\u2190" + " Click ")
-                    #'''
+                    #"""
 
                 elif col < 12:
                     if row == selected_pos:

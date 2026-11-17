@@ -131,14 +131,14 @@ class LoadSliceMaskImage(QThread):
         else:
             params_str = json.dumps(self.thrs_hld_pars)
             my_cmd = {
-                'nod_lst': self.nod_num_lst,
-                'path': self.exp_path,
-                'cmd_str': [
-                    'gtmis', str(self.img_num),
-                    'inv_scale=' + str(self.inv_scale),
-                    'view_rect=' + str(self.x1) + "," + str(self.y1) +
+                "nod_lst": self.nod_num_lst,
+                "path": self.exp_path,
+                "cmd_str": [
+                    "gtmis", str(self.img_num),
+                    "inv_scale=" + str(self.inv_scale),
+                    "view_rect=" + str(self.x1) + "," + str(self.y1) +
                              "," + str(self.x2) + "," + str(self.y2),
-                    'params=' + params_str
+                    "params=" + params_str
                 ]
             }
 
@@ -353,7 +353,7 @@ class RadialParamWidget(QWidget):
 def save_image_as_file(parent_scene = None, width = None, height = None):
 
     try:
-        zoom_dependant = '''
+        zoom_dependant = """
         img = QImage(
             self.main_obj.window.imageView.viewport().width(),
             self.main_obj.window.imageView.viewport().height(),
@@ -362,7 +362,7 @@ def save_image_as_file(parent_scene = None, width = None, height = None):
         img = QImage(
             self.img_d1_d2[0], self.img_d1_d2[1], QImage.Format_ARGB32
         )
-        '''
+        """
         img = QImage(width, height, QImage.Format_ARGB32)
 
         img.fill(Qt.transparent)
@@ -385,7 +385,7 @@ def save_image_as_file(parent_scene = None, width = None, height = None):
         print("FileResul = ", fileResul)
 
         file_name = fileResul[0]
-        if file_name != '':
+        if file_name != "":
 
             if file_name[-4:] != ".png":
                 file_name += ".png"

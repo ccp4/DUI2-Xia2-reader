@@ -72,7 +72,7 @@ def main():
             caption = "Choose working directory"
         )
 
-        if dir_2_change != '':
+        if dir_2_change != "":
             print("Using ", dir_2_change, " as working dir")
 
         else:
@@ -140,7 +140,7 @@ def main():
             recovery_data = None, dat_ini = server_data_init
         )
 
-    log_path = os.path.join(dir_2_change, 'run_dui2_all_local_all_ram.log')
+    log_path = os.path.join(dir_2_change, "run_dui2_all_local_all_ram.log")
     logging.basicConfig(filename=log_path, level=logging.DEBUG, force=True)
 
 

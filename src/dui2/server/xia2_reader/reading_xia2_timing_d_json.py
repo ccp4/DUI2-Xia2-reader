@@ -111,14 +111,14 @@ def find_expt_n_refl(file_lst):
 
 
 def add_connection(parent_dict, child_dict, file_name):
-    parent_poss = parent_dict['curr_poss']
-    if parent_poss not in child_dict['parent_pos_lst']:
-        child_dict['parent_pos_lst'].append(parent_poss)
-        child_dict['files_from_parent_dict'][parent_poss] = []
-        parent_dict['chidren_pos_lst'].append(child_dict['curr_poss'])
+    parent_poss = parent_dict["curr_poss"]
+    if parent_poss not in child_dict["parent_pos_lst"]:
+        child_dict["parent_pos_lst"].append(parent_poss)
+        child_dict["files_from_parent_dict"][parent_poss] = []
+        parent_dict["chidren_pos_lst"].append(child_dict["curr_poss"])
 
-    if file_name not in child_dict['files_from_parent_dict'][parent_poss]:
-        child_dict['files_from_parent_dict'][parent_poss].append(file_name)
+    if file_name not in child_dict["files_from_parent_dict"][parent_poss]:
+        child_dict["files_from_parent_dict"][parent_poss].append(file_name)
 
 
 # xia2 (lib/bits.auto_logfiler) names the log of every step:
@@ -139,7 +139,7 @@ def run_number_of(file_name):
 
 def hinted_run_number(cmd_dict):
     # run number written in the names of the files this step wrote
-    for file_name in cmd_dict['for_next_lst']:
+    for file_name in cmd_dict["for_next_lst"]:
         run_number = run_number_of(file_name)
         if run_number is not None:
             return run_number
@@ -182,8 +182,8 @@ def find_log_files(list_of_commands):
 
     last_number = 0
     for pos, cmd_dict in enumerate(list_of_commands):
-        cmd_dict['log_file_path'] = None
-        found_dict = logs_in_dir(cmd_dict['work_dir'], cmd_dict['exe_cmd'])
+        cmd_dict["log_file_path"] = None
+        found_dict = logs_in_dir(cmd_dict["work_dir"], cmd_dict["exe_cmd"])
         run_number = hint_lst[pos]
         if run_number is None or run_number not in found_dict:
             next_hint = None
@@ -202,10 +202,10 @@ def find_log_files(list_of_commands):
 
         if run_number is None:
             print("Log file not found for:",
-                  cmd_dict['curr_poss'], cmd_dict['exe_cmd'])
+                  cmd_dict["curr_poss"], cmd_dict["exe_cmd"])
 
         else:
-            cmd_dict['log_file_path'] = found_dict[run_number]
+            cmd_dict["log_file_path"] = found_dict[run_number]
             last_number = run_number
 
 
@@ -214,14 +214,14 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
     curr_poss = bigger_lin_in
     print("curr_poss(get_list_of_commands)=", curr_poss)
 
-    json_file = open(path_in, 'r', encoding="utf-8")
+    json_file = open(path_in, "r", encoding="utf-8")
     entries_lst = json.load(json_file)
     json_file.close()
 
     list_of_commands = []
     for entry in entries_lst:
         exe_cmd, par_lst = split_cmd_line(entry["command"])
-        if not is_dials_command(exe_cmd) or exe_cmd == 'dials.report':
+        if not is_dials_command(exe_cmd) or exe_cmd == "dials.report":
             continue
 
         (
@@ -230,22 +230,22 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
         expt_from_prev_lst, refl_from_prev_lst = find_expt_n_refl(from_prev_lst)
         expt_for_next_lst, refl_for_next_lst = find_expt_n_refl(for_next_lst)
         cmd_dict = {
-            'exe_cmd'                   :exe_cmd,
-            'par_lst'                   :par_lst,
-            'tuning_params_lst'         :tuning_params_lst,
-            'from_prev_lst'             :from_prev_lst,
-            'for_next_lst'              :for_next_lst,
-            'expt_from_prev_lst'        :expt_from_prev_lst,
-            'refl_from_prev_lst'        :refl_from_prev_lst,
-            'expt_for_next_lst'         :expt_for_next_lst,
-            'refl_for_next_lst'         :refl_for_next_lst,
-            'parent_pos_lst'            :[],
-            'chidren_pos_lst'           :[],
-            'files_from_parent_dict'    :{},
-            'external_files_lst'        :[],
-            'time_start'                :entry.get("time_start"),
-            'time_end'                  :entry.get("time_end"),
-            'curr_poss'                 :curr_poss,
+            "exe_cmd"                   :exe_cmd,
+            "par_lst"                   :par_lst,
+            "tuning_params_lst"         :tuning_params_lst,
+            "from_prev_lst"             :from_prev_lst,
+            "for_next_lst"              :for_next_lst,
+            "expt_from_prev_lst"        :expt_from_prev_lst,
+            "refl_from_prev_lst"        :refl_from_prev_lst,
+            "expt_for_next_lst"         :expt_for_next_lst,
+            "refl_for_next_lst"         :refl_for_next_lst,
+            "parent_pos_lst"            :[],
+            "chidren_pos_lst"           :[],
+            "files_from_parent_dict"    :{},
+            "external_files_lst"        :[],
+            "time_start"                :entry.get("time_start"),
+            "time_end"                  :entry.get("time_end"),
+            "curr_poss"                 :curr_poss,
         }
         curr_poss += 1
         list_of_commands.append(cmd_dict)
@@ -256,12 +256,12 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
     # node number (curr_poss) -> command dict, numbers start at bigger_lin_in
     cmd_by_poss = {}
     for cmd_dict in list_of_commands:
-        cmd_by_poss[cmd_dict['curr_poss']] = cmd_dict
+        cmd_by_poss[cmd_dict["curr_poss"]] = cmd_dict
     # file name -> position of the most recent command that wrote it
 
     producer_of = {}
     for cur_num, curr_dict in enumerate(list_of_commands):
-        for file_name in curr_dict['from_prev_lst']:
+        for file_name in curr_dict["from_prev_lst"]:
             if file_name in producer_of:
                 parent_poss = producer_of[file_name]
 
@@ -276,9 +276,9 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
                 )
 
             elif has_file_extension(file_name):
-                curr_dict['external_files_lst'].append(file_name)
+                curr_dict["external_files_lst"].append(file_name)
 
-        for single_par in curr_dict['tuning_params_lst']:
+        for single_par in curr_dict["tuning_params_lst"]:
             parent_poss = find_param_parent(
                 single_par, list_of_commands[0:cur_num]
             )
@@ -287,13 +287,13 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
                     cmd_by_poss[parent_poss], curr_dict, single_par
                 )
 
-        if curr_dict['exe_cmd'] in USES_PREVIOUS_OUTPUT and cur_num > 0:
+        if curr_dict["exe_cmd"] in USES_PREVIOUS_OUTPUT and cur_num > 0:
             add_connection(
                 list_of_commands[cur_num - 1], curr_dict, "(implicit)"
             )
 
-        for file_name in curr_dict['for_next_lst']:
-            producer_of[file_name] = curr_dict['curr_poss']
+        for file_name in curr_dict["for_next_lst"]:
+            producer_of[file_name] = curr_dict["curr_poss"]
 
 
     print("\n producer_of =", producer_of)
@@ -308,11 +308,11 @@ def run_n_get_tree(
     print("\n path_to_xia2_timing =", path_to_xia2_run_dir)
     ended_str = os.sep + "xia2-timing.json"
     if path_to_xia2_run_dir.endswith(ended_str):
-        print("using path: \'", path_to_xia2_run_dir, "\' as given by user")
+        print("using path: '", path_to_xia2_run_dir, "' as given by user")
         path_to_timing_file = path_to_xia2_run_dir
 
     else:
-        print("adding: \'", ended_str, "\' to given path")
+        print("adding: '", ended_str, "' to given path")
         path_to_timing_file = path_to_xia2_run_dir + ended_str
 
     lst_cmd, bigger_lin_out = get_list_of_commands(
@@ -321,10 +321,10 @@ def run_n_get_tree(
     )
 
     ############################################################## same 1
-    '''dict_w_lst_cmd = build_reusable_graph_list(
+    """dict_w_lst_cmd = build_reusable_graph_list(
         list_of_commands = lst_cmd, bigger_lin_in = bigger_lin_out,
         import_lin = bigger_lin_from_dui2
-    )'''
+    )"""
     ############################################################## same 2
     dict_w_lst_cmd = build_reusable_graph_list(lst_cmd)
 

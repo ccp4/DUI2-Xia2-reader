@@ -244,7 +244,7 @@ class ImgGraphicsScene(QGraphicsScene):
                     except ValueError:
                         pass
 
-                if pict[0] == 'untrusted.rectangle':
+                if pict[0] == "untrusted.rectangle":
                     tmp_width = lst_num[1] - lst_num[0]
                     tmp_height = lst_num[3] - lst_num[2]
                     x_rect_1 = lst_num[0]
@@ -254,7 +254,7 @@ class ImgGraphicsScene(QGraphicsScene):
                     )
                     self.addRect(rectangle, self.overlay_pen1)
 
-                elif pict[0] == 'untrusted.circle':
+                elif pict[0] == "untrusted.circle":
                     x_rect_1 = lst_num[0] - lst_num[2]
                     y_rect_1 = lst_num[1] - lst_num[2]
                     side = 2 * lst_num[2]
@@ -263,7 +263,7 @@ class ImgGraphicsScene(QGraphicsScene):
                     )
                     self.addEllipse(rectangle, self.overlay_pen1)
 
-                elif pict[0] == 'untrusted.polygon':
+                elif pict[0] == "untrusted.polygon":
                     siz_n_blk = (len(lst_num) - 2) / 2
                     if siz_n_blk >= 1:
                         for i in range(int(siz_n_blk)):
@@ -273,7 +273,7 @@ class ImgGraphicsScene(QGraphicsScene):
                                 self.overlay_pen1
                             )
 
-                elif pict[0] == 'multipanel.rectangle':
+                elif pict[0] == "multipanel.rectangle":
                     tmp_width = lst_num[1] - lst_num[0]
                     tmp_height = lst_num[3] - lst_num[2]
                     x_rect_1 = lst_num[0]
@@ -284,7 +284,7 @@ class ImgGraphicsScene(QGraphicsScene):
                     )
                     self.addRect(rectangle, self.overlay_pen1)
 
-                elif pict[0] == 'multipanel.circle':
+                elif pict[0] == "multipanel.circle":
                     x_rect_1 = lst_num[0] - lst_num[2]
                     y_rect_1 = lst_num[1] - lst_num[2]
                     side = 2 * lst_num[2]
@@ -370,10 +370,10 @@ class ImgGraphicsScene(QGraphicsScene):
                 n_text.setPen(self.overlay_pen1)
 
             except (UnboundLocalError, TypeError, AttributeError):
-                not_neded_to_log = ''' logging.info(
+                not_neded_to_log = """ logging.info(
                     "not found the nearer reflection " +
                     "or not existent reflection list yet"
-                )'''
+                )"""
                 pass
 
         self.new_mouse_pos.emit(x_pos, y_pos)
@@ -720,7 +720,7 @@ class DoImageView(QObject):
         try:
             self.np_full_mask_img = np.zeros((
                 self.img_d1_d2[0], self.img_d1_d2[1]
-                ), dtype = 'float')
+                ), dtype = "float")
 
         except TypeError:
             self.np_full_mask_img = None
@@ -740,15 +740,15 @@ class DoImageView(QObject):
         if self.nod_or_path is True:
             if self.pop_display_menu.rad_but_obs.isChecked():
                 my_cmd = {
-                    'nod_lst': lst_2_load,
-                    'cmd_str': ["grl", str(self.cur_img_num)]
+                    "nod_lst": lst_2_load,
+                    "cmd_str": ["grl", str(self.cur_img_num)]
                 }
 
             else:
                 z_dept_str = str(self.pop_display_menu.z_dept_combo.value())
                 my_cmd = {
-                    'nod_lst': lst_2_load,
-                    'cmd_str': [
+                    "nod_lst": lst_2_load,
+                    "cmd_str": [
                         "grp", str(self.cur_img_num),
                         "z_dept=" + z_dept_str
                     ]
@@ -756,8 +756,8 @@ class DoImageView(QObject):
 
         elif type(self.nod_or_path) is str:
             my_cmd = {
-                'path': self.nod_or_path,
-                'cmd_str': ["get_reflection_list", str(self.cur_img_num)]
+                "path": self.nod_or_path,
+                "cmd_str": ["get_reflection_list", str(self.cur_img_num)]
             }
 
         elif self.nod_or_path is False:
@@ -814,7 +814,7 @@ class DoImageView(QObject):
         lst_2_x_out = []
         try:
             if self.on_filter_reflections:
-                lst_of_str = self.main_obj.new_node.par_lst[0][0]['value'].split(",")
+                lst_of_str = self.main_obj.new_node.par_lst[0][0]["value"].split(",")
                 for single_str in lst_of_str:
                     lst_2_x_out.append(int(single_str))
 
@@ -948,7 +948,7 @@ class DoImageView(QObject):
             else:
                 data_mask= np.zeros((
                     self.img_d1_d2[0], self.img_d1_d2[1]
-                ), dtype = 'float')
+                ), dtype = "float")
 
 
             m_rgb_np = self.bmp_mask.img_2d_rgb(
@@ -1090,10 +1090,10 @@ class DoImageView(QObject):
                 y_pnt = y_pnt - float(panel_num * panel_height)
 
             full_cmd = {
-                'nod_lst': [self.cur_nod_num],
-                'cmd_str': [
-                    'get_resolution', 'panel=' + str(panel_num),
-                    'xy_coordinates=' + str(x_pnt) + ',' + str(y_pnt)
+                "nod_lst": [self.cur_nod_num],
+                "cmd_str": [
+                    "get_resolution", "panel=" + str(panel_num),
+                    "xy_coordinates=" + str(x_pnt) + "," + str(y_pnt)
                 ]
             }
             lst_req = get_req_json_dat(
@@ -1363,7 +1363,7 @@ class DoImageView(QObject):
         try:
             self.np_full_img = np.zeros((
                 self.img_d1_d2[0], self.img_d1_d2[1]
-                ), dtype = 'float')
+                ), dtype = "float")
 
         except TypeError:
             self.np_full_img = None

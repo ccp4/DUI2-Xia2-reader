@@ -4,7 +4,7 @@ import logging
 
 def main():
     par_def = (
-        ("url", 'http://127.0.0.1:45678/'),
+        ("url", "http://127.0.0.1:45678/"),
         ("all_local", "false"),
         ("windows_exe", "false"),
         ("token", "dummy_4_now"),

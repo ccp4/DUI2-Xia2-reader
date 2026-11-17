@@ -771,7 +771,7 @@ class MainObject(QObject):
         logging.info("exit_triggered(QObject) ... 1")
         msgBox  = QMessageBox()
         txt_exit =  "If you are closing by accident,"
-        txt_exit += " you don\'t need to worry.    \n"
+        txt_exit += " you don't need to worry.    \n"
         txt_exit += "Just launch Dui2 again and "
         txt_exit += "it will pickup just where it left off.  "
         msgBox.setText(txt_exit)
@@ -1429,10 +1429,10 @@ class MainObject(QObject):
         self.curr_nod_num = self.new_node.number
         self.display()
         self.refresh_output()
-        if local_main_cmd == ['dials.export']:
+        if local_main_cmd == ["dials.export"]:
             self.param_widgets[self.curr_widg_key]["simple"].reset_pars()
 
-        if local_main_cmd == ['dials.merge']:
+        if local_main_cmd == ["dials.merge"]:
             self.param_widgets[self.curr_widg_key]["simple"].reset_pars()
 
         cmd = {
@@ -1450,7 +1450,7 @@ class MainObject(QObject):
         except (TypeError, IndexError, AttributeError):
             logging.info(" Err Catch Loading Lamda")
 
-        if local_main_cmd == ['dials.reindex']:
+        if local_main_cmd == ["dials.reindex"]:
             self.r_index_widg.opt_clicked(self.best_rd_idx_opt, 1)
 
     def search_in_parent_nodes_exp(self):
@@ -1549,7 +1549,7 @@ class MainObject(QObject):
 
         else:
             logging.info("only clone (F or S)")
-            if self.server_nod_lst[self.curr_nod_num]['cmd2show'] == ['dials.root']:
+            if self.server_nod_lst[self.curr_nod_num]["cmd2show"] == ["dials.root"]:
                 logging.info("clicked on root node, not supposed to clone here")
 
             else:
@@ -1626,14 +1626,14 @@ class MainObject(QObject):
 
         if(
             self.param_widgets[self.curr_widg_key]["main_cmd"]
-            == ['dials.reindex']
+            == ["dials.reindex"]
         ):
             self.r_index_widg.opt_clicked(self.best_rd_idx_opt, 1)
 
     def request_launch(self):
         cmd_lst = self.new_node.get_full_command_list()
         lst_of_node_str = self.new_node.parent_node_lst
-        cmd = {'nod_lst': lst_of_node_str, 'cmd_lst': cmd_lst}
+        cmd = {"nod_lst": lst_of_node_str, "cmd_lst": cmd_lst}
         logging.info("cmd(request_launch) =" + str(cmd))
         self.log_show.clear_4_run()
         do_predictions_n_report = bool(
@@ -1778,15 +1778,15 @@ class MainObject(QObject):
     def what_2_do_after_dials_cmd(self, nod_num_out, do_pred_n_rept):
         self.new_pred_n_repo = False
         if(
-            self.server_nod_lst[nod_num_out]['cmd2show'][0] ==
-            'dials.import'
+            self.server_nod_lst[nod_num_out]["cmd2show"][0] ==
+            "dials.import"
         ):
             self.do_image_view.set_just_imported()
 
         logging.info("nod_num_out(what_2_do_after_dials_cmd)=" + str(nod_num_out) )
         if(
-            self.server_nod_lst[nod_num_out]['cmd2show'][0] ==
-            'dials.split_experiments'
+            self.server_nod_lst[nod_num_out]["cmd2show"][0] ==
+            "dials.split_experiments"
         ):
             cmd = {"nod_lst": [nod_num_out], "cmd_lst": ["split_node"]}
             new_thrd = PostRequestWithOutput(

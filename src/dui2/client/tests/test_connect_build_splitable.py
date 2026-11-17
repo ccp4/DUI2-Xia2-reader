@@ -24,7 +24,7 @@ copyright (c) CCP4 - DLS
 import sys, json, logging
 import requests
 
-uni_url = 'http://127.0.0.1:45678/'
+uni_url = "http://127.0.0.1:45678/"
 #uni_url = 'http://supercomputo.cimav.edu.mx:45678/'
 
 def requests_post(cmd_in):
@@ -33,10 +33,10 @@ def requests_post(cmd_in):
         tmp_dat = req_post.raw.readline()
         print("tmp_dat =", tmp_dat)
         #tmp_dat = req_post.raw.readline()
-        line_str = str(tmp_dat.decode('utf-8'))
+        line_str = str(tmp_dat.decode("utf-8"))
 
-        if '/*EOF*/' in line_str:
-            print('/*EOF*/ received')
+        if "/*EOF*/" in line_str:
+            print("/*EOF*/ received")
             break
 
         else:
@@ -46,7 +46,7 @@ def requests_post(cmd_in):
 if __name__ == "__main__":
     tree_size = 5
     for n in range(tree_size):
-        import_cmd = 'dials.import '
+        import_cmd = "dials.import "
         #imgs_path = 'input.template="/home/luiso/dif_dat/C2sum_5/C2sum_5_'
         #imgs_path = 'input.template="/home/lui/diff_data/C2sum_1/C2sum_1_'
         imgs_path = 'input.template="/home/ufn91840/diff_data/X4_wide/X4_wide_M1S4_2_.cbf'
@@ -60,18 +60,18 @@ if __name__ == "__main__":
         imgs_path += str_num + '.cbf.gz"'
         #imgs_path += str_num + '.cbf"'
         import_cmd += imgs_path
-        full_cmd = {'nod_lst': [0], 'cmd_lst': [import_cmd]}
+        full_cmd = {"nod_lst": [0], "cmd_lst": [import_cmd]}
         requests_post(full_cmd)
 
     for n in range(tree_size):
         n1 = n+1
-        full_cmd = {'nod_lst': [n1], 'cmd_lst': ['dials.find_spots']}
+        full_cmd = {"nod_lst": [n1], "cmd_lst": ["dials.find_spots"]}
         requests_post(full_cmd)
 
 
     for n in range(tree_size):
         n1 = n + tree_size + 1
-        full_cmd = {'nod_lst': [n1], 'cmd_lst': ['dials.index']}
+        full_cmd = {"nod_lst": [n1], "cmd_lst": ["dials.index"]}
         requests_post(full_cmd)
 
     lst_par_nod = []
@@ -80,11 +80,11 @@ if __name__ == "__main__":
         lst_par_nod.append(n1)
         nxt_nod = n1 + 1
 
-    full_cmd = {'nod_lst': lst_par_nod, 'cmd_lst': ['dials.combine_experiments']}
+    full_cmd = {"nod_lst": lst_par_nod, "cmd_lst": ["dials.combine_experiments"]}
     requests_post(full_cmd)
-    '''
+    """
     full_cmd = {'nod_lst': [nxt_nod], 'cmd_lst': ['dials.split_experiments']}
     requests_post(full_cmd)
-    '''
+    """
 
 

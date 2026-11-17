@@ -65,14 +65,14 @@ class ReqHandler(object):
             self.tree_runner.run_dials_command(cmd_dict, call_obj)
             logging.info("sending /*EOF*/ (Dials CMD)")
             spit_out(
-                str_out = '/*EOF*/', req_obj = call_obj, out_type = 'utf-8'
+                str_out = "/*EOF*/", req_obj = call_obj, out_type = "utf-8"
             )
 
         else:
             self.tree_runner.run_dui_command(cmd_dict, call_obj)
             logging.info("sending /*EOF*/ (Dui CMD)")
             spit_out(
-                str_out = '/*EOF*/', req_obj = call_obj, out_type = 'utf-8'
+                str_out = "/*EOF*/", req_obj = call_obj, out_type = "utf-8"
             )
 
     def fake_get(self, url_dict = None, call_obj = None):
@@ -95,7 +95,7 @@ class ReqHandler(object):
 
         if type(lst_out) is list or type(lst_out) is dict:
             spit_out(
-                str_out = lst_out, req_obj = call_obj, out_type = 'utf-8'
+                str_out = lst_out, req_obj = call_obj, out_type = "utf-8"
             )
 
         elif type(lst_out) is bytes:

@@ -57,7 +57,7 @@ def np_arr_2_byte_stream(np_arr_in):
     img_arr[0] = float(d1)
     img_arr[1] = float(d2)
     img_arr[2:] = np_arr_in.ravel()
-    byte_info = img_arr.tobytes(order='C')
+    byte_info = img_arr.tobytes(order="C")
     return byte_info
 
 
@@ -406,7 +406,7 @@ def get_dispersion_debug_obj_tup(
         algorithm = params_in["algorithm"]
 
     except KeyError:
-        algorithm = 'dispersion_extended'
+        algorithm = "dispersion_extended"
 
     experiments = ExperimentList.from_file(expt_path)
     my_imageset = experiments.imagesets()[0]

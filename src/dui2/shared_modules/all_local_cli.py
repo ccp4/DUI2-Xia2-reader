@@ -55,7 +55,7 @@ def main(par_def = None):
     m_obj = cliObject(cmd_tree_runner = cmd_runner)
 
     for cmd_repeat in range(10):
-        str_in = input("type: \"Node,command\":")
+        str_in = input('type: "Node,command":')
         m_obj.run_cmd(str_in)
 
 

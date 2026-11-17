@@ -2,7 +2,7 @@ from multiprocessing import Process, Pipe
 from dui2.server import run_server
 import logging
 
-logging.basicConfig(filename='run_dui2_server.log', level=logging.DEBUG)
+logging.basicConfig(filename="run_dui2_server.log", level=logging.DEBUG)
 
 server_par_def = (
     ("chdir", None),

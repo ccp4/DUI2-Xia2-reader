@@ -96,8 +96,8 @@ def find_implicit_parent(file_name, prev_cmd_lst):
         if matches(file_name):
             # most recent previous run of that program
             for prev_dict in reversed(prev_cmd_lst):
-                if prev_dict['exe_cmd'] == exe_cmd:
-                    return prev_dict['curr_poss']
+                if prev_dict["exe_cmd"] == exe_cmd:
+                    return prev_dict["curr_poss"]
 
     return None
 
@@ -107,8 +107,8 @@ def find_param_parent(single_par, prev_cmd_lst):
         if single_par.startswith(key + "="):
             # most recent previous run of any of those programs
             for prev_dict in reversed(prev_cmd_lst):
-                if prev_dict['exe_cmd'] in exe_cmd_lst:
-                    return prev_dict['curr_poss']
+                if prev_dict["exe_cmd"] in exe_cmd_lst:
+                    return prev_dict["curr_poss"]
 
     return None
 
@@ -145,8 +145,8 @@ def map_abs_paths(list_of_commands):
     dir_of_file = {}
     ambiguous_set = set()
     for cmd_dict in list_of_commands:
-        cmd_dict['work_dir'] = None
-        for single_par in cmd_dict['par_lst']:
+        cmd_dict["work_dir"] = None
+        for single_par in cmd_dict["par_lst"]:
             path_str = reversed_find_str(
                 str_in = single_par, lst_sep_lst = ["="]
             )
@@ -172,11 +172,11 @@ def spread_work_dirs(list_of_commands, dir_of_file, ambiguous_set):
     while found_new:
         found_new = False
         for cmd_dict in list_of_commands:
-            if cmd_dict['work_dir'] is not None:
+            if cmd_dict["work_dir"] is not None:
                 continue
 
             no_path_lst = []
-            for single_par in cmd_dict['par_lst']:
+            for single_par in cmd_dict["par_lst"]:
                 path_str = reversed_find_str(
                     str_in = single_par, lst_sep_lst = ["="]
                 )
@@ -192,14 +192,14 @@ def spread_work_dirs(list_of_commands, dir_of_file, ambiguous_set):
             if len(dir_set) == 1:
                 new_work_dir = dir_set.pop()
                 #print("new_work_dir =", new_work_dir)
-                cmd_dict['work_dir'] = new_work_dir
+                cmd_dict["work_dir"] = new_work_dir
                 found_new = True
                 for file_name in no_path_lst:
                     if (
                         file_name not in dir_of_file
                         and file_name not in ambiguous_set
                     ):
-                        dir_of_file[file_name] = cmd_dict['work_dir']
+                        dir_of_file[file_name] = cmd_dict["work_dir"]
 
             elif len(dir_set) > 1 and cmd_dict not in conflict_lst:
                 conflict_lst.append(cmd_dict)
@@ -210,22 +210,22 @@ def spread_work_dirs(list_of_commands, dir_of_file, ambiguous_set):
 def report_n_common_dir(list_of_commands, conflict_lst):
     common_dir = None
     for cmd_dict in list_of_commands:
-        if cmd_dict['work_dir'] is None:
+        if cmd_dict["work_dir"] is None:
             # not implied by the log, left as None on purpose
             if cmd_dict in conflict_lst:
                 print("Dir not found (conflicting dirs) for:",
-                      cmd_dict['curr_poss'], cmd_dict['exe_cmd'])
+                      cmd_dict["curr_poss"], cmd_dict["exe_cmd"])
 
             else:
-                tmp_off = '''print("Dir not found for:",
+                tmp_off = """print("Dir not found for:",
                       cmd_dict['curr_poss'], cmd_dict['exe_cmd']
-                )'''
+                )"""
 
         elif common_dir is None:
-            common_dir = cmd_dict['work_dir']
+            common_dir = cmd_dict["work_dir"]
 
         else:
-            common_dir = os.path.commonpath([common_dir, cmd_dict['work_dir']])
+            common_dir = os.path.commonpath([common_dir, cmd_dict["work_dir"]])
 
 
     return common_dir
@@ -236,8 +236,8 @@ def fill_missing_work_dirs(list_of_commands, common_dir):
     extra_dir_left = common_dir[0: natv_posi]
 
     for cmd_dict in list_of_commands:
-        if cmd_dict['work_dir'] is None:
-            cmd_dict['work_dir'] = extra_dir_left + "/scale/"
+        if cmd_dict["work_dir"] is None:
+            cmd_dict["work_dir"] = extra_dir_left + "/scale/"
 
 
 # DUI2 grows its tree one step after another: a new node continues from the
@@ -259,22 +259,22 @@ def to_dui2_tree(list_of_commands, root_poss):
     # stay in 'file_parent_pos_lst'
     cmd_by_poss = {}
     for cmd_dict in list_of_commands:
-        cmd_dict['file_parent_pos_lst'] = list(cmd_dict['parent_pos_lst'])
-        cmd_dict['chidren_pos_lst'] = []
-        cmd_by_poss[cmd_dict['curr_poss']] = cmd_dict
+        cmd_dict["file_parent_pos_lst"] = list(cmd_dict["parent_pos_lst"])
+        cmd_dict["chidren_pos_lst"] = []
+        cmd_by_poss[cmd_dict["curr_poss"]] = cmd_dict
 
-        if cmd_dict['parent_pos_lst'] == []:
+        if cmd_dict["parent_pos_lst"] == []:
             # e.g.: dials.import, hangs from the node that imported xia2
-            cmd_dict['parent_pos_lst'] = [root_poss]
+            cmd_dict["parent_pos_lst"] = [root_poss]
 
-        elif cmd_dict['exe_cmd'] not in JOIN_COMMANDS:
-            cmd_dict['parent_pos_lst'] = [max(cmd_dict['parent_pos_lst'])]
+        elif cmd_dict["exe_cmd"] not in JOIN_COMMANDS:
+            cmd_dict["parent_pos_lst"] = [max(cmd_dict["parent_pos_lst"])]
 
     for cmd_dict in list_of_commands:
-        for parent_poss in cmd_dict['parent_pos_lst']:
+        for parent_poss in cmd_dict["parent_pos_lst"]:
             if parent_poss in cmd_by_poss:
-                cmd_by_poss[parent_poss]['chidren_pos_lst'].append(
-                    cmd_dict['curr_poss']
+                cmd_by_poss[parent_poss]["chidren_pos_lst"].append(
+                    cmd_dict["curr_poss"]
                 )
 
 
@@ -284,13 +284,13 @@ def full_path_lst(file_lst, cmd_dict):
     # without 'work_dir' the name stays as it is (no path)
     path_lst = []
     for file_name in file_lst:
-        if cmd_dict['work_dir'] is None:
+        if cmd_dict["work_dir"] is None:
             new_path = file_name
 
         else:
-            new_path = os.path.join(cmd_dict['work_dir'], file_name)
+            new_path = os.path.join(cmd_dict["work_dir"], file_name)
 
-        for single_par in cmd_dict['par_lst']:
+        for single_par in cmd_dict["par_lst"]:
             path_str = reversed_find_str(str_in = single_par, lst_sep_lst = ["="])
             if (
                 os.path.isabs(path_str)
@@ -310,9 +310,9 @@ def print_graph_table(list_of_commands):
     print("from", "parent", "to", "child", "via")
     print("-" * 90)
     for cmd_dict in list_of_commands:
-        for parent_poss in sorted(cmd_dict['parent_pos_lst']):
+        for parent_poss in sorted(cmd_dict["parent_pos_lst"]):
             lbl_lst = []
-            FIXME = '''
+            FIXME = """
             fmt_str = "%-5s %-30s %-5s %-30s %s"
             for label in cmd_dict['files_from_parent_dict'][parent_poss]:
                 lbl_lst.append(short_label(label))
@@ -322,11 +322,11 @@ def print_graph_table(list_of_commands):
                 cmd_dict['curr_poss'], cmd_dict['exe_cmd'],
                 ", ".join(sorted(lbl_lst)),
             ))
-            '''
+            """
             fmt_str = "%-5s %-30s %-5s %-30s"
             print(fmt_str % (
-                parent_poss, list_of_commands[parent_poss]['exe_cmd'],
-                cmd_dict['curr_poss'], cmd_dict['exe_cmd']
+                parent_poss, list_of_commands[parent_poss]["exe_cmd"],
+                cmd_dict["curr_poss"], cmd_dict["exe_cmd"]
             ))
 
     print("=" * 90)
@@ -343,19 +343,19 @@ def build_reusable_graph_list(
     lst_nod = []
     bigger_lin = bigger_lin_in
     for cmd_dict in list_of_commands:
-        if bigger_lin < cmd_dict['curr_poss']:
-            bigger_lin = cmd_dict['curr_poss']
+        if bigger_lin < cmd_dict["curr_poss"]:
+            bigger_lin = cmd_dict["curr_poss"]
 
-        parent_node_lst = cmd_dict['parent_pos_lst']
+        parent_node_lst = cmd_dict["parent_pos_lst"]
 
         if  parent_node_lst == []:
             parent_node_lst = [bigger_lin - 1]
             print("parent_node_lst(fixed) =", parent_node_lst)
 
-        lst_expt_in = full_path_lst(cmd_dict['expt_from_prev_lst'], cmd_dict)
-        lst_refl_in = full_path_lst(cmd_dict['refl_from_prev_lst'], cmd_dict)
-        lst_expt_out = full_path_lst(cmd_dict['expt_for_next_lst'], cmd_dict)
-        lst_refl_out = full_path_lst(cmd_dict['refl_for_next_lst'], cmd_dict)
+        lst_expt_in = full_path_lst(cmd_dict["expt_from_prev_lst"], cmd_dict)
+        lst_refl_in = full_path_lst(cmd_dict["refl_from_prev_lst"], cmd_dict)
+        lst_expt_out = full_path_lst(cmd_dict["expt_for_next_lst"], cmd_dict)
+        lst_refl_out = full_path_lst(cmd_dict["refl_for_next_lst"], cmd_dict)
         # like CmdNode.set_exe_files_out, a step that writes no .expt/.refl
         # hands on what it read, so a DUI2 step launched from it gets files
         if lst_expt_out == []:
@@ -364,8 +364,8 @@ def build_reusable_graph_list(
         if lst_refl_out == []:
             lst_refl_out = list(lst_refl_in)
 
-        tun_par_lst = cmd_dict['tuning_params_lst']
-        tun_par_lst = [cmd_dict['exe_cmd']] + tun_par_lst
+        tun_par_lst = cmd_dict["tuning_params_lst"]
+        tun_par_lst = [cmd_dict["exe_cmd"]] + tun_par_lst
         lst2run = [tun_par_lst]
         node = {
             "_base_dir"             :os.getcwd(),
@@ -373,20 +373,20 @@ def build_reusable_graph_list(
                                         "nod_lst":[None],
                                         "cmd_lst":[[None]]
                                     },
-            "full_cmd_lst"          :cmd_dict['exe_cmd'],
+            "full_cmd_lst"          :cmd_dict["exe_cmd"],
             "lst2run"               :lst2run,
             "_lst_expt_in"          :lst_expt_in,
             "_lst_refl_in"          :lst_refl_in,
             "_lst_expt_out"         :lst_expt_out,
             "_lst_refl_out"         :lst_refl_out,
-            "_run_dir"              :cmd_dict['work_dir'],
+            "_run_dir"              :cmd_dict["work_dir"],
 
             "_html_rep"             :None,
             "_predic_refl"          :None,
-            "log_file_path"         :cmd_dict.get('log_file_path'),
-            "number"                :cmd_dict['curr_poss'],
+            "log_file_path"         :cmd_dict.get("log_file_path"),
+            "number"                :cmd_dict["curr_poss"],
             "parent_node_lst"       :parent_node_lst,
-            "child_node_lst"        :cmd_dict['chidren_pos_lst'],
+            "child_node_lst"        :cmd_dict["chidren_pos_lst"],
             "status"                :"Succeeded"
         }
         lst_nod.append(node)
@@ -403,7 +403,7 @@ def build_reusable_graph_list(
 def send_line(new_line, req_obj):
     # like add_log_line in multi_node, returns 1 when the client is gone
     try:
-        spit_out(str_out = new_line, req_obj = req_obj, out_type = 'utf-8')
+        spit_out(str_out = new_line, req_obj = req_obj, out_type = "utf-8")
 
     except BrokenPipeError:
         return 1
@@ -430,9 +430,9 @@ def run_n_spit_out(lst_dat_in, run_dir, req_obj):
         universal_newlines = True
     )
     new_line = None
-    while run_proc.poll() is None or new_line != '':
+    while run_proc.poll() is None or new_line != "":
         new_line = run_proc.stdout.readline()
-        if new_line != '':
+        if new_line != "":
             n_broken_pipes += send_line(new_line, req_obj)
 
     run_proc.stdout.close()
@@ -440,7 +440,7 @@ def run_n_spit_out(lst_dat_in, run_dir, req_obj):
 
 
 def run_predicts_n_reports(all_dat = None, arg_in = None, req_obj = None):
-    lst_cmd = all_dat['step_list']
+    lst_cmd = all_dat["step_list"]
     # every report and prediction goes in the same dir, with the node number
     # in the file name, the commands run there (cwd) without os.chdir
     path_to_dir = os.path.abspath("predicts_n_reports")
@@ -453,7 +453,7 @@ def run_predicts_n_reports(all_dat = None, arg_in = None, req_obj = None):
 
     n_broken_pipes = 0
     for cmd_node in lst_cmd:
-        number_str = str(cmd_node['number'])
+        number_str = str(cmd_node["number"])
         new_line = (
             "HTML Report + Reflection Prediction (node " + number_str +
             ") ... START\n"
@@ -461,11 +461,11 @@ def run_predicts_n_reports(all_dat = None, arg_in = None, req_obj = None):
         n_broken_pipes += send_line(new_line, req_obj)
 
         # running HTML report generation
-        rep_lst_dat_in = ['dials.report']
-        for expt_2_add in cmd_node['_lst_expt_out']:
+        rep_lst_dat_in = ["dials.report"]
+        for expt_2_add in cmd_node["_lst_expt_out"]:
             rep_lst_dat_in.append(expt_2_add)
 
-        for refl_2_add in cmd_node['_lst_refl_out']:
+        for refl_2_add in cmd_node["_lst_refl_out"]:
             rep_lst_dat_in.append(refl_2_add)
 
         output_html_file = "dials.report_n_" + number_str + ".html"
@@ -475,7 +475,7 @@ def run_predicts_n_reports(all_dat = None, arg_in = None, req_obj = None):
 
         tmp_html_path = path_to_dir + os.sep + output_html_file
         if os.path.exists(tmp_html_path):
-            cmd_node['_html_rep'] = str(tmp_html_path)
+            cmd_node["_html_rep"] = str(tmp_html_path)
             new_line = "HTML Report ready\n"
 
         else:
@@ -485,13 +485,13 @@ def run_predicts_n_reports(all_dat = None, arg_in = None, req_obj = None):
 
         # running prediction generation, like CmdNode.generate_predict_n_report
         # but with the node number in the output name (all share one dir)
-        if cmd_node['_lst_expt_out'] == []:
+        if cmd_node["_lst_expt_out"] == []:
             new_line = "No experiments, no Reflection Prediction here\n"
             n_broken_pipes += send_line(new_line, req_obj)
 
         else:
-            pred_lst_dat_in = ['dials.predict']
-            for expt_2_add in cmd_node['_lst_expt_out']:
+            pred_lst_dat_in = ["dials.predict"]
+            for expt_2_add in cmd_node["_lst_expt_out"]:
                 pred_lst_dat_in.append(expt_2_add)
 
             output_pred_file = "predicted_n_" + number_str + ".refl"
@@ -503,7 +503,7 @@ def run_predicts_n_reports(all_dat = None, arg_in = None, req_obj = None):
 
             tmp_predic_path = path_to_dir + os.sep + output_pred_file
             if os.path.exists(tmp_predic_path):
-                cmd_node['_predic_refl'] = str(tmp_predic_path)
+                cmd_node["_predic_refl"] = str(tmp_predic_path)
                 new_line = "Reflection Prediction ready\n"
 
             else:
@@ -520,6 +520,6 @@ def run_predicts_n_reports(all_dat = None, arg_in = None, req_obj = None):
     if n_broken_pipes > 0:
         print("<< BrokenPipe err catch >> while sending output")
 
-    all_dat['step_list'] = lst_cmd
+    all_dat["step_list"] = lst_cmd
     print("\n done \n")
     return all_dat

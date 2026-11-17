@@ -24,7 +24,7 @@ copyright (c) CCP4 - DLS
 import sys, json, logging
 import requests
 
-uni_url = 'http://127.0.0.1:45678/'
+uni_url = "http://127.0.0.1:45678/"
 #uni_url = 'http://127.0.0.1:45679/'
 #uni_url = 'http://supercomputo.cimav.edu.mx:45678/'
 
@@ -33,29 +33,29 @@ if __name__ == "__main__":
     #correct = '''
     full_cmd = {
         "nod_lst":"", "cmd_str":["history"],
-        'token': 'dummy_4_now'
+        "token": "dummy_4_now"
     }
     #'''
 
-    misspell_token = '''
+    misspell_token = """
     full_cmd = {
         "nod_lst":"", "cmd_str":["history"],
         'tock': 'dummy_4_now'
     }
-    #'''
+    #"""
 
-    no_token_error = '''
+    no_token_error = """
     full_cmd = {
         "nod_lst":"", "cmd_str":["history"]
     }
-    #'''
+    #"""
 
-    wrong_token_error = '''
+    wrong_token_error = """
     full_cmd = {
         "nod_lst":"", "cmd_str":["history"],
         'token': 'dummy_4_nowww'
     }
-    #'''
+    #"""
 
     req_get = requests.get(uni_url, stream = True, params = full_cmd)
     print("\n url =\n", req_get.url, "\n")
@@ -63,10 +63,10 @@ if __name__ == "__main__":
     while True:
         tmp_dat = req_get.raw.readline()
         print("tmp_dat =", tmp_dat)
-        line_str = str(tmp_dat.decode('utf-8'))
+        line_str = str(tmp_dat.decode("utf-8"))
 
-        if '/*EOF*/' in line_str:
-            print('/*EOF*/ received')
+        if "/*EOF*/" in line_str:
+            print("/*EOF*/ received")
             break
 
         else:

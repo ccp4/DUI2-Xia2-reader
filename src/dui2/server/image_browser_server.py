@@ -182,7 +182,7 @@ def main(par_def = None, connection_out = None):
 
                 if type(lst_out) is list or type(lst_out) is dict:
                     try:
-                        self.send_header('Content-type', 'text/plain')
+                        self.send_header("Content-type", "text/plain")
                         self.end_headers()
 
                     except AttributeError:
@@ -191,17 +191,17 @@ def main(par_def = None, connection_out = None):
                             " not supposed send header info"
                         )
 
-                    json_str = json.dumps(lst_out) + '\n'
+                    json_str = json.dumps(lst_out) + "\n"
                     spit_out(
-                        str_out = json_str, req_obj = self, out_type = 'utf-8'
+                        str_out = json_str, req_obj = self, out_type = "utf-8"
                     )
 
                 elif type(lst_out) is bytes:
                     byt_data = zlib.compress(lst_out)
                     siz_dat = str(len(byt_data))
                     try:
-                        self.send_header('Content-type', 'application/zlib')
-                        self.send_header('Content-Length', siz_dat)
+                        self.send_header("Content-type", "application/zlib")
+                        self.send_header("Content-Length", siz_dat)
                         self.end_headers()
 
                     except AttributeError:
@@ -213,7 +213,7 @@ def main(par_def = None, connection_out = None):
 
                 logging.info("sending /*EOF*/")
                 spit_out(
-                    str_out = '/*EOF*/', req_obj = self, out_type = 'utf-8'
+                    str_out = "/*EOF*/", req_obj = self, out_type = "utf-8"
                 )
 
             except BrokenPipeError:

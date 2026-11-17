@@ -25,7 +25,7 @@ import sys, zlib
 import requests
 import numpy as np
 
-uni_url = 'http://127.0.0.1:45678/'
+uni_url = "http://127.0.0.1:45678/"
 #uni_url = 'http://127.0.0.1:45679/'
 #uni_url = 'http://supercomputo.cimav.edu.mx:45678/'
 
@@ -33,19 +33,19 @@ if __name__ == "__main__":
     img_num = 0
     print("\n\n img_num =", img_num)
     full_cmd = {
-        'nod_lst': [2],
-        'path': None,
-        'cmd_str': [
-            'gtmis', str(img_num), 'inv_scale=1',
-            'view_rect=1095,860,1105,870',"params={'algorithm': 'dispersion_extended', 'gain': 1.01, 'global_threshold': 0.1, 'min_count': 2, 'nsig_b': 6.2, 'nsig_s': 3.1, 'size': [4, 4]}"
+        "nod_lst": [2],
+        "path": None,
+        "cmd_str": [
+            "gtmis", str(img_num), "inv_scale=1",
+            "view_rect=1095,860,1105,870","params={'algorithm': 'dispersion_extended', 'gain': 1.01, 'global_threshold': 0.1, 'min_count': 2, 'nsig_b': 6.2, 'nsig_s': 3.1, 'size': [4, 4]}"
         ],
-        'token': 'dummy_4_now',
+        "token": "dummy_4_now",
     }
 
     req_get = requests.get(
         uni_url, stream = True, params = full_cmd, timeout = 15
     )
-    req_head = req_get.headers.get('content-length', 0)
+    req_head = req_get.headers.get("content-length", 0)
     total_size = int(req_head) + 1
     print("total_size =" + str(total_size))
     block_size = int(total_size / 6 * 1024)

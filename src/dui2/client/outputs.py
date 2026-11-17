@@ -66,7 +66,7 @@ class LoadFiles(QThread):
             )
             exp_req = req_shot.result_out()
             try:
-                full_exp_file = exp_req.decode('utf-8')
+                full_exp_file = exp_req.decode("utf-8")
 
             except TypeError:
                 logging.info("Type Err Catch (LoadFiles)")
@@ -177,7 +177,7 @@ class LaunchReciprocalLattice(QThread):
             return
 
         new_line = None
-        while self.my_proc.poll() is None or new_line != '':
+        while self.my_proc.poll() is None or new_line != "":
             new_line = self.my_proc.stdout.readline()
             if len(new_line) > 1:
                 logging.info(str(new_line))
@@ -191,13 +191,13 @@ class LaunchReciprocalLattice(QThread):
 
     def kill_proc(self):
 
-        tst_without_this = '''
+        tst_without_this = """
         if os.path.exists(self.ref_path):
             os.remove(self.ref_path)
 
         if os.path.exists(self.exp_path):
             os.remove(self.exp_path)
-        '''
+        """
 
         try:
             #TODO consider using directly self.my_proc.kill() instead of
@@ -320,7 +320,7 @@ class HandleLoadStatusLabel(QObject):
         self.main_obj.window.OutuputStatLabel.setStyleSheet(
             "QLabel { background-color : green; color : yellow; }"
         )
-        self.main_obj.window.OutuputStatLabel.setText('  Loading  ')
+        self.main_obj.window.OutuputStatLabel.setText("  Loading  ")
         self.main_obj.parent_app.processEvents()
         logging.info("load_started (HandleLoadStatusLabel)")
 
@@ -338,7 +338,7 @@ class HandleLoadStatusLabel(QObject):
             "QLabel { background-color : green; color : yellow; }"
         )
         self.main_obj.window.OutuputStatLabel.setText(
-            '  Loading: ' + str_progress + " %  "
+            "  Loading: " + str_progress + " %  "
         )
         self.main_obj.parent_app.processEvents()
 
@@ -346,7 +346,7 @@ class HandleLoadStatusLabel(QObject):
         self.main_obj.window.OutuputStatLabel.setStyleSheet(
             "QLabel { background-color : white; color : blue; }"
         )
-        self.main_obj.window.OutuputStatLabel.setText('  Ready  ')
+        self.main_obj.window.OutuputStatLabel.setText("  Ready  ")
         self.main_obj.parent_app.processEvents()
         logging.info("load_finished (HandleLoadStatusLabel)")
 
@@ -534,7 +534,7 @@ class DoLoadHTML(QObject):
                         self.retry_time += 1
 
                     else:
-                        full_file = req_file.decode('utf-8')
+                        full_file = req_file.decode("utf-8")
                         self.retry_time = 1
 
                     logging.info("... html request ended")
@@ -558,7 +558,7 @@ class DoLoadHTML(QObject):
 
                 except AttributeError:
                     logging.info("\n Connection err catch (DoLoadHTML) \n")
-                    full_file = ''
+                    full_file = ""
 
             if len(full_file) < 5:
                 html_show(
@@ -720,7 +720,7 @@ class ShowLog(QObject):
             self.main_obj.window.incoming_text.insertPlainText(new_line)
 
     def show_ready_log(self, show_help = None, replace_w_this = None):
-        logging.info('from: show_ready_log')
+        logging.info("from: show_ready_log")
         if show_help == True:
             try:
                 if replace_w_this:
@@ -806,9 +806,9 @@ class HistoryBox(QDialog):
         print("file_path =", file_path)
 
         file_name = file_path[0]
-        if file_name != '':
+        if file_name != "":
             print("file_name =", file_name)
-            with open(file_name, 'w', encoding="utf-8") as f:
+            with open(file_name, "w", encoding="utf-8") as f:
                 for sigl_comm in self.lst_of_cmd:
                     f.write(sigl_comm)
 

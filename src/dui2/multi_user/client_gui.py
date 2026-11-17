@@ -75,14 +75,14 @@ class Form(QWidget):
         dict_resp = self.post_clicked(new_command = "login")
         print("dict_resp(login) =" + str(dict_resp))
         try:
-            if dict_resp['body']['success']:
-                token = dict_resp['body']['message']['token']
-                port =  dict_resp['body']['message']['port']
+            if dict_resp["body"]["success"]:
+                token = dict_resp["body"]["message"]["token"]
+                port =  dict_resp["body"]["message"]["port"]
                 #cutting the last part from ~/ ... /DUI2/src/dui2/only_client.py
                 dui_main_path = str(only_client.__file__)[:-20]
                 code_path = dui_main_path + os.sep + "run_dui2_client.py"
                 token_str = "token=" + str(token)
-                url_str = 'url=' + self.domain_ini + str(port) + '/'
+                url_str = "url=" + self.domain_ini + str(port) + "/"
                 cmd_lst = [
                     str(sys.executable), str(code_path), token_str, url_str
                 ]

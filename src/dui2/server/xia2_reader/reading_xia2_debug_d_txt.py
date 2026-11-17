@@ -109,13 +109,13 @@ def split_by_type(par_lst):
 
 
 def add_connection(parent_dict, child_dict, file_name):
-    parent_poss = parent_dict['curr_poss']
-    if parent_poss not in child_dict['parent_pos_lst']:
-        child_dict['parent_pos_lst'].append(parent_poss)
-        child_dict['files_from_parent_dict'][parent_poss] = []
-        parent_dict['chidren_pos_lst'].append(child_dict['curr_poss'])
+    parent_poss = parent_dict["curr_poss"]
+    if parent_poss not in child_dict["parent_pos_lst"]:
+        child_dict["parent_pos_lst"].append(parent_poss)
+        child_dict["files_from_parent_dict"][parent_poss] = []
+        parent_dict["chidren_pos_lst"].append(child_dict["curr_poss"])
 
-    child_dict['files_from_parent_dict'][parent_poss].append(file_name)
+    child_dict["files_from_parent_dict"][parent_poss].append(file_name)
 
 
 # xia2 (DefaultDriver.close_wait) echoes the end of every log it closes:
@@ -175,7 +175,7 @@ def write_log_copy(log_path, log_lines):
 
 def get_list_of_commands(path_in, bigger_lin_in = 0):
     print("file 2 read = ", path_in)
-    log_file = open(path_in, 'r', encoding="utf-8")
+    log_file = open(path_in, "r", encoding="utf-8")
     lines_str = log_file.readlines()
     log_file.close()
     list_of_commands = []
@@ -186,7 +186,7 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
             new_cmd_str = lines_str[position + 1][1:]
             exe_cmd, full_cmd_lst = split_cmd_line(new_cmd_str)
 
-            if not is_dials_command(exe_cmd) or exe_cmd == 'dials.report':
+            if not is_dials_command(exe_cmd) or exe_cmd == "dials.report":
                 #TODO: have a look if some command escapes this
                 continue
 
@@ -208,22 +208,22 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
                 log_file_path = write_log_copy(orig_log_path, log_lines)
 
             cmd_dict = {
-                'full_cmd_lst'              :full_cmd_lst,
-                'exe_cmd'                   :exe_cmd,
-                'par_lst'                   :full_cmd_lst[1:],
-                'expt_from_prev_lst'        :expt_from_prev_lst,
-                'refl_from_prev_lst'        :refl_from_prev_lst,
-                'another_from_prev_lst'     :another_from_prev_lst,
-                'expt_for_next_lst'         :expt_for_next_lst,
-                'refl_for_next_lst'         :refl_for_next_lst,
-                'another_for_next_lst'      :another_for_next_lst,
-                'tuning_params_lst'         :tuning_params_lst,
-                'parent_pos_lst'            :[],
-                'chidren_pos_lst'           :[],
-                'files_from_parent_dict'    :{},
-                'external_files_lst'        :[],
-                'log_file_path'             :log_file_path,
-                'curr_poss'                 :curr_poss,
+                "full_cmd_lst"              :full_cmd_lst,
+                "exe_cmd"                   :exe_cmd,
+                "par_lst"                   :full_cmd_lst[1:],
+                "expt_from_prev_lst"        :expt_from_prev_lst,
+                "refl_from_prev_lst"        :refl_from_prev_lst,
+                "another_from_prev_lst"     :another_from_prev_lst,
+                "expt_for_next_lst"         :expt_for_next_lst,
+                "refl_for_next_lst"         :refl_for_next_lst,
+                "another_for_next_lst"      :another_for_next_lst,
+                "tuning_params_lst"         :tuning_params_lst,
+                "parent_pos_lst"            :[],
+                "chidren_pos_lst"           :[],
+                "files_from_parent_dict"    :{},
+                "external_files_lst"        :[],
+                "log_file_path"             :log_file_path,
+                "curr_poss"                 :curr_poss,
             }
             curr_poss += 1
             list_of_commands.append(cmd_dict)
@@ -233,15 +233,15 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
     # node number (curr_poss) -> command dict, numbers start at bigger_lin_in
     cmd_by_poss = {}
     for cmd_dict in list_of_commands:
-        cmd_by_poss[cmd_dict['curr_poss']] = cmd_dict
+        cmd_by_poss[cmd_dict["curr_poss"]] = cmd_dict
 
     # file name -> position of the most recent command that wrote it
     producer_of = {}
     for cur_num, curr_dict in enumerate(list_of_commands):
         for file_name in (
-            curr_dict['expt_from_prev_lst'] +
-            curr_dict['refl_from_prev_lst'] +
-            curr_dict['another_from_prev_lst']
+            curr_dict["expt_from_prev_lst"] +
+            curr_dict["refl_from_prev_lst"] +
+            curr_dict["another_from_prev_lst"]
         ):
             if file_name in producer_of:
                 parent_poss = producer_of[file_name]
@@ -252,12 +252,12 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
                 )
 
             if parent_poss is None:
-                curr_dict['external_files_lst'].append(file_name)
+                curr_dict["external_files_lst"].append(file_name)
                 continue
 
             add_connection(cmd_by_poss[parent_poss], curr_dict, file_name)
 
-        for single_par in curr_dict['tuning_params_lst']:
+        for single_par in curr_dict["tuning_params_lst"]:
             parent_poss = find_param_parent(
                 single_par, list_of_commands[0:cur_num]
             )
@@ -267,11 +267,11 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
                 )
 
         for file_name in (
-            curr_dict['expt_for_next_lst'] +
-            curr_dict['refl_for_next_lst'] +
-            curr_dict['another_for_next_lst']
+            curr_dict["expt_for_next_lst"] +
+            curr_dict["refl_for_next_lst"] +
+            curr_dict["another_for_next_lst"]
         ):
-            producer_of[file_name] = curr_dict['curr_poss']
+            producer_of[file_name] = curr_dict["curr_poss"]
 
     to_dui2_tree(list_of_commands, root_poss = bigger_lin_in - 1)
     return list_of_commands, curr_poss
@@ -283,11 +283,11 @@ def get_tree(
     print("path_to_xia2_run_dir =", path_to_xia2_run_dir)
     ended_str = os.sep + "xia2-debug.txt"
     if path_to_xia2_run_dir.endswith(ended_str):
-        print("using path: \'", path_to_xia2_run_dir, "\' as given by user")
+        print("using path: '", path_to_xia2_run_dir, "' as given by user")
         path_to_debug_file = path_to_xia2_run_dir
 
     else:
-        print("adding: \'", ended_str, "\' to given path")
+        print("adding: '", ended_str, "' to given path")
         path_to_debug_file = path_to_xia2_run_dir + ended_str
 
     lst_cmd, bigger_lin_out = get_list_of_commands(
