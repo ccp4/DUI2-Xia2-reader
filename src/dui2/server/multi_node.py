@@ -915,12 +915,9 @@ class Runner(object):
                 elif unalias_cmd_lst[0][0] == 'mask_app':
                     untrusted_list = unalias_cmd_lst[0][1:]
                     phil_file_name = self.mask_app_build(untrusted_list)
-
-                    print("\n\n here before run_dials_command")
-
                     self.run_dials_command(
                         cmd_dict = {
-                            'nod_lst': cmd_dict["nod_lst"], 'cmd_lst': [
+                            'nod_lst': cmd_dict["nod_lst"], "cmd_lst": [
                                 [
                                     'dials.generate_mask',
                                     '..'+ os.sep + phil_file_name,
@@ -929,9 +926,6 @@ class Runner(object):
                             ]
                         }, req_obj = req_obj
                     )
-
-                    print("here after run_dials_command \n\n")
-
 
                 elif unalias_cmd_lst == [["stop"]]:
                     for lin2go in cmd_dict["nod_lst"]:
