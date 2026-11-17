@@ -324,7 +324,7 @@ class FindNextCmd(object):
     def get_parent_num(self, nod_num):
         self.par_cmd_lst.append(self.nod_lst[nod_num]["cmd2show"][0][6:])
         for new_nod_num in self.nod_lst[nod_num]["parent_node_lst"]:
-            if new_nod_num := 0:
+            if new_nod_num != 0:
                 self.get_parent_num(new_nod_num)
 
     def get_nxt_cmd(self):
