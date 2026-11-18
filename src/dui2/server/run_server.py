@@ -138,6 +138,13 @@ def main(par_def = None, connection_out = None):
                     )
                     return
 
+                except Exception:
+                    # any other error must still end with << /*EOF*/ >>,
+                    # otherwise the client keeps waiting for it
+                    logging.exception(
+                        "Err catch while running: " + str(cmd_dict)
+                    )
+
                 self._send_eof("Dials CMD")
 
             else:
@@ -155,6 +162,13 @@ def main(par_def = None, connection_out = None):
                         "ConnectionReset err catch ** while sending EOF or JSON"
                     )
                     return
+
+                except Exception:
+                    # any other error must still end with << /*EOF*/ >>,
+                    # otherwise the client keeps waiting for it
+                    logging.exception(
+                        "Err catch while running: " + str(cmd_dict)
+                    )
 
                 self._send_eof("Dui2 CMD")
 

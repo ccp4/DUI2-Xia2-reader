@@ -170,14 +170,15 @@ def find_if_in_list(inner_command):
 
 
 def add_log_line(new_line, nod_req):
-    #TODO: look if this function is still needed
+    # sends one line to the client, returns 1 (instead of raising) when the
+    # client is gone, so the work on the server side can go on
     Error_Broken_Pipes = 0
     try:
         spit_out(
             str_out = new_line, req_obj = nod_req, out_type = "utf-8"
         )
 
-    except BrokenPipeError:
+    except (BrokenPipeError, ConnectionResetError):
         Error_Broken_Pipes = 1
 
     return Error_Broken_Pipes
@@ -488,10 +489,7 @@ class CmdNode(object):
         self, req_obj = None, run_xia2_dir_path = None,
         bigger_lin = None, run_xia2 = False
     ):
-        spit_out(
-            str_out = "   ...   run_xia2_read Start \n",
-            req_obj = req_obj, out_type = "utf-8"
-        )
+        add_log_line("   ...   run_xia2_read Start \n", req_obj)
 
         if run_xia2:
             return_list = run_n_get_tree(
@@ -505,10 +503,7 @@ class CmdNode(object):
                 bigger_lin_from_dui2 = bigger_lin, req_obj = req_obj
             )
 
-        spit_out(
-            str_out = "   ...   run_xia2_read Done \n",
-            req_obj = req_obj, out_type = "utf-8"
-        )
+        add_log_line("   ...   run_xia2_read Done \n", req_obj)
         return return_list
     ############################################################... run_xia2_read ...### end
 
@@ -789,23 +784,23 @@ class Runner(object):
                     xia2_node = self._create_xia2_busy_step(
                         xia2_debug_dir_path
                     )
-                    spit_out(
-                        str_out = "node.number=" + str(xia2_node.number) + "\n",
-                        req_obj = req_obj, out_type = "utf-8"
-                    )
-
+                    # messages to the client go through << add_log_line >>,
+                    # if the client goes away (BrokenPipe) the import still
+                    # runs to the end, as << run_predicts_n_reports >> does
+                    n_broken_pipes = 0
                     try:
-
+                        n_broken_pipes += add_log_line(
+                            "node.number=" + str(xia2_node.number) + "\n",
+                            req_obj
+                        )
                         if run_xia2:
-                            spit_out(
-                                str_out = "  ... Runnig Xia2 ...  \n",
-                                req_obj = req_obj, out_type = "utf-8"
+                            n_broken_pipes += add_log_line(
+                                "  ... Runnig Xia2 ...  \n", req_obj
                             )
 
                         else:
-                            spit_out(
-                                str_out = "  ... Not runnig Xia2 ...  \n",
-                                req_obj = req_obj, out_type = "utf-8"
+                            n_broken_pipes += add_log_line(
+                                "  ... Not runnig Xia2 ...  \n", req_obj
                             )
 
                         return_list = xia2_node.run_xia2_read(
@@ -816,10 +811,6 @@ class Runner(object):
                         )
 
                         self._extend_node_list(return_list)
-                        spit_out(
-                            str_out = "reading xia2_debug extending list \n",
-                            req_obj = req_obj, out_type = "utf-8"
-                        )
                         # link to the expanded branch only once it exists,
                         # one child per sweep (each dials.import hangs here)
                         for uni_dic in return_list["step_list"]:
@@ -827,33 +818,40 @@ class Runner(object):
                                 xia2_node.child_node_lst.append(
                                     int(uni_dic["number"])
                                 )
+
                         xia2_node.status = "Succeeded"
-                        spit_out(
-                            str_out = "reading xia2_debug ... Done\n",
-                            req_obj = req_obj, out_type = "utf-8"
+                        n_broken_pipes += add_log_line(
+                            "reading xia2_debug extending list \n", req_obj
+                        )
+                        n_broken_pipes += add_log_line(
+                            "reading xia2_debug ... Done\n", req_obj
                         )
 
-                    except FileNotFoundError:
-                        print("Not Found Err Catch while reading Xia2_debug")
+                    except Exception:
+                        # anything (not only FileNotFoundError) must not
+                        # leave the node << Busy >> forever, e.g.:
+                        # AttributeError, UnicodeDecodeError, IndexError,
+                        # json.JSONDecodeError, PermissionError ...
+                        # logging.exception keeps the full traceback
+                        logging.exception(
+                            "Err catch while reading xia2 run: " +
+                            str(xia2_debug_dir_path)
+                        )
                         xia2_node.status = "Failed"
-                        spit_out(
-                            str_out = "FAILED reading xia2_debug\n",
-                            req_obj = req_obj, out_type = "utf-8"
+                        n_broken_pipes += add_log_line(
+                            "FAILED reading xia2_debug " +
+                            "(see server log for details)\n", req_obj
                         )
-                        #FIXME: the next commented code is a suggestion
-                        #by Claude that I am not fully convinced:
 
-                    """except Exception as xia2_err:
-                        # anything else must not leave the node Busy forever
+                    finally:
+                        # last safety net, e.g. KeyboardInterrupt
+                        if xia2_node.status == "Busy":
+                            xia2_node.status = "Failed"
+
+                    if n_broken_pipes > 0:
                         logging.info(
-                            "Err catch while reading Xia2_debug: " +
-                            repr(xia2_err)
+                            "<< BrokenPipe err catch >> while reading xia2"
                         )
-                        xia2_node.status = "Failed"
-                        spit_out(
-                            str_out = "FAILED reading xia2_debug",
-                            req_obj = req_obj, out_type = 'utf-8'
-                        )"""
 
                 elif unalias_cmd_lst == [["run_predict_n_report"]]:
                     try:
@@ -941,7 +939,7 @@ class Runner(object):
                             req_obj = req_obj, out_type = "utf-8"
                         )
 
-            except BrokenPipeError:
+            except (BrokenPipeError, ConnectionResetError):
                 logging.info(
                     "<< BrokenPipe err catch >> while running Dui command"
                 )

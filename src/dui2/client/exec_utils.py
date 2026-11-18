@@ -396,6 +396,15 @@ class PostRequestWithOutput(QThread):
                 not_yet_read = True
                 while True:
                     tmp_dat = self.request.raw.readline()
+                    if tmp_dat == b"":
+                        # connection closed without << /*EOF*/ >> (e.g. the
+                        # server side raised), readline() would return b""
+                        # forever, so stop here instead of spinning
+                        logging.info(
+                            "stream ended without /*EOF*/ " + str(self.cmd)
+                        )
+                        break
+
                     line_str = str(tmp_dat.decode("utf-8"))
                     if "/*EOF*/" in line_str :
                         #TODO: consider a different Signal to say finished
@@ -453,17 +462,10 @@ class PostRequestWithOutput(QThread):
         logging.info("ended post QThread")
 
     def get_it_str(self, line_str):
-        if not self.already_read:
-            try:
-                nod_p_num = int(line_str.split("=")[1])
-                self.number = nod_p_num
-                self.first_line.emit(self.number)
-                self.already_read = True
-
-            except IndexError:
-                logging.info("PostRequestWithOutput ... Index err catch")
-
-        elif "/*EOF*/" in line_str :
+        # << /*EOF*/ >> is checked first: when a command fails before
+        # sending << node.number=N >>, EOF is the very first line and,
+        # if ignored, << self._done.wait() >> in << run >> never returns
+        if "/*EOF*/" in line_str :
             self.about_to_end.emit(self.number, self.do_predict_n_report)
             logging.info(
                 "do_predict_n_report = " + str(self.do_predict_n_report)
@@ -473,6 +475,19 @@ class PostRequestWithOutput(QThread):
 
             self.exit()
             #self.wait()
+
+        elif not self.already_read:
+            try:
+                nod_p_num = int(line_str.split("=")[1])
+                self.number = nod_p_num
+                self.first_line.emit(self.number)
+                self.already_read = True
+
+            except IndexError:
+                logging.info("PostRequestWithOutput ... Index err catch")
+
+            except ValueError:
+                logging.info("returning line without << = >> char")
 
         else:
             self.new_line_out.emit(line_str, self.number, "Busy")

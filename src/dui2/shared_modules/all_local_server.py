@@ -61,16 +61,27 @@ class ReqHandler(object):
 
                 logging.info("single_str = " + single_str)
 
+        # << /*EOF*/ >> is what releases the waiting client thread
+        # (PostRequestWithOutput._done), so it is sent even when the
+        # command raises, otherwise that thread waits forever
         if found_dials_command:
-            self.tree_runner.run_dials_command(cmd_dict, call_obj)
-            logging.info("sending /*EOF*/ (Dials CMD)")
-            spit_out(
-                str_out = "/*EOF*/", req_obj = call_obj, out_type = "utf-8"
-            )
+            eof_label = "Dials CMD"
 
         else:
-            self.tree_runner.run_dui_command(cmd_dict, call_obj)
-            logging.info("sending /*EOF*/ (Dui CMD)")
+            eof_label = "Dui CMD"
+
+        try:
+            if found_dials_command:
+                self.tree_runner.run_dials_command(cmd_dict, call_obj)
+
+            else:
+                self.tree_runner.run_dui_command(cmd_dict, call_obj)
+
+        except Exception:
+            logging.exception("Err catch while running: " + str(cmd_dict))
+
+        finally:
+            logging.info("sending /*EOF*/ (" + eof_label + ")")
             spit_out(
                 str_out = "/*EOF*/", req_obj = call_obj, out_type = "utf-8"
             )
