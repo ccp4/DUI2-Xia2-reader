@@ -802,6 +802,7 @@ def get_cmd_opt_list():
       "damage_analysis"                        ,
       "detect_blanks"                          ,
       "estimate_gain"                          ,
+      "estimate_resolution"                    ,
       "filter_reflections"                     ,
       "find_bad_pixels"                        ,
       "find_hot_pixels"                        ,
