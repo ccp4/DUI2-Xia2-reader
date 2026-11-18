@@ -285,13 +285,20 @@ class ReindexTable(QTableWidget):
 
 
 def get_label_from_str_list(log_data):
+    # the "Chiral space groups..." block that dials.refine_bravais_settings
+    # writes just before the solutions table (first "+-----" after it)
+    ini_num = None
+    end_num = None
     for num, single_line in enumerate(log_data):
         if single_line[:6] == "Chiral":
             ini_num = num
 
-        if single_line[:6] == "+-----":
+        if ini_num is not None and single_line[:6] == "+-----":
             end_num = num
             break
+
+    if ini_num is None:
+        return " Chiral space groups not found in log"
 
     lst_str = log_data[ini_num:end_num]
     full_label_str = ""

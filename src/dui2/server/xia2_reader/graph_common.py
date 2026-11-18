@@ -502,13 +502,19 @@ def build_reusable_graph_list(
         tun_par_lst = cmd_dict["tuning_params_lst"]
         tun_par_lst = [cmd_dict["exe_cmd"]] + tun_par_lst
         lst2run = [tun_par_lst]
+        cmd_dict_ini = build_cmd_dict_ini(
+            cmd_dict, parent_node_lst,
+            list_of_commands[0:cmd_num],
+            list_of_commands[cmd_num + 1:]
+        )
+        if cmd_dict_ini["cmd_lst"][0][0] == "dials.reindex":
+            # same as DUI2 (CmdNode.set_in_fil_n_par): the client reads
+            # the solution number (row + 1) from lst2run[-1][1] (cmd2show)
+            lst2run = [list(cmd_dict_ini["cmd_lst"][0])]
+
         node = {
             "_base_dir"             :os.getcwd(),
-            "cmd_dict_ini"          :build_cmd_dict_ini(
-                                        cmd_dict, parent_node_lst,
-                                        list_of_commands[0:cmd_num],
-                                        list_of_commands[cmd_num + 1:]
-                                    ),
+            "cmd_dict_ini"          :cmd_dict_ini,
             "full_cmd_lst"          :cmd_dict["exe_cmd"],
             "lst2run"               :lst2run,
             "_lst_expt_in"          :lst_expt_in,

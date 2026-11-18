@@ -160,6 +160,20 @@ def find_log_block(lines_str, cmd_line_pos):
     return None, []
 
 
+def read_full_log(log_path):
+    # xia2 (Driver/DefaultDriver.py) echoes only the last 50 lines of each
+    # log into xia2-debug.txt, e.g. for dials.refine_bravais_settings that
+    # leaves out the "Chiral space groups..." block the reindex table header
+    # needs, so the whole log is used when it is still on disk,
+    # None when it is not (e.g. the xia2 run was moved)
+    try:
+        with open(log_path, "r", encoding="latin-1") as fp:
+            return fp.readlines()
+
+    except OSError:
+        return None
+
+
 def write_log_copy(log_path, log_lines):
     # writes the echoed log lines into LOG_COPY_DIR, keeping the xia2 name
     # (e.g.: 5_dials.index.log, unique thanks to the xia2 run number)
@@ -205,6 +219,10 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
             log_file_path = None
             orig_log_path, log_lines = find_log_block(lines_str, position)
             if orig_log_path is not None:
+                full_log_lines = read_full_log(orig_log_path)
+                if full_log_lines is not None:
+                    log_lines = full_log_lines
+
                 log_file_path = write_log_copy(orig_log_path, log_lines)
 
             cmd_dict = {
