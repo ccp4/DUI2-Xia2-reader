@@ -786,6 +786,7 @@ def get_cmd_opt_list():
         "find_rotation_axis"                ,
         "index"                             ,
         "refine_bravais_settings"           ,
+        "reindex"                           ,
         "refine"                            ,
         "integrate"                         ,
         "symmetry"                          ,
