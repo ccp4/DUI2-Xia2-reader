@@ -38,6 +38,17 @@ from dials.command_line.refine_bravais_settings import (
     phil_scope as phil_scope_r_b_settings,
 )
 from dials.command_line.refine import working_phil as phil_scope_refine
+try:
+    from dials.command_line.reindex import phil_scope as phil_scope_reindex
+
+except (ImportError, ModuleNotFoundError, AttributeError):
+    class dummy_reindex_tmp(object):
+        pass
+
+    print("dials.reindex phil_scope NOT found")
+    phil_scope_reindex = dummy_reindex_tmp()
+    phil_scope_reindex.objects = []
+
 from dials.command_line.integrate import phil_scope as phil_scope_integrate
 try:
     from dials.command_line.ssx_integrate import phil_scope as ssx_phil_scope_integrate
@@ -593,7 +604,7 @@ def get_info_data(uni_cmd, cmd_dict, step_list):
                 lst2add = step_list[lin2go].get_bravais_summ()
                 return_list.append(lst2add)
 
-            except IndexError:
+            except (IndexError, AttributeError):
                 logging.info("err catch , wrong line, not sending bravais_sum")
 
     elif uni_cmd[0][-7:] == "_params":
@@ -835,6 +846,7 @@ def get_param_list(cmd_str):
             "ssx_index_params"               :ssx_phil_scope_index.objects     ,
             "refine_bravais_settings_params" :phil_scope_r_b_settings.objects  ,
             "refine_params"                  :phil_scope_refine.objects        ,
+            "reindex_params"                 :phil_scope_reindex.objects       ,
             "integrate_params"               :phil_scope_integrate.objects     ,
             "ssx_integrate_params"           :ssx_phil_scope_integrate.objects ,
             "symmetry_params"                :phil_scope_symmetry.objects      ,

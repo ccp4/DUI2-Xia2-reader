@@ -78,6 +78,7 @@ def get_pair_list():
         ("csp",     "cosym_params"                          ),
         ("scp",     "scale_params"                          ),
         ("cep",     "combine_experiments_params"            ),
+        ("rip",     "reindex_params"                        ),
         ("ip",      "dials.import"                          ),
         ("gm",      "dials.generate_mask"                   ),
         ("fd",      "dials.find_spots"                      ),
@@ -169,6 +170,46 @@ def find_if_in_list(inner_command):
     return found_command
 
 
+def find_bravais_summary(lst_expt_in):
+    # path to the << bravais_summary.json >> that CmdNode.__init__ adds to
+    # the inputs of the children of << dials.refine_bravais_settings >>
+    for file_str in lst_expt_in:
+        if os.path.basename(str(file_str)) == "bravais_summary.json":
+            return str(file_str)
+
+    return None
+
+
+def is_bravais_setting_path(file_str):
+    file_name = os.path.basename(str(file_str))
+    return (
+        file_name.startswith("bravais_setting_") and
+        file_name.endswith(".expt")
+    )
+
+
+def is_bravais_reindex(lst_in, lst_expt_in):
+    # dials.reindex has two flavours in DUI2:
+    #
+    #  << bravais >>  right after dials.refine_bravais_settings, the client
+    #                 sends only the solution number (row in the reindex
+    #                 table), e.g.: ["dials.reindex", "3"]
+    #
+    #  << generic >>  anywhere else (e.g.: after dials.integrate, from the
+    #                 optional widget or as xia2 does), dials.reindex runs
+    #                 like any other command, with the parameters given,
+    #                 e.g.: ["dials.reindex", "space_group=P4",
+    #                        "change_of_basis_op=b,c,a"]
+    if find_bravais_summary(lst_expt_in) is None:
+        return False
+
+    if len(lst_in) < 2:
+        # old behaviour, no solution number means solution 1
+        return True
+
+    return str(lst_in[1]).strip().isdigit()
+
+
 def add_log_line(new_line, nod_req):
     # sends one line to the client, returns 1 (instead of raising) when the
     # client is gone, so the work on the server side can go on
@@ -200,6 +241,10 @@ class CmdNode(object):
 
         self._lst_expt_in = []
         self._lst_refl_in = []
+        # experiments that went INTO dials.refine_bravais_settings, used by a
+        # << generic >> dials.reindex launched right after it, only needed
+        # while building the command, so it is NOT saved in << run_data >>
+        self._lst_expt_b4_rbs = []
         self._html_rep = None
         self._predic_refl = None
         self._lst_expt_out = []
@@ -233,6 +278,8 @@ class CmdNode(object):
                     lst_json = glob.glob(single_parent._run_dir + os.sep + "*.json")
                     for json_2_add in lst_json:
                         self._lst_expt_in.append(json_2_add)
+
+                    self._lst_expt_b4_rbs += single_parent._lst_expt_in
 
                 if len(self._lst_expt_in) < len(self._lst_refl_in):
                     self._lst_expt_in += single_parent._lst_expt_in
@@ -300,49 +347,79 @@ class CmdNode(object):
         for inner_lst in self.full_cmd_lst:
             self.lst2run.append(list(inner_lst))
 
-        if self.full_cmd_lst[-1][0] == "dials.reindex":
-            try:
-                try:
-                    sol_num = int(lst_in[1])
-
-                except(IndexError, ValueError):
-                    logging.info(" ***  err catch  ***")
-                    logging.info(" wrong solution number, defaulting to 1")
-                    sol_num = 1
-
-                json_file_tmp = None
-                for file_str in self._lst_expt_in:
-                    if "bravais_summary" in file_str:
-                        json_file_tmp = str(file_str)
-
-                if json_file_tmp is not None:
-                    with open(json_file_tmp) as summary_file:
-                        j_obj = json.load(summary_file)
-
-                    change_of_basis_op = j_obj[str(sol_num)]["cb_op"]
-                    input_str = "change_of_basis_op=" + str(change_of_basis_op)
-                    self.full_cmd_lst[-1].append(input_str)
-                    str2comp = "bravais_setting_" + str(sol_num) + ".expt"
-                    for file_str in self._lst_expt_in:
-                        if str2comp in file_str:
-                            self._lst_expt_in = [str(file_str)]
-
-                    self.lst2run[-1].append(" " + str(sol_num))
-
-            except KeyError:
-                logging.info("Key err catch  from attempting to reindex")
+        is_reindex = self.full_cmd_lst[-1][0] == "dials.reindex"
+        if is_reindex and is_bravais_reindex(lst_in, self._lst_expt_in):
+            self.set_bravais_reindex_in(lst_in)
+            # anything after the solution number goes as normal parameters
+            par_lst = lst_in[2:]
 
         else:
+            if is_reindex:
+                self.clean_generic_reindex_in()
+
             for expt_2_add in self._lst_expt_in:
                 self.full_cmd_lst[-1].append(expt_2_add)
+
+            par_lst = lst_in[1:]
 
         for refl_2_add in self._lst_refl_in:
             self.full_cmd_lst[-1].append(refl_2_add)
 
-        if self.full_cmd_lst[-1][0] != "dials.reindex":
-            for par in lst_in[1:]:
-                self.full_cmd_lst[-1].append(par)
-                self.lst2run[-1].append(par)
+        for par in par_lst:
+            self.full_cmd_lst[-1].append(par)
+            self.lst2run[-1].append(par)
+
+    def set_bravais_reindex_in(self, lst_in):
+        # solution number (row + 1 in the client's reindex table) ->
+        # change_of_basis_op + bravais_setting_N.expt
+        try:
+            sol_num = int(str(lst_in[1]).strip())
+
+        except (IndexError, ValueError):
+            logging.info(" ***  err catch  ***")
+            logging.info(" wrong solution number, defaulting to 1")
+            sol_num = 1
+
+        json_file_tmp = find_bravais_summary(self._lst_expt_in)
+        try:
+            with open(json_file_tmp) as summary_file:
+                j_obj = json.load(summary_file)
+
+            change_of_basis_op = j_obj[str(sol_num)]["cb_op"]
+
+        except (OSError, ValueError, KeyError):
+            logging.info("err catch  from attempting to reindex")
+            return
+
+        input_str = "change_of_basis_op=" + str(change_of_basis_op)
+        self.full_cmd_lst[-1].append(input_str)
+        str2comp = "bravais_setting_" + str(sol_num) + ".expt"
+        for file_str in self._lst_expt_in:
+            if os.path.basename(file_str) == str2comp:
+                self._lst_expt_in = [str(file_str)]
+
+        # as before (and as xia2 does) only the reflections are reindexed,
+        # bravais_setting_N.expt goes to the next step through
+        # << set_exe_files_out >> since dials.reindex writes no .expt here
+        self.lst2run[-1].append(" " + str(sol_num))
+
+    def clean_generic_reindex_in(self):
+        # a << generic >> dials.reindex must not get the json files or the
+        # bravais_setting_N.expt files, if it runs right after
+        # dials.refine_bravais_settings it takes the experiments that
+        # went into that step instead (e.g.: indexed.expt)
+        lst_expt = []
+        for file_str in self._lst_expt_in:
+            if(
+                not str(file_str).endswith(".json") and
+                not is_bravais_setting_path(file_str)
+            ):
+                lst_expt.append(file_str)
+
+        if len(lst_expt) == 0 and len(self._lst_expt_in) > 0:
+            lst_expt = list(self._lst_expt_b4_rbs)
+
+        self._lst_expt_in = lst_expt
 
     def set_exe_files_out(self):
         self._lst_expt_out = glob.glob(self._run_dir + os.sep + "*.expt")
@@ -660,10 +737,17 @@ class CmdNode(object):
             )
 
     def get_bravais_summ(self):
+        # now dials.reindex can hang from any node, so the node asked for
+        # might not be a dials.refine_bravais_settings one
         brav_summ_path = str(self._run_dir + os.sep + "bravais_summary.json")
         logging.info("brav_summ_path:" + brav_summ_path)
-        with open(brav_summ_path) as summary_file:
-            j_obj = json.load(summary_file)
+        try:
+            with open(brav_summ_path) as summary_file:
+                j_obj = json.load(summary_file)
+
+        except (OSError, ValueError):
+            logging.info("err catch , no bravais_summary.json in this node")
+            j_obj = {}
 
         return j_obj
 

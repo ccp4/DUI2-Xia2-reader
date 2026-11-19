@@ -304,6 +304,14 @@ class FindNextCmd(object):
             str_key = self.nod_lst[parent_num]["cmd2show"][0][6:]
             self.remove_split = True
 
+        elif str_key == "reindex":
+            # a dials.reindex that is NOT right after refine_bravais_settings
+            # (e.g.: after integrate) does not change what can come next,
+            # so it offers the same next steps as the node it hangs from
+            par_key = self.nod_lst[parent_num]["cmd2show"][0][6:]
+            if par_key != "refine_bravais_settings":
+                str_key = par_key
+
         try:
             self.default_list = param_widgets[str_key]["nxt_widg_lst"]
 

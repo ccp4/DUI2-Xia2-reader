@@ -850,6 +850,26 @@ class MainObject(QObject):
     def dials_help_ended(self):
         print("\n END getting help messages \n")
 
+    def is_bravais_reindex(self, nod_dict):
+        # mirrors << is_bravais_reindex >> in server/multi_node.py:
+        # the reindex table is only for dials.reindex hanging from
+        # dials.refine_bravais_settings and given just a solution number
+        cmd2show = nod_dict["cmd2show"]
+        if len(cmd2show) > 1:
+            return str(cmd2show[1]).strip().isdigit()
+
+        for par_num in nod_dict["parent_node_lst"]:
+            try:
+                par_cmd = str(self.server_nod_lst[par_num]["cmd2show"][0])
+
+            except (IndexError, KeyError, TypeError):
+                continue
+
+            if par_cmd.endswith("refine_bravais_settings"):
+                return True
+
+        return False
+
     def launch_reindex(self, sol_rei):
         try:
             is_same = self.new_node.set_custom_parameter(str(sol_rei))
@@ -1037,6 +1057,11 @@ class MainObject(QObject):
 
         else:
             key2find = cmd_ini
+
+        if key2find == "reindex" and not self.is_bravais_reindex(cur_nod):
+            # << generic >> dials.reindex (e.g.: after integrate),
+            # its parameters live in the << optional >> widget
+            key2find = "optional"
 
         try:
             self.change_widget(key2find)

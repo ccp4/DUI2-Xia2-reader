@@ -211,6 +211,16 @@ def build_cmd_dict_ini(cmd_dict, parent_node_lst, prev_cmd_lst, next_cmd_lst):
                 "cmd_lst":[["dials.reindex", sol_num]]
             }
 
+        # NOT tied to dials.refine_bravais_settings (e.g.: xia2 reindexing
+        # after dials.integrate or dials.symmetry), same request DUI2 sends
+        # from the << optional >> widget: the parameters as they were given
+        return {
+            "nod_lst":list(parent_node_lst),
+            "cmd_lst":[
+                ["dials.reindex"] + list(cmd_dict.get("tuning_params_lst", []))
+            ]
+        }
+
     return {"nod_lst":[None], "cmd_lst":[[None]]}
 
 
@@ -510,6 +520,8 @@ def build_reusable_graph_list(
         if cmd_dict_ini["cmd_lst"][0][0] == "dials.reindex":
             # same as DUI2 (CmdNode.set_in_fil_n_par): the client reads
             # the solution number (row + 1) from lst2run[-1][1] (cmd2show)
+            # or, for a << generic >> dials.reindex, the parameters it shows
+            # in the << optional >> widget
             lst2run = [list(cmd_dict_ini["cmd_lst"][0])]
 
         node = {
