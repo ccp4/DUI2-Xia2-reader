@@ -6,7 +6,7 @@ try:
     is_bravais_setting, find_implicit_parent, find_param_parent,
     print_graph_table, export_reusable_graph_list, is_dials_command,
     find_work_dirs, build_reusable_graph_list, run_predicts_n_reports,
-    to_dui2_tree, POSITIONAL_IN, POSITIONAL_OUT,
+    to_dui2_tree, run_n_spit_out, POSITIONAL_IN, POSITIONAL_OUT,
 )
 
 except ModuleNotFoundError:
@@ -15,7 +15,7 @@ except ModuleNotFoundError:
     is_bravais_setting, find_implicit_parent, find_param_parent,
     print_graph_table, export_reusable_graph_list, is_dials_command,
     find_work_dirs, build_reusable_graph_list, run_predicts_n_reports,
-    to_dui2_tree, POSITIONAL_IN, POSITIONAL_OUT,
+    to_dui2_tree, run_n_spit_out, POSITIONAL_IN, POSITIONAL_OUT,
 )
 
 
@@ -305,8 +305,18 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
 def run_n_get_tree(
     path_to_xia2_run_dir = None, bigger_lin_from_dui2 = None, req_obj = None
 ):
-    print("\n path_to_xia2_timing =", path_to_xia2_run_dir)
+
+    dir_2_change = os.getcwd()
+    run_n_spit_out(
+        [
+            "xia2", "--integrate", "--timing", path_to_xia2_run_dir
+        ], dir_2_change, req_obj
+    )
+
     ended_str = os.sep + "xia2-timing.json"
+    path_to_timing_file = dir_2_change + ended_str
+
+    to_edit = '''
     if path_to_xia2_run_dir.endswith(ended_str):
         print("using path: '", path_to_xia2_run_dir, "' as given by user")
         path_to_timing_file = path_to_xia2_run_dir
@@ -314,6 +324,7 @@ def run_n_get_tree(
     else:
         print("adding: '", ended_str, "' to given path")
         path_to_timing_file = path_to_xia2_run_dir + ended_str
+    '''
 
     lst_cmd, bigger_lin_out = get_list_of_commands(
         path_in = path_to_timing_file,

@@ -568,6 +568,9 @@ def send_line(new_line, req_obj):
 def run_n_spit_out(lst_dat_in, run_dir, req_obj):
     # runs one command in run_dir, sending each line it prints as it comes,
     # returns the number of lines that could not be sent (BrokenPipe)
+
+    print("\n\n lst_dat_in =", lst_dat_in, "\n\n")
+
     n_broken_pipes = 0
     exe_path = shutil.which(lst_dat_in[0])
     if exe_path is None:
@@ -594,6 +597,9 @@ def run_n_spit_out(lst_dat_in, run_dir, req_obj):
 
 
 def run_predicts_n_reports(all_dat = None, arg_in = None, req_obj = None):
+
+    #TODO: look if the arg_in variable should be used here
+
     lst_cmd = all_dat["step_list"]
     # every report and prediction goes in the same dir, with the node number
     # in the file name, the commands run there (cwd) without os.chdir
