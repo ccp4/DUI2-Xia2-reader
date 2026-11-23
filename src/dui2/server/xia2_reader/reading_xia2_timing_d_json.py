@@ -201,8 +201,10 @@ def find_log_files(list_of_commands):
                     break
 
         if run_number is None:
-            print("Log file not found for:",
-                  cmd_dict["curr_poss"], cmd_dict["exe_cmd"])
+            print(
+                "Log file not found for:",
+                cmd_dict["curr_poss"], cmd_dict["exe_cmd"]
+            )
 
         else:
             cmd_dict["log_file_path"] = found_dict[run_number]
@@ -210,9 +212,9 @@ def find_log_files(list_of_commands):
 
 
 def get_list_of_commands(path_in, bigger_lin_in = 0):
-    print("file 2 read = ", path_in)
+    #print("file 2 read = ", path_in)
     curr_poss = bigger_lin_in
-    print("curr_poss(get_list_of_commands)=", curr_poss)
+    #print("curr_poss(get_list_of_commands)=", curr_poss)
 
     json_file = open(path_in, "r", encoding="utf-8")
     entries_lst = json.load(json_file)
@@ -296,7 +298,7 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
             producer_of[file_name] = curr_dict["curr_poss"]
 
 
-    print("\n producer_of =", producer_of)
+    #print("\n producer_of =", producer_of)
 
     to_dui2_tree(list_of_commands, root_poss = bigger_lin_in - 1)
     return list_of_commands, curr_poss

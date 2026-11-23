@@ -188,13 +188,13 @@ def write_log_copy(log_path, log_lines):
 
 
 def get_list_of_commands(path_in, bigger_lin_in = 0):
-    print("file 2 read = ", path_in)
+    #print("file 2 read = ", path_in)
     log_file = open(path_in, "r", encoding="utf-8")
     lines_str = log_file.readlines()
     log_file.close()
     list_of_commands = []
     curr_poss = bigger_lin_in
-    print("curr_poss(get_list_of_commands)=", curr_poss)
+    #print("curr_poss(get_list_of_commands)=", curr_poss)
     for position, single_line in enumerate(lines_str):
         if single_line[0:15] == "# command line:":
             new_cmd_str = lines_str[position + 1][1:]
@@ -298,14 +298,14 @@ def get_list_of_commands(path_in, bigger_lin_in = 0):
 def get_tree(
     path_to_xia2_run_dir = None, bigger_lin_from_dui2 = None, req_obj = None
 ):
-    print("path_to_xia2_run_dir =", path_to_xia2_run_dir)
+    #print("path_to_xia2_run_dir =", path_to_xia2_run_dir)
     ended_str = os.sep + "xia2-debug.txt"
     if path_to_xia2_run_dir.endswith(ended_str):
-        print("using path: '", path_to_xia2_run_dir, "' as given by user")
+        #print("using path: '", path_to_xia2_run_dir, "' as given by user")
         path_to_debug_file = path_to_xia2_run_dir
 
     else:
-        print("adding: '", ended_str, "' to given path")
+        #print("adding: '", ended_str, "' to given path")
         path_to_debug_file = path_to_xia2_run_dir + ended_str
 
     lst_cmd, bigger_lin_out = get_list_of_commands(

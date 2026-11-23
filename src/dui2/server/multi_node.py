@@ -860,7 +860,7 @@ class Runner(object):
                         )
 
                     xia2_debug_dir_path = unalias_cmd_lst[1][0]
-                    print("xia2_debug_dir_path =", xia2_debug_dir_path, "\n\n")
+                    #print("xia2_debug_dir_path =", xia2_debug_dir_path, "\n\n")
 
                     # Busy node goes into the tree BEFORE the slow part and
                     # its number is the first line, so the client's

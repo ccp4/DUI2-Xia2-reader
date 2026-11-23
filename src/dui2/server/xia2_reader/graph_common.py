@@ -444,7 +444,7 @@ def report_n_common_dir(list_of_commands, conflict_lst):
     return common_dir
 
 def fill_missing_work_dirs(list_of_commands, common_dir):
-    print("\n using:", common_dir, "as root path")
+    #print("\n using:", common_dir, "as root path")
     natv_posi = common_dir.rfind("NATIVE") - 1
     extra_dir_left = common_dir[0: natv_posi]
 
@@ -563,7 +563,7 @@ def build_reusable_graph_list(
 
         if  parent_node_lst == []:
             parent_node_lst = [bigger_lin - 1]
-            print("parent_node_lst(fixed) =", parent_node_lst)
+            #print("parent_node_lst(fixed) =", parent_node_lst)
 
         lst_expt_in = full_path_lst(cmd_dict["expt_from_prev_lst"], cmd_dict)
         lst_refl_in = full_path_lst(cmd_dict["refl_from_prev_lst"], cmd_dict)
@@ -644,7 +644,7 @@ def run_n_spit_out(lst_dat_in, run_dir, req_obj):
     # runs one command in run_dir, sending each line it prints as it comes,
     # returns the number of lines that could not be sent (BrokenPipe)
 
-    print("\n\n lst_dat_in =", lst_dat_in, "\n\n")
+    #print("\n\n lst_dat_in =", lst_dat_in, "\n\n")
 
     n_broken_pipes = 0
     exe_path = shutil.which(lst_dat_in[0])
@@ -679,7 +679,7 @@ def run_predicts_n_reports(all_dat = None, arg_in = None, req_obj = None):
     # every report and prediction goes in the same dir, with the node number
     # in the file name, the commands run there (cwd) without os.chdir
     path_to_dir = os.path.abspath("predicts_n_reports")
-    print("path_to_dir =", path_to_dir)
+    #print("path_to_dir =", path_to_dir)
     try:
         os.mkdir(path_to_dir)
 
