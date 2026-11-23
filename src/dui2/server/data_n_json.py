@@ -839,24 +839,33 @@ def get_cmd_opt_list():
     return sorted(command_list)
 
 
-def get_param_list(cmd_str):
-    connect_dict = {
-            "find_spots_params"              :phil_scope_find_spots.objects    ,
-            "index_params"                   :phil_scope_index.objects         ,
-            "ssx_index_params"               :ssx_phil_scope_index.objects     ,
-            "refine_bravais_settings_params" :phil_scope_r_b_settings.objects  ,
-            "refine_params"                  :phil_scope_refine.objects        ,
-            "reindex_params"                 :phil_scope_reindex.objects       ,
-            "integrate_params"               :phil_scope_integrate.objects     ,
-            "ssx_integrate_params"           :ssx_phil_scope_integrate.objects ,
-            "symmetry_params"                :phil_scope_symmetry.objects      ,
-            "search_beam_position_params"    :phil_search_beam.objects         ,
-            "two_theta_refine_params"        :phil_scope_two_theta_refine.objects ,
-            "cosym_params"                   :phil_scope_cosym.objects         ,
-            "scale_params"                   :phil_scope_scale.objects         ,
-            "combine_experiments_params"     :phil_scope_combine_params.objects,
-        }
+# PHIL scope of each command that has << advanced >> parameter widgets,
+# the widgets are built from these scopes (see get_param_list), so their
+# << local_path >> is always the full PHIL path of the parameter
+PHIL_MASTER_DICT = {
+        "find_spots"                     :phil_scope_find_spots            ,
+        "index"                          :phil_scope_index                 ,
+        "ssx_index"                      :ssx_phil_scope_index             ,
+        "refine_bravais_settings"        :phil_scope_r_b_settings          ,
+        "refine"                         :phil_scope_refine                ,
+        "reindex"                        :phil_scope_reindex               ,
+        "integrate"                      :phil_scope_integrate             ,
+        "ssx_integrate"                  :ssx_phil_scope_integrate         ,
+        "symmetry"                       :phil_scope_symmetry              ,
+        "search_beam_position"           :phil_search_beam                 ,
+        "two_theta_refine"               :phil_scope_two_theta_refine      ,
+        "cosym"                          :phil_scope_cosym                 ,
+        "scale"                          :phil_scope_scale                 ,
+        "combine_experiments"            :phil_scope_combine_params        ,
+    }
 
+
+def get_phil_master(cmd_str):
+    # e.g.: "find_spots" -> phil_scope_find_spots, None when not in the dict
+    return PHIL_MASTER_DICT.get(cmd_str)
+
+
+def get_param_list(cmd_str):
     if cmd_str == "find_spots_params" or cmd_str == "integrate_params":
         do_convertion_4_nprog = True
 
@@ -864,7 +873,8 @@ def get_param_list(cmd_str):
         do_convertion_4_nprog = False
 
     lst_dict = BuildParamDictData(
-        connect_dict[cmd_str], do_convertion_4_nprog
+        PHIL_MASTER_DICT[cmd_str[:-len("_params")]].objects,
+        do_convertion_4_nprog
     )
     lst_phil_obj = lst_dict()
     return lst_phil_obj

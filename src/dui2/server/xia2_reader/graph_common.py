@@ -3,11 +3,15 @@
 import os, json, shutil, subprocess
 
 if __package__:
-    from dui2.server.data_n_json import spit_out
+    from dui2.server.data_n_json import spit_out, get_phil_master
 
 else:
     def spit_out(str_out = " None ", req_obj = None, out_type = None):
         print(str_out, end = "")
+
+    def get_phil_master(cmd_str):
+        # without DUI2 (standalone script) parameter names stay as given
+        return None
 
 
 
@@ -194,6 +198,72 @@ def solution_from_next_cmd(cmd_dict, next_cmd_lst):
     return None
 
 
+# xia2 (like any DIALS user) may give a parameter with a shortened name,
+# e.g.: nproc=4 or d_min=1.5, DIALS (libtbx.phil) finds the full path itself,
+# but the DUI2 parameter widgets only know the full PHIL path (local_path),
+# e.g.: spotfinder.mp.nproc=4, so a node imported from xia2 must have the
+# full path in << lst2run >>, otherwise the client (update_all_param) finds
+# no widget to update and the parameters area keeps the defaults, even if
+# cloning the node (which copies << lst2run >> as text) runs correctly
+
+_FULL_PATHS_CACHE = {}
+
+
+def collect_full_paths(phil_obj_lst, path_set):
+    # same walk as BuildParamDictData.deep_in_recurs in data_n_json
+    for single_obj in phil_obj_lst:
+        if getattr(single_obj, "is_definition", False):
+            path_set.add(str(single_obj.full_path()))
+
+        elif getattr(single_obj, "is_scope", False):
+            collect_full_paths(single_obj.objects, path_set)
+
+
+def phil_full_paths(program_name):
+    # e.g.: "dials.find_spots" -> {"spotfinder.mp.nproc", ...},
+    # empty set for commands without PHIL scope in DUI2 (e.g.: dials.export)
+    if program_name not in _FULL_PATHS_CACHE:
+        path_set = set()
+        if program_name.startswith("dials."):
+            master = get_phil_master(program_name[len("dials."):])
+            collect_full_paths(getattr(master, "objects", []), path_set)
+
+        _FULL_PATHS_CACHE[program_name] = path_set
+
+    return _FULL_PATHS_CACHE[program_name]
+
+
+def to_full_phil_path(single_par, path_set):
+    # "nproc=4" -> "spotfinder.mp.nproc=4", like libtbx.phil does, a short
+    # name is the last part(s) of the full path, when it is ambiguous or
+    # not found the parameter stays as given
+    if "=" not in single_par or len(path_set) == 0:
+        return single_par
+
+    key, value = single_par.split("=", 1)
+    key = key.strip()
+    if key in path_set:
+        return key + "=" + value.strip()
+
+    found_lst = [
+        full_path for full_path in path_set
+        if full_path.endswith("." + key)
+    ]
+    if len(found_lst) == 1:
+        return found_lst[0] + "=" + value.strip()
+
+    return single_par
+
+
+def dui2_params_lst(cmd_dict):
+    # parameters of a xia2 command as DUI2 would have written them
+    path_set = phil_full_paths(get_program_name(cmd_dict["exe_cmd"]))
+    return [
+        to_full_phil_path(single_par, path_set)
+        for single_par in cmd_dict.get("tuning_params_lst", [])
+    ]
+
+
 def build_cmd_dict_ini(cmd_dict, parent_node_lst, prev_cmd_lst, next_cmd_lst):
     # the request DUI2 would have sent to run the same step,
     # e.g.: {"nod_lst": [4], "cmd_lst": [["dials.reindex", "3"]]}
@@ -216,9 +286,7 @@ def build_cmd_dict_ini(cmd_dict, parent_node_lst, prev_cmd_lst, next_cmd_lst):
         # from the << optional >> widget: the parameters as they were given
         return {
             "nod_lst":list(parent_node_lst),
-            "cmd_lst":[
-                ["dials.reindex"] + list(cmd_dict.get("tuning_params_lst", []))
-            ]
+            "cmd_lst":[["dials.reindex"] + dui2_params_lst(cmd_dict)]
         }
 
     return {"nod_lst":[None], "cmd_lst":[[None]]}
@@ -509,9 +577,11 @@ def build_reusable_graph_list(
         if lst_refl_out == []:
             lst_refl_out = list(lst_refl_in)
 
-        tun_par_lst = cmd_dict["tuning_params_lst"]
-        tun_par_lst = [cmd_dict["exe_cmd"]] + tun_par_lst
-        lst2run = [tun_par_lst]
+        # what the client shows in the parameters area and copies when
+        # cloning: program name (no path) + parameters with full PHIL path,
+        # the same as a node launched from DUI2 (CmdNode.set_in_fil_n_par)
+        program_name = get_program_name(cmd_dict["exe_cmd"])
+        lst2run = [[program_name] + dui2_params_lst(cmd_dict)]
         cmd_dict_ini = build_cmd_dict_ini(
             cmd_dict, parent_node_lst,
             list_of_commands[0:cmd_num],
@@ -527,7 +597,12 @@ def build_reusable_graph_list(
         node = {
             "_base_dir"             :os.getcwd(),
             "cmd_dict_ini"          :cmd_dict_ini,
-            "full_cmd_lst"          :cmd_dict["exe_cmd"],
+            # list of commands (each one a list), like CmdNode.full_cmd_lst,
+            # e.g.: for the << history >> request, a plain string here
+            # would be iterated one character at a time
+            "full_cmd_lst"          :[
+                [cmd_dict["exe_cmd"]] + list(cmd_dict["par_lst"])
+            ],
             "lst2run"               :lst2run,
             "_lst_expt_in"          :lst_expt_in,
             "_lst_refl_in"          :lst_refl_in,
